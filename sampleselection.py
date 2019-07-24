@@ -1,8 +1,3 @@
-
-
-# data analysis
-# capture 20 images and their respective histograms
-
 import PIL
 from PIL import Image
 import imagehash
@@ -17,8 +12,6 @@ import numpy as np
 import random
 
 IMGDIR = "./imagesbooks/"
-
-
 # ----------random sampling 20 images------------#
 trainhistpath = list(paths.list_images(IMGDIR))
 # print (trainhistpath)
@@ -28,47 +21,22 @@ sample1 = random.sample(trainhistpath, 10)
 # print (sample)
 
 #--------printing 10 random sample------#
-
-# for p in sample:
-#     image = Image.open(p)
-#     imgplot = plt.imshow(image)
-#     plt.show()
     
-fig=plt.figure(figsize=(40, 40))
-columns = 2
-rows = 5
-l = 0
-# ax enables access to manipulate each of subplots
-ax = []
-d = list(sample1)
-# print(d)
+# fig=plt.figure(figsize=(40, 40))
+# columns = 2
+# rows = 5
+# l = 0
+# ax = []
+# d = list(sample1)
+# # print(d)
 
-for i in range(1, columns*rows +1):
-    img = plt.imread(d[l])
-    ax.append(fig.add_subplot(rows, columns, i))
-    ax[-1].set_title(str(d[l]))
-    plt.imshow(img)
-    l +=1
-plt.show()
-
-
-# # ----------------histogram cal of corresponding 10 images--------------#
-# for f in sample1:
-#     image = cv2.imread(f)
-#     if image is None:
-#         continue
-#     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-#     # extract a RGB color histogram from the image,
-#     # using 8 bins per channel, normalize, and update
-#     # the index
-#     hist = cv2.calcHist([image], [0, 1, 2], None, [8, 8, 8],[0, 256, 0, 256, 0, 256])
-#     hist = cv2.normalize(hist, None)
-#     Trainhist =  Trainhist.append({'file':f,'imagehist':hist}, ignore_index=True)
-
-# # print (Trainhist)
-# a = list(hist)
-# print(a)
-
+# for i in range(1, columns*rows +1):
+#     img = plt.imread(d[l])
+#     ax.append(fig.add_subplot(rows, columns, i))
+#     ax[-1].set_title(str(d[l]))
+#     plt.imshow(img)
+#     l +=1
+# plt.show()
 #-------------printing histogram of 10 samples-------------------#
 
 columns = 2*2
@@ -101,12 +69,10 @@ for i in range(1, columns*rows +1,2):
     l +=1
 plt.show()
 
+#--------------------------HASHING----------------------#
 
-#-------------hashing operation---------------#
 
 IMGDIR = "./imagesbooks/"
-# IMGDIR = "../../images_holidays/jpg/"
-# TEST_IMGDIR = "../../test_images/"
 
 haystackPaths = list(paths.list_images(IMGDIR))
 print(haystackPaths)
@@ -121,10 +87,10 @@ for f in haystackPaths:
     
     image = Image.open(f)
 #     imageHash = imagehash.phash(image)
-    p = imagehash.phash(image, hash_size=32)
-    a = imagehash.average_hash(image, hash_size=32)
-    d = imagehash.dhash(image, hash_size=32)
-    w = imagehash.whash(image, hash_size=32)
+    p = imagehash.phash(image, hash_size=8)
+    a = imagehash.average_hash(image, hash_size=8)
+    d = imagehash.dhash(image, hash_size=8)
+    w = imagehash.whash(image, hash_size=8)
 
     haystack = haystack.append ({'file':f, 'phash':p, 'ahash':a, 'dhash':d,'whash':w }, ignore_index=True)
 # print (haystack.head())
@@ -146,8 +112,8 @@ print("[INFO] computing hashes for needles...")
 
 import pandas as pd 
 import random
-# sample = ['./imagesbooks/ukbench07994.jpg']
-sample = ['./imagesbooks/ukbench05764.jpg']
+# sample = ['./imagesbooks/ukbench00456.jpg']
+sample = ['./imagesbooks/ukbench03036.jpg']
 # sample = random.sample(haystackPaths, 1)
 # sample = ['./images/ukbench00019.jpg', './images/ukbench00025.jpg', './images/ukbench00045.jpg', './images/ukbench00003.jpg', './images/ukbench00029.jpg']
 # sample = ['./images/ukbench00048.jpg', './images/ukbench00016.jpg', './images/ukbench00045.jpg']
@@ -165,10 +131,10 @@ for f in sample:
 
 
 #     imageHash = imagehash.phash(image)
-    p = imagehash.phash(image, hash_size=32)
-    a = imagehash.average_hash(image, hash_size=32)
-    d = imagehash.dhash(image, hash_size=32)
-    w = imagehash.whash(image, hash_size=32)
+    p = imagehash.phash(image, hash_size=8)
+    a = imagehash.average_hash(image, hash_size=8)
+    d = imagehash.dhash(image, hash_size=8)
+    w = imagehash.whash(image, hash_size=8)
     
     hashes['phash']= hashes['phash'] - p
     hashes['ahash']= hashes['ahash'] - a
