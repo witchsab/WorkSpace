@@ -11,7 +11,8 @@ import pandas as pd
 import numpy as np
 import random
 
-IMGDIR = "./imagesbooks/"
+
+IMGDIR = "./imagebooks2/"
 # ----------random sampling 20 images------------#
 trainhistpath = list(paths.list_images(IMGDIR))
 # print (trainhistpath)
@@ -27,7 +28,7 @@ sample1 = random.sample(trainhistpath, 10)
 # rows = 5
 # l = 0
 # ax = []
-# d = list(sample1)
+d = list(sample1)
 # # print(d)
 
 # for i in range(1, columns*rows +1):
@@ -70,6 +71,9 @@ for i in range(1, columns*rows +1,2):
 plt.show()
 
 #--------------------------HASHING----------------------#
+import foregroundextraction as extract
+from matplotlib import cm
+import os
 
 
 IMGDIR = "./imagesbooks/"
@@ -83,17 +87,27 @@ haystack = pd.DataFrame(columns=['file', 'phash', 'ahash', 'dhash', 'whash'])
 # time the hashing operation 
 start = time.time()
 
+counter = 0 
 for f in haystackPaths:
     
-    image = Image.open(f)
+    image_orig = Image.open(f)
+    image = extract.foregroundExtract(f)    # check 
+    image = Image.fromarray(image)          # check 
+    filename = os.path.basename(f)
+    image.save("./imagebooks2/"+ filename)
 #     imageHash = imagehash.phash(image)
-    p = imagehash.phash(image, hash_size=8)
-    a = imagehash.average_hash(image, hash_size=8)
-    d = imagehash.dhash(image, hash_size=8)
-    w = imagehash.whash(image, hash_size=8)
+    p = imagehash.phash(image, hash_size=32)
+    a = imagehash.average_hash(image, hash_size=32)
+    d = imagehash.dhash(image, hash_size=32)
+    w = imagehash.whash(image, hash_size=32)
 
     haystack = haystack.append ({'file':f, 'phash':p, 'ahash':a, 'dhash':d,'whash':w }, ignore_index=True)
-# print (haystack.head())
+
+    counter += 1
+    print ("Completed", counter, f)
+
+
+print (haystack.head())
 
 #     print (p, imageHash)
     
@@ -113,8 +127,8 @@ print("[INFO] computing hashes for needles...")
 import pandas as pd 
 import random
 # sample = ['./imagesbooks/ukbench00456.jpg']
-sample = ['./imagesbooks/ukbench03036.jpg']
-# sample = random.sample(haystackPaths, 1)
+# sample = ['./imagesbooks/ukbench06700.jpg']
+sample = random.sample(haystackPaths, 1)
 # sample = ['./images/ukbench00019.jpg', './images/ukbench00025.jpg', './images/ukbench00045.jpg', './images/ukbench00003.jpg', './images/ukbench00029.jpg']
 # sample = ['./images/ukbench00048.jpg', './images/ukbench00016.jpg', './images/ukbench00045.jpg']
 
@@ -123,7 +137,12 @@ print (sample)
 for f in sample:
     
 #     print ("Searching", p)
-    image = Image.open(f)
+    # image = Image.open(f)
+    image_orig = Image.open(f)
+    image = extract.foregroundExtract(f)    # check 
+    image = Image.fromarray(image)          # check 
+
+    plt.imshow(image), plt.show()
 
 #     hashes = pd.DataFrame(columns=['file', 'phash', 'ahash', 'dhash', 'whash'])
 
@@ -131,10 +150,10 @@ for f in sample:
 
 
 #     imageHash = imagehash.phash(image)
-    p = imagehash.phash(image, hash_size=8)
-    a = imagehash.average_hash(image, hash_size=8)
-    d = imagehash.dhash(image, hash_size=8)
-    w = imagehash.whash(image, hash_size=8)
+    p = imagehash.phash(image, hash_size=32)
+    a = imagehash.average_hash(image, hash_size=32)
+    d = imagehash.dhash(image, hash_size=32)
+    w = imagehash.whash(image, hash_size=32)
     
     hashes['phash']= hashes['phash'] - p
     hashes['ahash']= hashes['ahash'] - a
