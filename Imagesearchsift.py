@@ -43,7 +43,7 @@ flann = cv2.FlannBasedMatcher(index_params,search_params)
 
 
 # Hyper-Parameters for SIFT comparison
-sift_features_limit = 1000
+sift_features_limit = 200
 lowe_ratio = 0.75
 predictions_count = 50
 
@@ -95,8 +95,10 @@ for index, j in siftdf.iterrows():
 matches_flann.sort(key=lambda x : x[0] , reverse = True)
 predictions.append((q_path,matches_flann[:predictions_count]))
 print(predictions)
+
+t= time.time() - start
 print("[INFO] processed {} images in {:.2f} seconds".format(
-len(haystackPaths), time.time() - start))
+len(haystackPaths), t))
 
 
 fig=plt.figure(figsize=(40, 40))
