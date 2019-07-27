@@ -5,6 +5,7 @@
 		}
 	],
 	"settings": {
-		"python.pythonPath": "/home/sabrina/venv/bin/python"
+		"python.pythonPath": "/home/towshif/venv/bin/python",
+		"editor.wordWrap": "on"
 	}
 }
