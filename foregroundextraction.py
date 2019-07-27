@@ -10,7 +10,7 @@ mode - It should be cv2.GC_INIT_WITH_RECT or cv2.GC_INIT_WITH_MASK or combined w
 '''
 
 import numpy as np
-import cv2
+import cv2 as cv2
 from matplotlib import pyplot as plt
 
 # # filename = (r"V:\\Download\\imagesbooks\\ukbench05777.jpg") 
