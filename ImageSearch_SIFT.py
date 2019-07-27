@@ -1,3 +1,13 @@
+'''
+SIFT, SURF, ORB are patented and no longer available opencv 4.0 
+install last opensource version 
+
+Ref: https://stackoverflow.com/questions/52305578/sift-cv2-xfeatures2d-sift-create-not-working-even-though-have-contrib-instal/52514095
+
+pip install opencv-python==3.4.2.16
+pip install opencv-contrib-python==3.4.2.16
+'''
+
 #--------------------------------SIFT CODE------------------------------------#
 
 # top = hashes.sort_values(by=['dhash'])[:20]
@@ -35,7 +45,7 @@ start = time.time()
 
 
 # Hyper-Parameters for SIFT comparison
-sift_features_limit = 1000
+sift_features_limit = 100
 lowe_ratio = 0.75
 predictions_count = 50
 
@@ -60,8 +70,6 @@ len(haystackPaths), time.time() - start))
 
 # ------------------ SIFT SEARCH CODE ---------------------
 
-start = time.time()
-
 # FLANN matcher
 FLANN_INDEX_KDTREE = 0
 index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
@@ -80,6 +88,7 @@ q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
 q_kp,q_des = gen_sift_features(q_img)
     
 
+start = time.time()
 # Start Search 
 predictions = []
 matches_flann = []
