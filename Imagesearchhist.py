@@ -11,22 +11,28 @@ from imutils import paths
 import matplotlib.pyplot as plt
 import pandas as pd 
 import numpy as np
+import random
+
+#-----------Training Images RGB Hist GENERRATION----------#
+
+
+
 
 IMGDIR = "./imagesbooks/"
 
 # Hyper-Parameter for comparing histograms
 correl_threshold = 0.70
 
-
 trainhistpath = list(paths.list_images(IMGDIR))
 # print (TrainhistPaths)
 
-import pandas as pd 
+# init RGB dataframe for Training image lib-------#
 Trainhist = pd.DataFrame(columns=['file','imagehist'])
+
+start = time.time()
 
 for f in trainhistpath:
     image = cv2.imread(f)
-   
     if image is None:
         continue
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -37,18 +43,20 @@ for f in trainhistpath:
     hist = cv2.normalize(hist, None)
     Trainhist =  Trainhist.append({'file':f,'imagehist':hist}, ignore_index=True)
 
+t= time.time() - start
+print("[INFO] processed {} images in {:.2f} seconds".format(
+len(trainhistpath), t))
 print (Trainhist.head())
 
 
-import random
+
+#----------query image gen--------------#
+
 img_path = random.sample(trainhistpath, 1)[0]
 print (img_path)
 
-showHistogram (img_path)
-
-
+# visualizing the histogram
 def showHistogram (img_path):
-    # visualizing the histogram
     import matplotlib.pyplot as plt
     img = cv2.imread(img_path)
     color = ('b','g','r')
@@ -58,10 +66,11 @@ def showHistogram (img_path):
         plt.plot(histr,color = col)
         plt.xlim([0,256])
     plt.show()
+showHistogram (img_path)
 
 
 # reading query image
-import random
+
 q_path = random.sample(trainhistpath, 1)[0]
 q_img = cv2.imread(q_path)
 query_paths = [q_path]
