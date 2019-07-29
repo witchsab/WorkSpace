@@ -45,7 +45,7 @@ start = time.time()
 
 
 # Hyper-Parameters for SIFT comparison
-sift_features_limit = 100
+sift_features_limit = 50
 lowe_ratio = 0.75
 predictions_count = 50
 
@@ -120,6 +120,8 @@ len(haystackPaths), time.time() - start))
 
 
 # ------------------ PLOT/DISPLAY RESULTS --------------------
+# this is a test code 
+
 print (q_path)
 columns = 5
 rows = 5

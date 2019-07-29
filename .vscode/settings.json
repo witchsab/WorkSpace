@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/home/sabrina/venv/bin/python",
+    "python.pythonPath": "/home/towshif/venv/bin/python",
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true
 }
