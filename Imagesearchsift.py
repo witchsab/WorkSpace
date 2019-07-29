@@ -20,7 +20,7 @@ d = haystackPaths
 import cv2
 
 def gen_sift_features(image):
-    sift = cv2.xfeatures2d.SIFT_create(1000)
+    sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
     # kp is the keypoints
     #
     # desc is the SIFT descriptors, they're 128-dimensional vectors
@@ -43,20 +43,10 @@ flann = cv2.FlannBasedMatcher(index_params,search_params)
 
 
 # Hyper-Parameters for SIFT comparison
-sift_features_limit = 1000
-lowe_ratio = 0.75
+sift_features_limit = 200
+lowe_ratio = 0.8
 predictions_count = 50
 
-
-
-# Reading query image
-# q_path = random.sample(haystackPaths, 1)[0]
-q_path = './imagesbooks/ukbench06453.jpg'  # sample test 
-q_img = cv2.imread(q_path)    
-q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
-# Generating SIFT features for query image
-q_kp,q_des = gen_sift_features(q_img)
-    
 
 for j in d:
     matches_count = 0
@@ -72,6 +62,15 @@ for j in d:
     if m_des is None:
         continue
 
+
+
+# Reading query image
+# q_path = random.sample(haystackPaths, 5)[0]
+q_path = './imagesbooks/ukbench05968.jpg'  # sample test 
+q_img = cv2.imread(q_path)    
+q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+# Generating SIFT features for query image
+q_kp,q_des = gen_sift_features(q_img)
 
 
 start = time.time()
@@ -95,18 +94,26 @@ for index, j in siftdf.iterrows():
 matches_flann.sort(key=lambda x : x[0] , reverse = True)
 predictions.append((q_path,matches_flann[:predictions_count]))
 print(predictions)
+
+t= time.time() - start
 print("[INFO] processed {} images in {:.2f} seconds".format(
-len(haystackPaths), time.time() - start))
+len(haystackPaths), t))
+print( 'Image = %s' %q_path,',', 'Time =%f seconds'%t,'kp=%i' %sift_features_limit)
 
 
-fig=plt.figure(figsize=(40, 40))
+
+
 columns = 5
 rows = 10
 l = 0
+size =2 
+fig=plt.figure(figsize=(size*columns, size*rows))
+
 # ax enables access to manipulate each of subplots
 ax = []
 
 x,mylist = predictions[0]
+
 for i in range(1, columns*rows +1):
     b,a = mylist [l]
     img = plt.imread(a)
@@ -114,6 +121,8 @@ for i in range(1, columns*rows +1):
     ax[-1].set_title('score='+str(b))
     plt.imshow(img)
     l +=1
+
+fig.suptitle('Add Title Here', fontsize=16)
 plt.show()
 
 
@@ -129,5 +138,10 @@ for key in mylist:
     )
 
 sift_score.plot()
+plt.title('kp=' + str(sift_features_limit) + ', T=' + str(t)  )
 plt.show()
+print( 'Image = %s' %q_path,',', 'Time =%f seconds'%t)
+#-----------------accuracy--------------#
+
+
 
