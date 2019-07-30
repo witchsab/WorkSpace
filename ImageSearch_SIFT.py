@@ -45,7 +45,7 @@ start = time.time()
 
 
 # Hyper-Parameters for SIFT comparison
-sift_features_limit = 100
+sift_features_limit = 50
 lowe_ratio = 0.75
 predictions_count = 50
 
@@ -70,6 +70,11 @@ len(haystackPaths), time.time() - start))
 
 # ------------------ SIFT SEARCH CODE ---------------------
 
+import random
+
+
+start = time.time()
+
 # FLANN matcher
 FLANN_INDEX_KDTREE = 0
 index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
@@ -78,8 +83,8 @@ flann = cv2.FlannBasedMatcher(index_params,search_params)
 
 
 # Reading query image
-# q_path = random.sample(haystackPaths, 1)[0]
-q_path = './imagesbooks/ukbench06453.jpg'  # sample test 
+q_path = random.sample(haystackPaths, 1)[0]
+# q_path = './imagesbooks/ukbench06453.jpg'  # sample test 
 q_img = cv2.imread(q_path)    
 q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
 
@@ -88,7 +93,6 @@ q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
 q_kp,q_des = gen_sift_features(q_img)
     
 
-start = time.time()
 # Start Search 
 predictions = []
 matches_flann = []
@@ -108,7 +112,7 @@ for index, j in siftdf.iterrows():
 
 matches_flann.sort(key=lambda x : x[0] , reverse = True)
 predictions.append((q_path,matches_flann[:predictions_count]))
-print(predictions)
+# print(predictions)
 print("[INFO] processed {} images in {:.2f} seconds".format(
 len(haystackPaths), time.time() - start))
 
@@ -116,10 +120,14 @@ len(haystackPaths), time.time() - start))
 
 
 # ------------------ PLOT/DISPLAY RESULTS --------------------
-fig=plt.figure(figsize=(40, 40))
+# this is a test code 
+
+print (q_path)
 columns = 5
-rows = 10
+rows = 5
 l = 0
+size = 2
+fig=plt.figure(figsize=(size*columns, size*rows))
 # ax enables access to manipulate each of subplots
 ax = []
 

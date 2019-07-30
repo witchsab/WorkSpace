@@ -112,3 +112,6 @@ venv.bak/
 # zip 
 *.zip 
 
+# vs code 
+.vscode/
+.vscode
