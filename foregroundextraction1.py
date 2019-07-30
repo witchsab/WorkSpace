@@ -14,7 +14,7 @@ import cv2
 from matplotlib import pyplot as plt
 
 # filename = (r"V:\\Download\\imagesbooks\\ukbench05777.jpg") 
-filename= ('./imagesbooks/ukbench09364.jpg'  )  
+filename = (r"V:\\Download\\imagesbooks\\ukbench05777.jpg")
 # ukbench02719 , ukbench02722 , ukbench03045 , ukbench02748, ukbench00032, ukbench00126, ukbench00003
 
 img = cv2.imread(filename)
