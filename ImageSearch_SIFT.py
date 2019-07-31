@@ -10,7 +10,7 @@ pip install opencv-contrib-python==3.4.2.16
 
 #--------------------------------SIFT CODE------------------------------------#
 
-# top = hashes.sort_values(by=['dhash'])[:20]
+
 import PIL
 from PIL import Image
 import imagehash
