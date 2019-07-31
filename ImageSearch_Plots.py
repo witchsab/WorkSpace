@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd 
 import numpy as np
 import random
+import os 
 
 '''
 This function plots a list of tuples containing scores and paths
@@ -43,8 +44,9 @@ def plot_predictions (matches,query_image_path ):
 
     for i in range(1,  min( len(d) +1   ,   columns*rows +1)) :
         img = plt.imread(d[l])
+        name = os.path.basename(d[l])
         ax.append(fig.add_subplot(rows, columns, i))
-        ax[-1].set_title('score='+str(p[l]))
+        ax[-1].set_title(name + '|  score='+str(p[l]))
         plt.imshow(img)
         l +=1
     plt.show()

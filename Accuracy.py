@@ -6,9 +6,10 @@ def accuracy_matches(q_path, imagematches, window):
     # print (q_path)
 
     queryfilename = os.path.basename(q_path)
-    # print (queryfilename)
+    print (queryfilename)
 
     filenumber = int(queryfilename.split('.')[0].split('ukbench')[1])
+    fileext = queryfilename.split('.')[1]
 
     start = filenumber - filenumber%4
 
@@ -18,11 +19,14 @@ def accuracy_matches(q_path, imagematches, window):
 
 
     for i in range(start, start+4):
-        familyfilename.append('ukbench'+ str(i).zfill(5)+'.jpg')
+        familyfilename.append('ukbench'+ str(i).zfill(5)+ '.' + fileext)
 
-    # print(familyfilename)
+    print(familyfilename)
 
-    familyfilename.remove(queryfilename)
+    try: 
+        familyfilename.remove(queryfilename)
+    except: 
+        pass
 
 
 
@@ -34,7 +38,7 @@ def accuracy_matches(q_path, imagematches, window):
 
     searchlist = []
 
-    for item in imagematches:
+    for item in imagematches[:window]:
         score, path = item
         searchlist.append(os.path.basename(path))
 
@@ -43,7 +47,7 @@ def accuracy_matches(q_path, imagematches, window):
     searchlist.remove(queryfilename)
 
     overlap = list(set(familyfilename).intersection(searchlist))
-
+    print ('overlap', overlap)
 
     acc = (len(overlap)/len(familyfilename)) *100
 
