@@ -125,56 +125,63 @@ def foregroundExtractAndWarp(filename) :
         contours, _ = cv2.findContours(mask2.copy(), 1, 1) # not copying here will throw an error
 
         # sort by max area of contour
-        boundingBoxes = [cv2.boundingRect(c) for c in contours]
-        (cnts, boundingBoxes) = zip(*sorted(zip(contours, boundingBoxes), key=lambda b:b[1][i],reverse=True))
+        # boundingBoxes = [cv2.boundingRect(c) for c in contours]
+        # (cnts, boundingBoxes) = zip(*sorted(zip(contours, boundingBoxes), key=lambda b:b[1][i],reverse=True))
+
+        cnts = sorted(contours, key=cv2.contourArea, reverse=True)
+
         # show max contour
         maxct= cnts[0]
+
+        # -------------Method 1 - rotated simple bounding box-------
         rect = cv2.minAreaRect(maxct)
         box = cv2.boxPoints(rect)
         box = np.int0(box)
         img = cv2.drawContours(orig.copy(),[box],0,(0,255,0),2)
-        # plt.imshow (img), plt.show()
+        # plt.imshow (img), plt.title('Rot BB'), plt.show()
 
         # generate the warped image 
         ratio = ratio = orig.shape[0] / 500.0
         warped1 = four_point_transform(orig.copy(), box.reshape(4, 2) * ratio)
-        # plt.imshow (warped), plt.show()
+        # plt.imshow (warped1), plt.title('Warped BB'), plt.show()
         # return warp 
 
-        # Method 2 - 4 point Quad fit inside contour
+        # --------------Method 2 - 4 point Quad fit inside contour
 
         # simplify contours and fit a 4 point rect inside it  
         epsilon = 0.1*cv2.arcLength(maxct,True)
-        approx = cv2.approxPolyDP(maxct,epsilon,True)
-        if len(approx) !=4 :
+        found = approx = cv2.approxPolyDP(maxct,epsilon,True)
+        if len(approx) !=4 : # 4 point not found then revert to Box
             approx =  box  # from previous rotatated rectangle bounding box
-        img = cv2.drawContours(img, [approx], 0, (255,255,255), 3)
-        plt.imshow (img), plt.show()
+        img = cv2.drawContours(img, [found], 0, (255,255,255), 3)
+        # plt.imshow (img), plt.title('4 Point BB inner (w), BB(G)'), plt.show()
 
         # generate the warped image 
         ratio = ratio = orig.shape[0] / 500.0
         warped2 = four_point_transform(orig.copy(), approx.reshape(4, 2) * ratio)
-        plt.imshow (warped), plt.show()
+        # plt.imshow (warped2), plt.title('Warped 4 Point Inner'), plt.show()
         # return warp 
+
+
+        # plt.imshow(img),plt.colorbar(),plt.show()  # show masked image 
+        # plt.imshow(mask2),plt.colorbar(),plt.show() # show mask binary
 
 
     except Exception as e: 
         print ("Some Exception")
-        img_BGRA = img.copy()
-        warped1 = img.copy()
-        warped2 = img.copy()
+        img_BGRA = orig.copy()
+        warped1 = orig.copy()
+        warped2 = orig.copy()
+        bbmap = orig.copy()
     
-    # plt.imshow(img),plt.colorbar(),plt.show()  # show masked image 
-    # plt.imshow(mask2),plt.colorbar(),plt.show() # show mask 
-
-
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     img_BGRA = cv2.cvtColor(img_BGRA, cv2.COLOR_BGRA2RGBA) # transparency
     warped1 = cv2.cvtColor(warped1, cv2.COLOR_BGR2RGB)
     warped2 = cv2.cvtColor(warped2, cv2.COLOR_BGR2RGB)
+    bbmap = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 
-    return image, img_BGRA, warped1, warped2
+    return image, img_BGRA, warped1, warped2, bbmap
 
 
 # ------------------------ 4 point perspective transform -------------------------
