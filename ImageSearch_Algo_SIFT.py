@@ -114,89 +114,89 @@ def SIFT_SEARCH (feature, queryimagepath, sift_features_limit, lowe_ratio, predi
 
 
 
-# ------------ GENERATION TEST-------------------#
+# # ------------ GENERATION TEST-------------------#
 
 
-# Hyper-Parameters for SIFT comparison
-sift_features_limit = 100
-lowe_ratio = 0.75
-predictions_count = 50
+# # Hyper-Parameters for SIFT comparison
+# sift_features_limit = 1000
+# lowe_ratio = 0.75
+# predictions_count = 50
 
-IMGDIR = "./imagesbooks/"
-imagepaths = list(paths.list_images(IMGDIR))
-mydata1, mytime1 = gen_sift_features(imagepaths, 500)
-
-
-# ------------------ SEARCH TEST ---------------------#
-
-q_path = random.sample(imagepaths, 1)[0]
-imagepredictions , searchtime = SIFT_SEARCH(mydata1, q_path, 300,0.75, 50)
-
-# to reload module: uncomment use the following 
-# %load_ext autoreload
-# %autoreload 2
-
-import Accuracy as accuracy
-a = accuracy.accuracy_matches(q_path, imagepredictions[:20], 50)
-print ('Accuracy =',  a, '%')
-
-import ImageSearch_Plots as myplots
-myplots.plot_predictions(imagepredictions[:20], q_path)
+# IMGDIR = "./imagesbooks/"
+# imagepaths = list(paths.list_images(IMGDIR))
+# mydata1, mytime1 = gen_sift_features(imagepaths, 1000)
 
 
+# # ------------------ SEARCH TEST ---------------------#
 
+# q_path = random.sample(imagepaths, 1)[0]
+# imagepredictions , searchtime = SIFT_SEARCH(mydata1, q_path, 300,0.75, 50)
 
+# # to reload module: uncomment use the following 
+# # %load_ext autoreload
+# # %autoreload 2
 
-#---------------- Compile data and plot results 
+# import Accuracy as accuracy
+# a = accuracy.accuracy_matches(q_path, imagepredictions[:20], 50)
+# print ('Accuracy =',  a, '%')
 
-accStats = pd.DataFrame(columns=['file','Acc', 'PCount'])
-
-q_paths = random.sample(imagepaths, 50)  # random sample 100 items in list 
-
-for q_path in q_paths:    
-    print ("Processing, time", q_paths.index(q_path), searchtime)
-    imagepredictions , searchtime = SIFT_SEARCH(mydata1, q_path, 50,0.75, 50)
-    a = accuracy.accuracy_matches(q_path, imagepredictions, 50)
-    accStats = accStats.append({ 'file': q_path, 'Acc': a, 'PCount': len(imagepredictions) } , ignore_index=True)
-
-
-plt.plot(accStats['Acc'])
-plt.plot (accStats['PCount'])
-plt.hlines(accStats['Acc'].mean(), 0, 100, 'r')
-
-print ("Mean Acc = ", accStats['Acc'].mean())
-
-
-# ------------------ PLOT/DISPLAY RESULTS --------------------
-fig=plt.figure(figsize=(40, 40))
-columns = 5
-rows = 10
-l = 0
-# ax enables access to manipulate each of subplots
-ax = []
-
-mylist = imagepredictions
-for i in range(1, columns*rows +1):
-    b,a = mylist [l]
-    img = plt.imread(a)
-    ax.append(fig.add_subplot(rows, columns, i))
-    ax[-1].set_title('score='+str(b))
-    plt.imshow(img)
-    l +=1
-plt.show()
+# import ImageSearch_Plots as myplots
+# myplots.plot_predictions(imagepredictions[:20], q_path)
 
 
 
 
-sift_score = pd.DataFrame (columns=['score'])
-for key in mylist: 
-    b, a = key 
-    sift_score = sift_score.append(
-        {
-            'score' : b
-        }, ignore_index=True
-    )
 
-sift_score.plot()
-plt.show()
+# #---------------- Compile data and plot results 
+
+# accStats = pd.DataFrame(columns=['file','Acc', 'PCount'])
+
+# q_paths = random.sample(imagepaths, 50)  # random sample 100 items in list 
+
+# for q_path in q_paths:    
+#     print ("Processing, time", q_paths.index(q_path), searchtime)
+#     imagepredictions , searchtime = SIFT_SEARCH(mydata1, q_path, 1000,0.75, 50)
+#     a = accuracy.accuracy_matches(q_path, imagepredictions, 50)
+#     accStats = accStats.append({ 'file': q_path, 'Acc': a, 'PCount': len(imagepredictions) } , ignore_index=True)
+
+
+# plt.plot(accStats['Acc'])
+# plt.plot (accStats['PCount'])
+# plt.hlines(accStats['Acc'].mean(), 0, 100, 'r')
+
+# print ("Mean Acc = ", accStats['Acc'].mean())
+
+
+# # ------------------ PLOT/DISPLAY RESULTS --------------------
+# fig=plt.figure(figsize=(40, 40))
+# columns = 5
+# rows = 10
+# l = 0
+# # ax enables access to manipulate each of subplots
+# ax = []
+
+# mylist = imagepredictions
+# for i in range(1, columns*rows +1):
+#     b,a = mylist [l]
+#     img = plt.imread(a)
+#     ax.append(fig.add_subplot(rows, columns, i))
+#     ax[-1].set_title('score='+str(b))
+#     plt.imshow(img)
+#     l +=1
+# plt.show()
+
+
+
+
+# sift_score = pd.DataFrame (columns=['score'])
+# for key in mylist: 
+#     b, a = key 
+#     sift_score = sift_score.append(
+#         {
+#             'score' : b
+#         }, ignore_index=True
+#     )
+
+# sift_score.plot()
+# plt.show()
 
