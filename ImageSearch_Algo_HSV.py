@@ -26,6 +26,20 @@ def HSV_GEN (listOfImagePaths):
     # print (Trainhist.head())
     return (Trainhist, t)
 
+def HSV_FEATURE (searchimagepath): 
+
+    # initialize the color descriptor
+    cd = ColorDescriptor((8, 12, 3))
+
+    queryImage = cv2.imread(searchimagepath)
+
+    # initialize the image descriptor
+    cd = ColorDescriptor((8, 12, 3))
+    queryFeatures = cd.describe(queryImage)
+
+    return queryFeatures
+    
+
 
 def HSV_SEARCH2 (feature, searchimagepath): 
 

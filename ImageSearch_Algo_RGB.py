@@ -49,6 +49,16 @@ def RGB_GEN(custompaths):
 #----------query image gen--------------#
 
 
+def RGB_FEATURE (searchimagepath) : 
+    image = cv2.imread(searchimagepath)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # extract a RGB color histogram from the image,
+    # using 8 bins per channel, normalize, and update the index
+    hist = cv2.calcHist([image], [0, 1, 2], None, [8, 8, 8],[0, 256, 0, 256, 0, 256])
+    hist = cv2.normalize(hist, None)
+
+    return hist
+
 
 def RGB_SEARCH(feature, searchimagepath, correl_threshold):
     start = time.time()

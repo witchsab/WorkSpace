@@ -116,3 +116,7 @@ venv.bak/
 .vscode/
 .vscode
 config.code-workspace
+
+# other data 
+.csv
+.~

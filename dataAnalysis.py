@@ -35,6 +35,9 @@ print ('HSV Feature Generation time', mytime)
 
 q_path = random.sample(imagepaths, 1)[0]
 
+# test feature 
+fh = ImageSearch_Algo_HSV.HSV_FEATURE(q_path)
+
 # imagematches , searchtime = ImageSearch_Algo_HSV.HSV_SEARCH(mydataHSV, q_path)
 imagematches , searchtime = ImageSearch_Algo_HSV.HSV_SEARCH(mydataHSV, q_path)
 print ('HSV Search time', searchtime)
@@ -88,7 +91,7 @@ print ('Accuracy =',  a, '%')
 import ImageSearch_Plots as myplots
 myplots.plot_predictions(imagematches[:20], q_path)
 
-#---------------- HSV Compile data and plot results 
+#---------------- HSV FAST Compile data and plot results 
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -135,6 +138,10 @@ print ('RGB Feature Generation time', mytime)
 #------------ RGB SEARCH TEST------------------------------#
 
 q_path = random.sample(imagepaths, 1)[0]
+
+
+# test 
+# ft = ImageSearch_Algo_RGB.RGB_FEATURE (q_path)
 
 imagematches , searchtime = ImageSearch_Algo_RGB.RGB_SEARCH(mydataRGB, q_path, 0.5)
 
