@@ -94,69 +94,68 @@ def HASH_SEARCH (searchImagePath, features, matchCount, hashAlgo, hashsize) :
     top = hashes.sort_values(by=[hashAlgo])[:matchCount]  # get top 20 matches 
     
     t = time.time() - start
-    print("[INFO] processed {} images in {:.2f} seconds".format(
-    len(hashes), t))
+    # print("[INFO] processed {} images in {:.2f} seconds".format(len(hashes), t))
 
     # print (top.head())
 
-    # plotting results 
-    d = list(top['file'])
-    p = list(top[hashAlgo])
-    # print (d)
+    # # plotting results 
+    # d = list(top['file'])
+    # p = list(top[hashAlgo])
+    # # print (d)
     
-    fig=plt.figure(figsize=(40, 40))
-    columns = 20
-    rows = 1
-    l = 0
-    # ax enables access to manipulate each of subplots
-    ax = []
+    # fig=plt.figure(figsize=(40, 40))
+    # columns = 20
+    # rows = 1
+    # l = 0
+    # # ax enables access to manipulate each of subplots
+    # ax = []
 
-    for i in range(1, columns*rows +1):
-        img = plt.imread(d[l])
-        ax.append(fig.add_subplot(rows, columns, i))
-        ax[-1].set_title('score='+str(p[l]))
-        plt.imshow(img)
-        l +=1
-    plt.show()
+    # for i in range(1, columns*rows +1):
+    #     img = plt.imread(d[l])
+    #     ax.append(fig.add_subplot(rows, columns, i))
+    #     ax[-1].set_title('score='+str(p[l]))
+    #     plt.imshow(img)
+    #     l +=1
+    # plt.show()
 
     # return time and a list of tuples: [( score, file path) ]    
-    return (top[[hashAlgo, 'file']].apply(tuple, axis=1), t )
+    return ( list(top[[hashAlgo, 'file']].apply(tuple, axis=1)), t )
 
 
-# --------------------------TESTING CODE----------------------------
+# # --------------------------TESTING CODE----------------------------
 
 
-from imutils import paths
+# from imutils import paths
 
-# for hash all the images in folder / database 
+# # for hash all the images in folder / database 
 
-IMGDIR = r"V:\\Download\\imagesbooks2\\"
-# IMGDIR = "./imagesbooks/"
-# IMGDIR = "../../images_holidays/jpg/"
-# TEST_IMGDIR = "../../test_images/"
+# IMGDIR = r"V:\\Download\\imagesbooks2\\"
+# # IMGDIR = "./imagesbooks/"
+# # IMGDIR = "../../images_holidays/jpg/"
+# # TEST_IMGDIR = "../../test_images/"
 
-haystackPaths = list(paths.list_images(IMGDIR))
+# haystackPaths = list(paths.list_images(IMGDIR))
 
-features = HASH_GEN (haystackPaths, 32)
+# features = HASH_GEN (haystackPaths, 32)
 
 
-# search images 
+# # search images 
  
-import random
+# import random
 
-sample = r'V:\\Download\\imagesbooks2\\ukbench07994.png'
-# sample = random.sample(haystackPaths, 1)
-# sample = ['./images/ukbench00019.jpg', './images/ukbench00025.jpg', './images/ukbench00045.jpg', './images/ukbench00003.jpg', './images/ukbench00029.jpg']
-# sample = ['./images/ukbench00048.jpg', './images/ukbench00016.jpg', './images/ukbench00045.jpg']
+# sample = r'V:\\Download\\imagesbooks2\\ukbench07994.png'
+# # sample = random.sample(haystackPaths, 1)
+# # sample = ['./images/ukbench00019.jpg', './images/ukbench00025.jpg', './images/ukbench00045.jpg', './images/ukbench00003.jpg', './images/ukbench00029.jpg']
+# # sample = ['./images/ukbench00048.jpg', './images/ukbench00016.jpg', './images/ukbench00045.jpg']
 
-mydata, mytime = HASH_SEARCH (sample, features, 20, 'phash', 32)
-mydata, mytime = HASH_SEARCH (sample, features, 20, 'dhash', 32)
-mydata, mytime = HASH_SEARCH (sample, features, 20, 'ahash', 32)
-mydata, mytime = HASH_SEARCH (sample, features, 20, 'whash', 32)
-
-
-import ImageSearch_Plots as myplots
-myplots.plot_predictions(mydata, sample)
+# mydata, mytime = HASH_SEARCH (sample, features, 20, 'phash', 32)
+# mydata, mytime = HASH_SEARCH (sample, features, 20, 'dhash', 32)
+# mydata, mytime = HASH_SEARCH (sample, features, 20, 'ahash', 32)
+# mydata, mytime = HASH_SEARCH (sample, features, 20, 'whash', 32)
 
 
-# -------------------------END TESTING----------------------------
+# import ImageSearch_Plots as myplots
+# myplots.plot_predictions(mydata, sample)
+
+
+# # -------------------------END TESTING----------------------------

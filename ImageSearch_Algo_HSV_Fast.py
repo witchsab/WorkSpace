@@ -18,7 +18,7 @@ import random
 
 
 #-----------Training Images RGB Hist GENERRATION----------#
-def RGB_GEN(custompaths):
+def HSV_GEN(custompaths):
     # init RGB dataframe for Training image lib-------#
     Trainhist = pd.DataFrame(columns=['file','imagehist'])
 
@@ -28,11 +28,13 @@ def RGB_GEN(custompaths):
         image = cv2.imread(f)
         if image is None:
             continue
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
         # extract a RGB color histogram from the image,
         # using 8 bins per channel, normalize, and update
         # the index
-        hist = cv2.calcHist([image], [0, 1, 2], None, [8, 8, 8],[0, 256, 0, 256, 0, 256])
+        hist = cv2.calcHist([image], [0, 1, 2], None, [8, 12, 3],[0, 180, 0, 256, 0, 256])
         hist = cv2.normalize(hist, None)
         Trainhist =  Trainhist.append({'file':f,'imagehist':hist}, ignore_index=True)
 
@@ -50,16 +52,16 @@ def RGB_GEN(custompaths):
 
 
 
-def RGB_SEARCH(feature, searchimagepath, correl_threshold):
+def HSV_SEARCH(feature, searchimagepath, correl_threshold):
     start = time.time()
     image = cv2.imread(searchimagepath)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
     # extract a RGB color histogram from the image,
     # using 8 bins per channel, normalize, and update the index
-    hist = cv2.calcHist([image], [0, 1, 2], None, [8, 8, 8],[0, 256, 0, 256, 0, 256])
+    hist = cv2.calcHist([image], [0, 1, 2], None, [8, 12, 3],[0, 180, 0, 256, 0, 256])
     hist = cv2.normalize(hist, None)       
-
-
 
     matches = []
 
