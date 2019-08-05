@@ -72,16 +72,17 @@ def accuracy_matches(q_path, imagematches, window):
         except : 
             pass
     indexlist.append(0)
+    sorted_position = sorted(indexlist)
     
-    # print (indexlist)
+    print (sorted_position)
 
-    # metricValue = metricCalc(indexlist)
-    metricValue = metricCalc(list(range(0, len(familyfilename)+1))) /metricCalc(indexlist)
+    metricValue = metricCalc(indexlist)
+    # metricValue = metricCalc(list(range(0, len(familyfilename)+1))) /metricCalc(indexlist)
     # print (metricValue)
     # print (queryfilename)
     # print (searchlist)
 
-    return (acc, metricValue)
+    return (acc, metricValue, sorted_position)
 
 
 def metricCalc(indexlist) : 
