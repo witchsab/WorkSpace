@@ -3,6 +3,9 @@ import cv2
 import imutils
 import pandas as pd 
 import time
+from sklearn.neighbors import KDTree
+import os 
+import pickle
 
 
 def HSV_GEN (listOfImagePaths): 
@@ -38,46 +41,69 @@ def HSV_FEATURE (searchimagepath):
     queryFeatures = cd.describe(queryImage)
 
     return queryFeatures
+
+
+def HSV_Create_Tree ( mydataHSV, savefile='testHSV'  ) : 
     
+    YD = list(mydataHSV['imagehist'])
+    YA = np.asarray(YD)
+    # nsamples, nx, ny, nz = XA.shape  # know the shape before you flatten
+    # X = XA.reshape ((nsamples, nx*ny*nz)) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+
+    HSVtree = KDTree(YA ) # , metric='euclidean')
+    
+    # save the tree #example # treeName = 'testHSV.pickle'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump(HSVtree,outfile)
+
+    return HSVtree
 
 
-def HSV_SEARCH2 (feature, searchimagepath): 
 
-    start = time.time()    
+def HSV_Load_Tree ( openfile='testHSV'  ) : 
+    
+    # reading the pickle tree
+    infile = open(openfile + '.pickle','rb')
+    HSVTree = pickle.load(infile)
+    infile.close()
 
-    queryImage = cv2.imread(searchimagepath)
+    return HSVTree
 
-    # initialize the image descriptor
-    cd = ColorDescriptor((8, 12, 3))
-    queryFeatures = cd.describe(queryImage)
 
-    # FLANN matcher
-    FLANN_INDEX_KDTREE = 0
-    index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
-    search_params = dict(checks=50)   # or pass empty dictionary
-    flann = cv2.FlannBasedMatcher(index_params,search_params)
-    lowe_ratio = 0.75
+'''
+Params: 
+HSVTree = Tree object 
+mydataHSV = pandas dataframe of the tree (same order no filter or change)
+searchimagepath = string path of the search image 
 
-    matches_flann = []
+Output: 
+list of tuples: [(score, matchedfilepath) ]
+time = total searching time 
+'''
+def HSV_SEARCH_TREE ( HSVtree , mydataHSV,  searchimagepath, returnCount=100): 
 
-    for index, row in feature.iterrows():
-        q_des = np.asarray(queryFeatures, dtype=np.float32)
-        m_des = np.asarray(row['imagehist'], dtype=np.float32)
-        # distance = chi2_distance( row['imagehist'], queryFeatures)
-        # distance = cv2.compareHist(queryFeatures, row['imagehist'], cv2.HISTCMP_CORREL)
-        matches = flann.knnMatch(q_des,m_des,k=2)
-        
-        #ratio query as per Lowe's paper
-        matches_count = 0
-        for x,(m,n) in enumerate(matches):
-            if m.distance < lowe_ratio*n.distance:
-                matches_count += 1
-        matches.append((matches_count, row['file']))
+    start = time.time()
+    
+    # get the feature from the input image 
+    fh = HSV_FEATURE (searchimagepath)
 
-    matches_flann.sort(key=lambda x : x[0] , reverse = True)
+    fh = np.asarray(fh)
+    # ft = raw feature 
+    # process 
+    nz = fh.shape  # know the shape before you flatten
+    F = fh.reshape (1, -1) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 
-    t= time.time() - start
-    return (matches_flann, t)
+    # the search; k = number of returns expected 
+    # returns distances, index of the items in the order of the input tree nparray 
+    dist, ind = HSVtree.query(F, k=returnCount)
+    t = time.time() - start 
+
+    flist = list (mydataHSV.iloc[ ind[0].tolist()]['file'])
+    slist = list (dist[0])
+    matches = tuple(zip( slist, flist)) # create a list of tuples from 2 lists 
+
+    return (matches, t)
+
 
 
 def HSV_SEARCH (feature, searchimagepath): 

@@ -196,7 +196,7 @@ tree = KDTree(X)  # metric =
 nx, ny, nz = ft.shape  # know the shape before you flatten
 F = ft.reshape ((nx*ny*nz)) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 
-dist, ind = tree.query(F, k=9)
+scores, ind = tree.query(F, k=9)
 
 
 
@@ -231,7 +231,7 @@ ft = ImageSearch_Algo_RGB.RGB_FEATURE (q_path)
 nx, ny, nz = ft.shape  # know the shape before you flatten
 F = ft.reshape ((1, nx*ny*nz)) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 
-dist, ind = RGBtree.query(F, k=50)
+scores, ind = RGBtree.query(F, k=50)
 t = time.time() - start 
 
 print (ind)
@@ -245,7 +245,7 @@ print ( "RGB KDTree Search took ", t, ' secs')
 
 # Zip results into a list of tuples (score , file) & calculate score 
 flist = list (mydataHSV.iloc[ ind[0].tolist()]['file'])
-slist = list (dist[0])
+slist = list (scores[0])
 result = tuple(zip( slist, flist)) 
 a , q = accuracy.accuracy_matches(q_path, result, 20)
 print ('Accuracy =',  a, '%', '| Quality:', q )
@@ -265,6 +265,7 @@ print ('Accuracy =',  a, '%', '| Quality:', q )
 
 
 from sklearn.neighbors import KDTree
+import numpy as np
 import time 
 
 YD = list(mydataHSV['imagehist'])
@@ -273,6 +274,19 @@ YA = np.asarray(YD)
 # X = XA.reshape ((nsamples, nx*ny*nz)) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 
 HSVtree = KDTree(YA ) # , metric='euclidean')
+
+# save to pickle file 
+import pickle
+treeName = 'testHSV.pickle'
+outfile = open (treeName, 'wb')
+pickle.dump(HSVtree,outfile)
+
+
+# load from pickle file 
+infile = open(treeName,'rb')
+newTree = pickle.load(infile)
+infile.close()
+
 
 #  Example with HSV metrices 
 import ImageSearch_Algo_HSV 
@@ -291,10 +305,11 @@ fh = np.asarray(fh)
 nz = fh.shape  # know the shape before you flatten
 F = fh.reshape (1, -1) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 
-dist, ind = HSVtree.query(F, k=100)
+scores, ind = HSVtree.query(F, k=100)
 t = time.time() - start 
 
 print (ind)
+print (scores)
 
 # get the index of searchimage 
 print (mydataHSV.index[mydataHSV['file'] == q_path])
@@ -303,7 +318,183 @@ print ( "Search took ", t, ' secs')
 
 # Zip results into a list of tuples (score , file) & calculate score 
 flist = list (mydataHSV.iloc[ ind[0].tolist()]['file'])
-slist = list (dist[0])
+slist = list (scores[0])
 result = tuple(zip( slist, flist)) # create a list of tuples from 2 lists 
-a , q = accuracy.accuracy_matches(q_path, result, 100)
+a , q, pos, cnt = accuracy.accuracy_matches(q_path, result, 100)
 print ('Accuracy =',  a, '%', '| Quality:', q )
+print ('Count', cnt, ' | position', pos)
+
+
+# --------------------  KD Tree  HASH (phash, ahash, dhash, whash) ---------------------
+# Avg. Time per search: 0.033 s
+
+
+from sklearn.neighbors import KDTree
+import imagehash
+import numpy as np
+import time 
+
+# YD = np.array(mydataHASH['phash'].apply(imagehash.ImageHash.__hash__))
+YD = list(mydataHASH['ahash'])
+
+# a = np.empty((h, w)) # create an empty array 
+result_array = []
+
+for item in YD : 
+    onearray = np.asarray(np.array (item.hash), dtype=float)
+    result_array.append(onearray)
+
+YA = np.asarray(result_array)
+nsamples, x, y = YA.shape  # know the shape before you flatten
+F = YA.reshape ( nsamples, x*y ) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+
+HASHTree = KDTree( F ,  metric='euclidean')
+
+# save to pickle file 
+import pickle
+treeName = 'testHASH.pickle'
+outfile = open (treeName, 'wb')
+pickle.dump(HASHTree,outfile)
+
+
+# load from pickle file 
+infile = open(treeName,'rb')
+newTree = pickle.load(infile)
+infile.close()
+
+
+#  Example with HASH metrices 
+import ImageSearch_Algo_Hash 
+import Accuracy as accuracy
+
+# random sample 
+q_path = random.sample(imagepaths, 1)[0]
+
+start = time.time()
+# test 
+fh = np.array (ImageSearch_Algo_Hash.HASH_FEATURE(q_path, 'ahash', 16).hash)
+
+fd = np.asarray(fh , dtype=float) # since hash is an array of bool -> numpy its 1,0
+# ft = raw feature 
+# process 
+x, y = fd.shape # know the shape before you flatten
+FF = fd.reshape (1, x*y) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+
+scores, ind = HASHTree.query(FF, k=100)
+t = time.time() - start 
+
+print (ind)
+print (scores[:, :50])  # top 50 scores from np.array
+
+# get the index of searchimage 
+print (mydataHASH.index[mydataHASH['file'] == q_path])
+print (q_path)
+print ( "Search took ", t, ' secs')
+
+# Zip results into a list of tuples (score , file) & calculate score 
+flist = list (mydataHASH.iloc[ ind[0].tolist()]['file'])
+slist = list (scores[0])
+result = tuple(zip( slist, flist)) # create a list of tuples from 2 lists 
+a , q, pos, cnt = accuracy.accuracy_matches(q_path, result, 100)
+print ('Accuracy =',  a, '%', '| Quality:', q )
+print ('Count', cnt, ' | position', pos)
+
+
+
+
+
+# --------------------  KD Hybrid Tree HASH (phash, ahash, dhash, whash) ---------------------
+# Avg. Time per search: 0.033 s
+
+
+from sklearn.neighbors import KDTree
+import imagehash
+import numpy as np
+import time 
+
+# YD = np.array(mydataHASH['phash'].apply(imagehash.ImageHash.__hash__))
+YD = list(mydataHASH['ahash'])
+
+# a = np.empty((h, w)) # create an empty array 
+result_array = []
+
+for index, row in mydataHASH.iterrows() :
+    p =  row['phash'].hash
+    a =  row['ahash'].hash
+    d =  row['dhash'].hash
+    w =  row['whash'].hash
+    thisarray = []
+    thisarray.append(np.asarray(np.array (p), dtype=float))
+    thisarray.append(np.asarray(np.array (a), dtype=float))
+    thisarray.append(np.asarray(np.array (d), dtype=float))
+    thisarray.append(np.asarray(np.array (w), dtype=float))
+    
+    result_array.append (np.asarray(thisarray, dtype=float))
+
+YA = np.asarray(result_array)
+
+nsamples, x, y, z = YA.shape  # know the shape before you flatten
+F = YA.reshape ( nsamples, x*y*z ) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+
+HASHTree = KDTree( F ,  metric='euclidean')
+
+# save to pickle file 
+import pickle
+treeName = 'testHASH.pickle'
+outfile = open (treeName, 'wb')
+pickle.dump(HASHTree,outfile)
+
+
+# load from pickle file 
+infile = open(treeName,'rb')
+newTree = pickle.load(infile)
+infile.close()
+
+
+#  Example with HASH metrices 
+import ImageSearch_Algo_Hash 
+import Accuracy as accuracy
+
+# random sample 
+q_path = random.sample(imagepaths, 1)[0]
+
+start = time.time()
+# test 
+p =  ImageSearch_Algo_Hash.HASH_FEATURE(q_path, 'phash', 16).hash
+a =  ImageSearch_Algo_Hash.HASH_FEATURE(q_path, 'ahash', 16).hash
+d =  ImageSearch_Algo_Hash.HASH_FEATURE(q_path, 'dhash', 16).hash
+w =  ImageSearch_Algo_Hash.HASH_FEATURE(q_path, 'whash', 16).hash
+thisarray = []
+thisarray.append(np.asarray(np.array (p), dtype=float))
+thisarray.append(np.asarray(np.array (a), dtype=float))
+thisarray.append(np.asarray(np.array (d), dtype=float))
+thisarray.append(np.asarray(np.array (w), dtype=float))
+
+# result_array.append (np.asarray(thisarray, dtype=float))
+
+fd = np.asarray( thisarray , dtype=float) # since hash is an array of bool -> numpy its 1,0
+# ft = raw feature 
+# process 
+x, y, z = fd.shape # know the shape before you flatten
+FF = fd.reshape (1, x*y*z) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+
+scores, ind = HASHTree.query(FF, k=100)
+t = time.time() - start 
+
+print (ind)
+print (scores[:, :50])  # top 50 scores from np.array
+
+# get the index of searchimage 
+print (mydataHASH.index[mydataHASH['file'] == q_path])
+print (q_path)
+print ( "Search took ", t, ' secs')
+
+# Zip results into a list of tuples (score , file) & calculate score 
+flist = list (mydataHASH.iloc[ ind[0].tolist()]['file'])
+slist = list (scores[0])
+result = tuple(zip( slist, flist)) # create a list of tuples from 2 lists 
+a , q, pos, cnt = accuracy.accuracy_matches(q_path, result, 100)
+print ('Accuracy =',  a, '%', '| Quality:', q )
+print ('Count', cnt, ' | position', pos)
+
+

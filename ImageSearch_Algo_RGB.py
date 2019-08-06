@@ -8,13 +8,14 @@ import imagehash
 import os
 import cv2
 import time
-from pprint import pprint
 from imutils import paths
 import matplotlib.pyplot as plt
 import pandas as pd 
 import numpy as np
 import random
-
+from sklearn.neighbors import KDTree
+import os 
+import pickle
 
 
 #-----------Training Images RGB Hist GENERRATION----------#
@@ -59,6 +60,69 @@ def RGB_FEATURE (searchimagepath) :
 
     return hist
 
+def RGB_Create_Tree ( mydataRGB, savefile='testRGB'  ) : 
+    
+    # for feature vector matrices from features daataframe 
+    XD = list(mydataRGB['imagehist'])
+    XA = np.asarray(XD)
+    nsamples, nx, ny, nz = XA.shape  # know the shape before you flatten
+    X = XA.reshape ((nsamples, nx*ny*nz)) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+
+    RGBtree = KDTree(X , metric='manhattan')
+    
+    # save the tree #example # treeName = 'testRGB.pickle'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump(RGBtree,outfile)
+
+    return RGBtree
+
+
+
+def RGB_Load_Tree ( openfile='testRGB'  ) : 
+    
+    # reading the pickle tree
+    infile = open(openfile + '.pickle','rb')
+    RGBTree = pickle.load(infile)
+    infile.close()
+
+    return RGBTree
+
+
+'''
+Params: 
+HSVTree = Tree object 
+mydataHSV = pandas dataframe of the tree (same order no filter or change)
+searchimagepath = string path of the search image 
+
+Output: 
+list of tuples: [(score, matchedfilepath) ]
+time = total searching time 
+'''
+def RGB_SEARCH_TREE ( RGBtree , mydataRGB,  searchimagepath, returnCount=100): 
+
+    start = time.time()
+    
+    # get the feature from the input image 
+    fh = RGB_FEATURE (searchimagepath)
+
+    fh = np.asarray(fh)
+    # ft = raw feature 
+    # process 
+    nz = fh.shape  # know the shape before you flatten
+    F = fh.reshape (1, -1) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+
+    # the search; k = number of returns expected 
+    # returns distances, index of the items in the order of the input tree nparray 
+    dist, ind = RGBtree.query(F, k=returnCount)
+    t = time.time() - start 
+
+    flist = list (mydataRGB.iloc[ ind[0].tolist()]['file'])
+    slist = list (dist[0])
+    matches = tuple(zip( slist, flist)) # create a list of tuples from 2 lists 
+
+    return (matches, t)
+
+
 
 def RGB_SEARCH(feature, searchimagepath, correl_threshold):
     start = time.time()
@@ -69,14 +133,9 @@ def RGB_SEARCH(feature, searchimagepath, correl_threshold):
     hist = cv2.calcHist([image], [0, 1, 2], None, [8, 8, 8],[0, 256, 0, 256, 0, 256])
     hist = cv2.normalize(hist, None)       
 
-
-
     matches = []
-
-    for index, row in feature.iterrows():
-        
-        cmp = cv2.compareHist(hist, row['imagehist'], cv2.HISTCMP_CORREL)
-        
+    for index, row in feature.iterrows():        
+        cmp = cv2.compareHist(hist, row['imagehist'], cv2.HISTCMP_CORREL)        
         if cmp > correl_threshold:
             matches.append((cmp, row['file']))
 

@@ -118,5 +118,6 @@ venv.bak/
 config.code-workspace
 
 # other data 
-.csv
-.~
+*.csv
+*.~
+*.pickle

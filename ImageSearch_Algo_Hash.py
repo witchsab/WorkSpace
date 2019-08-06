@@ -10,9 +10,10 @@ import time
 from pprint import pprint
 import matplotlib.pyplot as plt
 import pandas as pd 
+import pickle
 
 
-def HASH_GEN(haystackPaths , hashsize):
+def HASH_GEN ( haystackPaths , hashsize):
     
     # init a hash dataframe
     haystack = pd.DataFrame(columns=['file', 'phash', 'ahash', 'dhash', 'whash'])
@@ -38,13 +39,95 @@ def HASH_GEN(haystackPaths , hashsize):
 
     # show timing for hashing haystack images, then start computing the
     # hashes for needle images
+
+    t = time.time() - start
+
     print("[INFO] processed {} images in {:.2f} seconds".format(
-    len(haystack), time.time() - start))    
+    len(haystack), t ))    
 
-    return haystack
+    return (haystack, t)
 
 
-def HASH_SEARCH (searchImagePath, features, matchCount, hashAlgo, hashsize) : 
+def HASH_FEATURE (searchimagepath, hashAlgo='phash', hashsize=8) : 
+
+    queryImage = Image.open(searchimagepath)
+    
+    if hashAlgo == 'phash':
+        hashvalue = imagehash.phash(queryImage, hash_size=hashsize)
+    elif hashAlgo == 'dhash':
+        hashvalue = imagehash.dhash(queryImage, hash_size=hashsize)
+    elif hashAlgo == 'ahash':
+        hashvalue = imagehash.average_hash(queryImage, hash_size=hashsize)
+    elif hashAlgo == 'whash':
+        hashvalue = imagehash.whash(queryImage, hash_size=hashsize)
+
+    return hashvalue
+
+
+
+def HASH_Create_Tree ( mydataHash, savefile='testHash', hashAlgo='phash' ) : 
+    
+    YD = list(mydataHash[ hashAlgo ])
+    YA = np.asarray(YD)
+    # nsamples, nx, ny, nz = XA.shape  # know the shape before you flatten
+    # X = XA.reshape ((nsamples, nx*ny*nz)) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+
+    Hashtree = KDTree(YA ) # , metric='euclidean')
+    
+    # save the tree #example # treeName = 'testHash.pickle'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump(Hashtree,outfile)
+
+    return Hashtree
+
+
+
+def HASH_Load_Tree ( openfile='testHash'  ) : 
+    
+    # reading the pickle tree
+    infile = open(openfile + '.pickle','rb')
+    HSVTree = pickle.load(infile)
+    infile.close()
+
+    return HSVTree
+
+
+'''
+Params: 
+HSVTree = Tree object 
+mydataHSV = pandas dataframe of the tree (same order no filter or change)
+searchimagepath = string path of the search image 
+
+Output: 
+list of tuples: [(score, matchedfilepath) ]
+time = total searching time 
+'''
+def HASH_SEARCH_TREE ( Hashtree , mydataHash,  searchimagepath, returnCount=100): 
+
+    start = time.time()
+    
+    # get the feature from the input image 
+    fh = HASH_FEATURE (searchimagepath)
+
+    fh = np.asarray(fh)
+    # ft = raw feature 
+    # process 
+    nz = fh.shape  # know the shape before you flatten
+    F = fh.reshape (1, -1) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+
+    # the search; k = number of returns expected 
+    # returns distances, index of the items in the order of the input tree nparray 
+    dist, ind = Hashtree.query(F, k=returnCount)
+    t = time.time() - start 
+
+    flist = list (mydataHash.iloc[ ind[0].tolist()]['file'])
+    slist = list (dist[0])
+    matches = tuple(zip( slist, flist)) # create a list of tuples from 2 lists 
+
+    return (matches, t)
+
+
+def HASH_SEARCH (searchImagePath, features, matchCount=20, hashAlgo='phahs', hashsize=8) : 
 
     # print (searchImagePath)
        
