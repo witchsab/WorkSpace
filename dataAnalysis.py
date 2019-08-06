@@ -53,10 +53,10 @@ print ('Accuracy =',  a, '%', ' | Quality: ', m)
 # test TREE SEARCH code 
 
 # to create a new tree from dataframe features 'mydataHSV'
-# mytree = ImageSearch_Algo_HSV.HSV_Create_Tree (mydataHSV, savefile='HSV_Tree')
+mytree = ImageSearch_Algo_HSV.HSV_Create_Tree (mydataHSV, savefile='HSV_Tree')
 
 # to load an existing tree 
-# thistree = ImageSearch_Algo_HSV.HSV_Load_Tree('HSV_Tree')
+thistree = ImageSearch_Algo_HSV.HSV_Load_Tree('HSV_Tree')
 
 imagematches , searchtime = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (thistree, mydataHSV, q_path, 50)
 print ('HSV Tree Search time', searchtime)
