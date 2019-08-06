@@ -42,6 +42,28 @@ def RGB_GEN(custompaths):
     # print (Trainhist.head())
     return (Trainhist,t)
 
+'''
+Save Pandas dataframe to pickle 
+Datafram format : file , imagehist
+'''
+def RGB_SAVE_FEATURES ( mydataRGB, savefile='testRGB_Data') : 
+    
+    # save the tree #example # treeName = 'testRGB_Data.pickle'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump( mydataRGB, outfile)
+
+'''
+Load Pandas dataframe from pickle 
+Datafram format : file , imagehist
+'''
+def RGB_LOAD_FEATURES ( openfile='testRGB_Data') : 
+    
+    # reading the pickle tree
+    infile = open(openfile + '.pickle','rb')
+    mydataRGB = pickle.load(infile)
+    infile.close()
+
+    return mydataRGB
 
 #------------------------------------END--------------------------------------#
 
