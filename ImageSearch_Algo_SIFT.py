@@ -9,6 +9,7 @@ pip install opencv-contrib-python==3.4.2.16
 '''
 
 #-------------------------SIFT FUNCTIONAL FORMAT---------------------------#
+
 import PIL
 from PIL import Image
 import imagehash
@@ -103,8 +104,6 @@ def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.
     
     matches_flann = []
 
-
-
     for index, j in feature.iterrows(): 
         m_des = j['siftdes'] 
         m_path = j['file']     
@@ -118,6 +117,7 @@ def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.
                 matches_count += 1
         matches_flann.append((matches_count,m_path))
 
+
     matches_flann.sort(key=lambda x : x[0] , reverse = True)
     predictions = matches_flann[:predictions_count]
     t= time.time() - start
@@ -125,7 +125,6 @@ def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.
     # print("[INFO] processed {} images in {:.2f} seconds".format(len(haystackPaths), t))
     return (predictions, t)
     ## Search End
-
 
 
 
