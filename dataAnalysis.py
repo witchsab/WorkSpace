@@ -1,25 +1,25 @@
 
+import os
+import pickle
+import random
+
+import matplotlib.pyplot as plt
+import pandas as pd
+from imutils import paths
+
+# for hash all the images in folder / database
+import Accuracy as accuracy
 import ImageSearch_Algo_Hash
 import ImageSearch_Algo_HSV
 import ImageSearch_Algo_HSV_Fast
-import random
-import pickle
-import ImageSearch_Algo_SIFT
-import pandas as pd
-import matplotlib.pyplot as plt
+import ImageSearch_Algo_ORB
 import ImageSearch_Algo_RGB
+import ImageSearch_Algo_SIFT
 import ImageSearch_Plots as myplots
-import Accuracy as accuracy
-import os
-# import ImageSearch_Algo_Hash as ImageSearch_Algo_Hash
-# import ImageSearch_Algo_RGB as ImageSearch_Algo_RGB
-
-import pandas
-from imutils import paths
-import random
 
 # --------------- TEST COMMONS------------------
 
+IMGDIR = r'./imagesbooks/'
 IMGDIR = r"V:\\Download\\imagesbooks\\"
 IMGDIRPROCESSED = ['']*5
 IMGDIRPROCESSED[0] = r"V:\\Download\\imagesbooks1\\"
@@ -35,7 +35,7 @@ IMGDIRPROCESSED[4] = r"V:\\Download\\imagesbooks_warp\\"
 
 
 imagepaths = list(paths.list_images(IMGDIR))
-# print (imagepathss)
+# print (imagepaths)
 
 mydataHSV, mytime = ImageSearch_Algo_HSV.HSV_GEN(imagepaths)
 print('HSV Feature Generation time', mytime)
@@ -91,7 +91,6 @@ myplots.plot_predictions(imagematches[:20], q_path)
 
 # -------------RGB RGENERATION TEST-------------------#
 
-import ImageSearch_Algo_RGB
 
 # Hyper-Parameter for comparing histograms
 parametercorrelationthreshold = 0.70
@@ -179,10 +178,6 @@ print("RGB Mean Search Time = ", accStats['Stime'].mean(), ' secs')
 # ----------------- HASH ALGO TESTING CODE----------------------------
 
 
-# for hash all the images in folder / database
-import ImageSearch_Algo_Hash
-from imutils import paths
-import pandas as pd
 
 # IMGDIR = IMGDIRPROCESSED[3]
 # IMGDIR = "./imagesbooks/"
@@ -214,7 +209,6 @@ print(q_path)
 
 
 
-import Accuracy as accuracy
 a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
 print("HASH Search time :", mytime)
 print('Accuracy =',  a, '%', '| Quality:', q)
@@ -370,8 +364,6 @@ print("RGB Mean Search Time = ", accStats['Stime'].mean(), ' secs')
 
 # --------------------------------- ORB GENERATION TEST-------------------#
 
-import ImageSearch_Algo_ORB
-import random
 # Hyper-Parameters for ORB comparison
 ORB_features_limit = 100
 lowe_ratio = 0.75
@@ -400,7 +392,6 @@ print(q_path)
 # %load_ext autoreload
 # %autoreload 2
 
-import Accuracy as accuracy
 
 a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
 print('Accuracy =',  a, '%', '| Quality:', q)
@@ -454,8 +445,6 @@ print ("Mean count   = ", accStatssift['hsvPCount'].mean())
 
 # --------------------------------SIFT GENERATION TEST-------------------#
 
-import ImageSearch_Algo_SIFT
-import random
 # Hyper-Parameters for SIFT comparison
 sift_features_limit = 100
 lowe_ratio = 0.9
@@ -503,7 +492,6 @@ print(q_path)
 # %load_ext autoreload
 # %autoreload 2
 
-import Accuracy as accuracy
 
 a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
 print('Accuracy =',  a, '%', '| Quality:', q)
@@ -546,10 +534,3 @@ print ("Mean time    = ", accStatssift['kp_100_time'].mean())
 print ("Mean count   = ", accStatssift['hsvPCount'].mean())
 
 accStatssift.to_csv('data/accStatssift_kp100_query50_poolAll.csv')
-
-
-
-
-
-
-
