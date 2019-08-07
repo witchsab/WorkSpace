@@ -62,8 +62,10 @@ def accuracy_matches(q_path, imagematches, window):
         searchlist.append(os.path.basename(path))
 
     # print (searchlist)
-
-    searchlist.remove(queryfilename)
+    try : 
+        searchlist.remove(queryfilename)
+    except: 
+        pass
 
     overlap = list(set(familyfilename).intersection(searchlist))
     # print ('overlap', overlap)
@@ -77,7 +79,7 @@ def accuracy_matches(q_path, imagematches, window):
     indexlist.append(0)
     sorted_position = sorted(indexlist)
     
-    print (sorted_position)
+    # print (sorted_position)
 
     metricValue = metricCalc(indexlist)
     # metricValue = metricCalc(list(range(0, len(familyfilename)+1))) /metricCalc(indexlist)

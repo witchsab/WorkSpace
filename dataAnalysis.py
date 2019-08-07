@@ -264,6 +264,9 @@ accStatssift.to_csv('data/accStatssift_kp100_query50_poolAll.csv')
 
 
 # for hash all the images in folder / database
+import ImageSearch_Algo_Hash
+from imutils import paths
+import pandas as pd
 
 # IMGDIR = IMGDIRPROCESSED[3]
 # IMGDIR = "./imagesbooks/"
@@ -279,69 +282,119 @@ print("HASH All Feature Generation time :", mytime)
 # search images
 
 q_path = r'V:\\Download\\imagesbooks\\ukbench00000.jpg'
-# q_path = random.sample(imagepaths, 1)[0]
+
+q_path = random.sample(imagepaths, 1)[0]
+testAlgo = 'whash'
+
 # sample = ['./images/ukbench00019.jpg', './images/ukbench00025.jpg', './images/ukbench00045.jpg', './images/ukbench00003.jpg', './images/ukbench00029.jpg']
 # sample = ['./images/ukbench00048.jpg', './images/ukbench00016.jpg', './images/ukbench00045.jpg']
 
 #  test on a sample
-imagematches, mytime = ImageSearch_Algo_Hash.HASH_SEARCH(
-    q_path, mydataHASH, 100, 'phash', 16)
+imagematches, mytime = ImageSearch_Algo_Hash.HASH_SEARCH(q_path, mydataHASH, 100, testAlgo, 16)
 # mydata, mytime = ImageSearch_Algo_Hash.HASH_SEARCH (sample, features, 20, 'dhash', 32)
 # mydata, mytime = ImageSearch_Algo_Hash.HASH_SEARCH (sample, features, 20, 'ahash', 32)
 # mydata, mytime = ImageSearch_Algo_Hash.HASH_SEARCH (sample, features, 20, 'whash', 32)
 print(q_path)
 
+
+
+import Accuracy as accuracy
 a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
 print("HASH Search time :", mytime)
 print('Accuracy =',  a, '%', '| Quality:', q)
 print('Count', cnt, ' | position', pos)
 
 
-# ----- Alternative tree search code [Optimized search time ]
-
-# test TREE SEARCH code
-
-# to create a new tree from dataframe features 'mydataHSV'
-# mytree = ImageSearch_Algo_RGB.RGB_Create_Tree (mydataRGB, savefile='RGB_Tree')
-
-# to load an existing tree
-# thistree = ImageSearch_Algo_RGB.RGB_Load_Tree('RGB_Tree')
-
-imagematches, searchtime = ImageSearch_Algo_RGB.RGB_SEARCH_TREE(
-    thistree, mydataRGB, q_path, 100)
-print('RGB Tree Search time', searchtime)
-
-a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
-print('Accuracy =',  a, '%', '| Quality:', q)
-print('Count', cnt, ' | position', pos)
-
-
-# Statistics over 100 sample using tree
-
-
 # -----------------HASH test on 100 statistical sample ---------------
 
+q_paths = random.sample(imagepaths, 200)  # random sample 100 items in list
 
-q_paths = random.sample(imagepaths, 100)  # random sample 100 items in list
+testAlgo = 'phash'
 
 accStats = pd.DataFrame(columns=['file', 'Acc', 'PCount', 'Stime'])
 for q_path in q_paths:
-    imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH(
-        q_path, mydataHASH, 100, 'phash', 32)
-    a = accuracy.accuracy_matches(q_path, imagematches, 50)
-    accStats = accStats.append({'file': q_path, 'Acc': a, 'PCount': len(
-        imagematches), 'Stime': searchtime}, ignore_index=True)
+    imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH(q_path, mydataHASH, 100, testAlgo, 16)
+    a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 50)
+    accStats = accStats.append({'file': q_path, 'Acc': a, 'PCount': cnt,  'Stime': searchtime}, ignore_index=True)
 
-
-plt.plot(accStats['Acc'])
+# plt.plot(accStats['Acc'])
 # plt.plot (accStats['PCount'])
-plt.hlines(accStats['Acc'].mean(), 0, 100, 'r')
+# plt.hlines(accStats['Acc'].mean(), 0, 100, 'r')
 
 print("Mean Acc = ", accStats['Acc'].mean(), '%')
 print("Mean Search Time = ", accStats['Stime'].mean(), ' secs')
 
 
-# -------------------------END TESTING----------------------------
+# -------------------------- Alternative HASH tree search code [Optimized search time ]
+testAlgo = 'whash'
+
+# test TREE SEARCH code
+
+# to create a new tree from dataframe features 'mydataHSV'
+mytree = ImageSearch_Algo_Hash.HASH_Create_Tree(mydataHASH, 'myHASH_Tree', testAlgo)
+
+# to load an existing tree
+# thistree = ImageSearch_Algo_RGB.RGB_Load_Tree('RGB_Tree')
+
+# test over a single sample 
+# q_path = random.sample(imagepaths, 1)[0]
+imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH_TREE(mytree, mydataHASH, q_path, testAlgo, 16, 100)
+print('HASH Tree Search time', searchtime)
+
+print ('Test Algo : ', testAlgo)
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
+
+# -----------------HASH Tree test on 100 statistical sample ---------------
+
+accStats = pd.DataFrame(columns=['file', 'Acc', 'PCount', 'Stime'])
+for q_path in q_paths:
+    imagematches, searchtime =  ImageSearch_Algo_Hash.HASH_SEARCH_TREE(mytree, mydataHASH, q_path, testAlgo, 16, 100)
+    a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 50)
+    accStats = accStats.append({'file': q_path, 'Acc': a, 'PCount': cnt,  'Stime': searchtime}, ignore_index=True)
+
+# plt.plot(accStats['Acc'])
+# plt.plot (accStats['PCount'])
+# plt.hlines(accStats['Acc'].mean(), 0, 100, 'r')
+
+print("Mean Acc = ", accStats['Acc'].mean(), '%')
+print("Mean Search Time = ", accStats['Stime'].mean(), ' secs')
+
+
+# --------------- HYBRID HASH TREE TEST -----------------------------
+testAlgoList = ['phash']
+
+# to create a new tree from dataframe features 'mydataHSV'
+myHybridtree = ImageSearch_Algo_Hash.HASH_CREATE_HYBRIDTREE(mydataHASH, 'myHASH_Tree', testAlgoList)
+
+# test over a single sample 
+# q_path = random.sample(imagepaths, 1)[0]
+imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH_HYBRIDTREE (myHybridtree, mydataHASH, q_path, testAlgoList, 16, 100)
+print('HASH Hybrid Tree Search time', searchtime)
+
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
+
+# -----------------HYBRID HASH Tree test on 100 statistical sample ---------------
+
+accStats = pd.DataFrame(columns=['file', 'Acc', 'PCount', 'Stime'])
+for q_path in q_paths:
+    imagematches, searchtime =  ImageSearch_Algo_Hash.HASH_SEARCH_HYBRIDTREE (myHybridtree, mydataHASH, q_path, testAlgoList, 16, 100)
+    a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 50)
+    accStats = accStats.append({'file': q_path, 'Acc': a, 'PCount': cnt,  'Stime': searchtime}, ignore_index=True)
+
+# plt.plot(accStats['Acc'])
+# plt.plot (accStats['PCount'])
+# plt.hlines(accStats['Acc'].mean(), 0, 100, 'r')
+
+print("Mean Acc = ", accStats['Acc'].mean(), '%')
+print("Mean Search Time = ", accStats['Stime'].mean(), ' secs')
+
+# ----------------END HYBRID TREE SEARCH STASTICAL DATA COLLECTION ----------------------------
+
+
 
 
 ##############################################################################################
@@ -397,3 +450,45 @@ plt.hlines(accStats['Acc'].mean(), 0, 100, 'r')
 
 print("RGB Mean Acc = ", accStats['Acc'].mean(), '%')
 print("RGB Mean Search Time = ", accStats['Stime'].mean(), ' secs')
+
+
+# ------------ ORB GENERATION TEST-------------------#
+
+import ImageSearch_Algo_ORB
+import random
+# Hyper-Parameters for ORB comparison
+ORB_features_limit = 100
+lowe_ratio = 0.75
+predictions_count = 50
+
+# IMGDIR = "./imagesbooks/"
+imagepaths = list(paths.list_images(IMGDIR))
+mydataORB, mytime1 = ImageSearch_Algo_ORB.GEN_ORB_FEATURES(imagepaths, ORB_features_limit)
+print("ORB Feature Generation time :", mytime1)
+
+q_path = random.sample(imagepaths, 1)[0]
+imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH(mydataORB, q_path, ORB_features_limit , 0.7, 50 )
+
+print (" ORB Search time :", searchtime)
+print(q_path)
+
+# # to reload module: uncomment use the following
+# %load_ext autoreload
+# %autoreload 2
+
+import Accuracy as accuracy
+
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print("HASH Search time :", mytime)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
+
+# plot the results 
+myplots.plot_predictions(imagematches[:20], q_path)
+
+
+
+
+
+
+

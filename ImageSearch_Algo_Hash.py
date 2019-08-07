@@ -11,6 +11,10 @@ from pprint import pprint
 import matplotlib.pyplot as plt
 import pandas as pd 
 import pickle
+from sklearn.neighbors import KDTree
+import imagehash
+import numpy as np
+import time
 
 
 def HASH_GEN ( haystackPaths , hashsize):
@@ -64,21 +68,40 @@ def HASH_FEATURE (searchimagepath, hashAlgo='phash', hashsize=8) :
     return hashvalue
 
 
+'''
+Create a KDTree with the hash 
+params: 
+mydataHash  = pandas dataframe; format: 'file', 'phash', 'dhash', 'ahash', 'whash'
+savefile    = filename to save pickle (dont add .pickle)
+hashAlgo    = phash, dhash, ahash, whash 
 
-def HASH_Create_Tree ( mydataHash, savefile='testHash', hashAlgo='phash' ) : 
+output/return: 
+HashTree (KDTree)
+
+'''
+def HASH_Create_Tree ( mydataHASH, savefile='testHash', hashAlgo='dhash' ) : 
     
-    YD = list(mydataHash[ hashAlgo ])
-    YA = np.asarray(YD)
-    # nsamples, nx, ny, nz = XA.shape  # know the shape before you flatten
-    # X = XA.reshape ((nsamples, nx*ny*nz)) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+    # YD = np.array(mydataHASH['phash'].apply(imagehash.ImageHash.__hash__))
+    YD = list(mydataHASH[hashAlgo])
 
-    Hashtree = KDTree(YA ) # , metric='euclidean')
+    # a = np.empty((h, w)) # create an empty array 
+    result_array = []
+
+    for item in YD : 
+        onearray = np.asarray(np.array (item.hash), dtype=float)
+        result_array.append(onearray)
+
+    YA = np.asarray(result_array)
+    nsamples, x, y = YA.shape  # know the shape before you flatten
+    F = YA.reshape ( nsamples, x*y ) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+
+    HASHTree = KDTree( F ,  metric='euclidean')
     
     # save the tree #example # treeName = 'testHash.pickle'
     outfile = open (savefile + '.pickle', 'wb')
-    pickle.dump(Hashtree,outfile)
+    pickle.dump(HASHTree,outfile)
 
-    return Hashtree
+    return HASHTree
 
 
 
@@ -86,10 +109,10 @@ def HASH_Load_Tree ( openfile='testHash'  ) :
     
     # reading the pickle tree
     infile = open(openfile + '.pickle','rb')
-    HSVTree = pickle.load(infile)
+    HashTree = pickle.load(infile)
     infile.close()
 
-    return HSVTree
+    return HashTree
 
 
 '''
@@ -102,32 +125,80 @@ Output:
 list of tuples: [(score, matchedfilepath) ]
 time = total searching time 
 '''
-def HASH_SEARCH_TREE ( Hashtree , mydataHash,  searchimagepath, returnCount=100): 
+def HASH_SEARCH_TREE ( HASHTree , mydataHASH,  searchimagepath, hashAlgo = 'dhash', hashsize=8, returnCount=100): 
 
     start = time.time()
+    # convert to np array from ImageHash->hash  
+    fh = np.array(HASH_FEATURE(searchimagepath, hashAlgo=hashAlgo, hashsize=hashsize).hash)
+
+    fd = np.asarray(fh , dtype=float) # convert to numpy float array for tree 
     
-    # get the feature from the input image 
-    fh = HASH_FEATURE (searchimagepath)
+    # reshape to 1xdim array to feed into tree
+    x, y = fd.shape # know the shape before you flatten
+    FF = fd.reshape (1, x*y) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 
-    fh = np.asarray(fh)
-    # ft = raw feature 
-    # process 
-    nz = fh.shape  # know the shape before you flatten
-    F = fh.reshape (1, -1) # gives a 2 D matice (sample, value) which can be fed to KMeans 
-
-    # the search; k = number of returns expected 
-    # returns distances, index of the items in the order of the input tree nparray 
-    dist, ind = Hashtree.query(F, k=returnCount)
+    scores, ind = HASHTree.query(FF, k=returnCount)
     t = time.time() - start 
 
-    flist = list (mydataHash.iloc[ ind[0].tolist()]['file'])
-    slist = list (dist[0])
+    # Zip results into a list of tuples (score , file) & calculate score 
+    flist = list (mydataHASH.iloc[ ind[0].tolist()]['file'])
+    slist = list (scores[0])
+    matches = tuple(zip( slist, flist)) # create a list of tuples from 2 lists
+
+    return (matches, t)
+
+
+
+def HASH_CREATE_HYBRIDTREE ( mydataHASH, savefile='testHash', hashAlgoList=['whash', 'ahash'] ) :  
+    # a = np.empty((h, w)) # create an empty array 
+    result_array = []
+
+    for index, row in mydataHASH.iterrows() :      
+        thisarray = []
+        for algo in hashAlgoList : 
+            hashValue =  row[algo].hash        
+            thisarray.append(np.asarray(np.array (hashValue), dtype=float))
+        
+        result_array.append (np.asarray(thisarray, dtype=float))
+
+    YA = np.asarray(result_array)
+
+    nsamples, x, y, z = YA.shape  # know the shape before you flatten
+    F = YA.reshape ( nsamples, x*y*z ) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+
+    HybridHASHTree = KDTree( F ,  metric='euclidean')
+
+    return HybridHASHTree
+
+
+def HASH_SEARCH_HYBRIDTREE ( HybridHASHTree , mydataHASH,  searchimagepath, hashAlgoList = [ 'whash', 'ahash'], hashsize=8, returnCount=100): 
+
+    start = time.time()
+    thisarray = []
+    for algo in hashAlgoList : 
+        hashValue =  HASH_FEATURE( searchimagepath , algo, 16).hash
+        thisarray.append(np.asarray(np.array (hashValue), dtype=float))
+
+    # result_array.append (np.asarray(thisarray, dtype=float))
+
+    fd = np.asarray( thisarray , dtype=float) # convert to float array
+    # ft = raw feature 
+    # process 
+    x, y, z = fd.shape # know the shape before you flatten
+    FF = fd.reshape (1, x*y*z) # gives a 2 D matice (sample, value) which can be fed to KMeans 
+
+    scores, ind = HybridHASHTree.query(FF, k=returnCount)
+    t = time.time() - start 
+
+    # Zip results into a list of tuples (score , file) & calculate score 
+    flist = list (mydataHASH.iloc[ ind[0].tolist()]['file'])
+    slist = list (scores[0])
     matches = tuple(zip( slist, flist)) # create a list of tuples from 2 lists 
 
     return (matches, t)
 
 
-def HASH_SEARCH (searchImagePath, features, matchCount=20, hashAlgo='phahs', hashsize=8) : 
+def HASH_SEARCH (searchImagePath, features, matchCount=20, hashAlgo='phash', hashsize=8) : 
 
     # print (searchImagePath)
        

@@ -363,7 +363,7 @@ newTree = pickle.load(infile)
 infile.close()
 
 
-#  Example with HASH metrices 
+# --------------------------- Example to search through a HASH Tree --------------------- 
 import ImageSearch_Algo_Hash 
 import Accuracy as accuracy
 
@@ -436,13 +436,13 @@ YA = np.asarray(result_array)
 nsamples, x, y, z = YA.shape  # know the shape before you flatten
 F = YA.reshape ( nsamples, x*y*z ) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 
-HASHTree = KDTree( F ,  metric='euclidean')
+HybridHASHTree = KDTree( F ,  metric='euclidean')
 
 # save to pickle file 
 import pickle
 treeName = 'testHASH.pickle'
 outfile = open (treeName, 'wb')
-pickle.dump(HASHTree,outfile)
+pickle.dump(HybridHASHTree,outfile)
 
 
 # load from pickle file 
@@ -478,7 +478,7 @@ fd = np.asarray( thisarray , dtype=float) # since hash is an array of bool -> nu
 x, y, z = fd.shape # know the shape before you flatten
 FF = fd.reshape (1, x*y*z) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 
-scores, ind = HASHTree.query(FF, k=100)
+scores, ind = HybridHASHTree.query(FF, k=100)
 t = time.time() - start 
 
 print (ind)
