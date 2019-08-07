@@ -208,12 +208,9 @@ mynewDataSIFT = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES('SIFT_Features_Frame_Al
 q_path = random.sample(imagepaths, 1)[0]
 imagematches, searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH(mynewDataSIFT, q_path, sift_features_limit , 0.75, 50 )
 
-<<<<<<< HEAD
-=======
 print (" SIFT Search time :", searchtime)
 print(q_path)
 
->>>>>>> 53978e22c7f1eb392565d064a9dcdf58f04678e8
 # # to reload module: uncomment use the following
 # %load_ext autoreload
 # %autoreload 2
@@ -366,7 +363,7 @@ print("Mean Search Time = ", accStats['Stime'].mean(), ' secs')
 
 
 # --------------- HYBRID HASH TREE TEST -----------------------------
-testAlgoList = ['whash']
+testAlgoList = ['phash']
 
 # to create a new tree from dataframe features 'mydataHSV'
 myHybridtree = ImageSearch_Algo_Hash.HASH_CREATE_HYBRIDTREE(mydataHASH, 'myHASH_Tree', testAlgoList)
@@ -453,3 +450,45 @@ plt.hlines(accStats['Acc'].mean(), 0, 100, 'r')
 
 print("RGB Mean Acc = ", accStats['Acc'].mean(), '%')
 print("RGB Mean Search Time = ", accStats['Stime'].mean(), ' secs')
+
+
+# ------------ ORB GENERATION TEST-------------------#
+
+import ImageSearch_Algo_ORB
+import random
+# Hyper-Parameters for ORB comparison
+ORB_features_limit = 100
+lowe_ratio = 0.75
+predictions_count = 50
+
+# IMGDIR = "./imagesbooks/"
+imagepaths = list(paths.list_images(IMGDIR))
+mydataORB, mytime1 = ImageSearch_Algo_ORB.GEN_ORB_FEATURES(imagepaths, ORB_features_limit)
+print("ORB Feature Generation time :", mytime1)
+
+q_path = random.sample(imagepaths, 1)[0]
+imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH(mydataORB, q_path, ORB_features_limit , 0.7, 50 )
+
+print (" ORB Search time :", searchtime)
+print(q_path)
+
+# # to reload module: uncomment use the following
+# %load_ext autoreload
+# %autoreload 2
+
+import Accuracy as accuracy
+
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print("HASH Search time :", mytime)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
+
+# plot the results 
+myplots.plot_predictions(imagematches[:20], q_path)
+
+
+
+
+
+
+
