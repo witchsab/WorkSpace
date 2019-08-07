@@ -67,6 +67,9 @@ mytree = ImageSearch_Algo_HSV.HSV_Create_Tree(mydataHSV, savefile='HSV_Tree')
 # to load an existing tree
 thistree = ImageSearch_Algo_HSV.HSV_Load_Tree('HSV_Tree')
 
+# sample 1 image 
+q_path = random.sample(imagepaths, 1)[0]
+
 imagematches, searchtime = ImageSearch_Algo_HSV.HSV_SEARCH_TREE(
     thistree, mydataHSV, q_path, 50)
 print('HSV Tree Search time', searchtime)
@@ -129,10 +132,13 @@ print('Count', cnt, ' | position', pos)
 # test TREE SEARCH code
 
 # to create a new tree from dataframe features 'mydataHSV'
-# mytree = ImageSearch_Algo_RGB.RGB_Create_Tree (mydataRGB, savefile='RGB_Tree')
+mytree = ImageSearch_Algo_RGB.RGB_Create_Tree (mydataRGB, savefile='RGB_Tree')
 
 # to load an existing tree
-# thistree = ImageSearch_Algo_RGB.RGB_Load_Tree('RGB_Tree')
+thistree = ImageSearch_Algo_RGB.RGB_Load_Tree('RGB_Tree')
+
+# sample 1 image
+q_path = random.sample(imagepaths, 1)[0]
 
 imagematches, searchtime = ImageSearch_Algo_RGB.RGB_SEARCH_TREE(
     thistree, mydataRGB, q_path, 100)
