@@ -149,7 +149,7 @@ def HASH_SEARCH_TREE ( HASHTree , mydataHASH,  searchimagepath, hashAlgo = 'dhas
 
 
 
-def HASH_CREATE_HYBRIDTREE ( mydataHASH, savefile='testHash', hashAlgoList=['dhash','whash'] ) :  
+def HASH_CREATE_HYBRIDTREE ( mydataHASH, savefile='testHash', hashAlgoList=['whash', 'ahash'] ) :  
     # a = np.empty((h, w)) # create an empty array 
     result_array = []
 
@@ -171,7 +171,7 @@ def HASH_CREATE_HYBRIDTREE ( mydataHASH, savefile='testHash', hashAlgoList=['dha
     return HybridHASHTree
 
 
-def HASH_SEARCH_HYBRIDTREE ( HybridHASHTree , mydataHASH,  searchimagepath, hashAlgoList = ['dhash', 'whash'], hashsize=8, returnCount=100): 
+def HASH_SEARCH_HYBRIDTREE ( HybridHASHTree , mydataHASH,  searchimagepath, hashAlgoList = [ 'whash', 'ahash'], hashsize=8, returnCount=100): 
 
     start = time.time()
     thisarray = []
@@ -198,7 +198,7 @@ def HASH_SEARCH_HYBRIDTREE ( HybridHASHTree , mydataHASH,  searchimagepath, hash
     return (matches, t)
 
 
-def HASH_SEARCH (searchImagePath, features, matchCount=20, hashAlgo='phahs', hashsize=8) : 
+def HASH_SEARCH (searchImagePath, features, matchCount=20, hashAlgo='phash', hashsize=8) : 
 
     # print (searchImagePath)
        
