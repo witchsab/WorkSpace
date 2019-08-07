@@ -20,6 +20,9 @@ from imutils import paths
 import matplotlib.pyplot as plt
 import pandas as pd 
 import random
+import pickle 
+
+
 IMGDIR = "./imagesbooks/"
 
 
@@ -55,21 +58,35 @@ def gen_sift_features(imagelibrarypaths, sift_features_limit):
     # print (siftdf.head())
     return (siftdf,  t)
 
+'''
+Save Pandas dataframe to pickle 
+Datafram format : file , imagehist
+'''
+
+def SIFT_SAVE_FEATURES ( mydataSIFT, savefile='testSIFT_Data') : 
+
+    # save the tree #example # treeName = 'testSIFT_Data.pickle'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump( mydataSIFT[['file', 'siftdes']] , outfile)
 
 
+'''
+Load Pandas dataframe from pickle 
+Datafram format : file , siftdes
+'''
+def SIFT_LOAD_FEATURES ( openfile='testSIFT_Data') : 
+    
+    # reading the pickle tree
+    infile = open(openfile + '.pickle','rb')
+    mydataSIFT = pickle.load(infile)
+    infile.close()
 
-
-   
-
-
-
-
-
+    return mydataSIFT
 
 
 #------------------QUERY IMAGE FEATURE GEN---------------#
 
-def SIFT_SEARCH (feature, queryimagepath, sift_features_limit, lowe_ratio, predictions_count):
+def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50):
     start = time.time()
     q_img = cv2.imread(queryimagepath)    
     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)

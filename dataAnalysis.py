@@ -171,7 +171,8 @@ print("RGB Mean Search Time = ", accStats['Stime'].mean(), ' secs')
 
 # ------------SIFT GENERATION TEST-------------------#
 
-
+import ImageSearch_Algo_SIFT
+import random
 # Hyper-Parameters for SIFT comparison
 sift_features_limit = 100
 lowe_ratio = 0.75
@@ -197,20 +198,69 @@ pickle.dump(mydataSIFT[['file', 'siftdes']], outfile)
 hdfSIFT = pd.HDFStore('SIFT_Features.h5')
 hdfSIFT.put('mydataSIFT', mydataSIFT[['file', 'siftdes']], data_columns=True)
 
+## Consolidated 
+ImageSearch_Algo_SIFT.SIFT_SAVE_FEATURES (mydataSIFT, 'SIFT_Features_Frame_All')
+mynewDataSIFT = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES('SIFT_Features_Frame_All')
+
 
 # ------------------SIFT  SEARCH TEST ---------------------#
 
 q_path = random.sample(imagepaths, 1)[0]
-imagepredictions, searchtime = SIFT_SEARCH(mydataSIFT, q_path, 300, 0.75, 50)
+imagematches, searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH(mynewDataSIFT, q_path, sift_features_limit , 0.75, 50 )
 
+<<<<<<< HEAD
+=======
+print (" SIFT Search time :", searchtime)
+print(q_path)
+
+>>>>>>> 53978e22c7f1eb392565d064a9dcdf58f04678e8
 # # to reload module: uncomment use the following
 # %load_ext autoreload
 # %autoreload 2
 
-a = accuracy.accuracy_matches(q_path, imagepredictions[:20], 50)
-print('Accuracy =',  a, '%')
+import Accuracy as accuracy
 
-myplots.plot_predictions(imagepredictions[:20], q_path)
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print("HASH Search time :", mytime)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
+
+# plot the results 
+myplots.plot_predictions(imagematches[:20], q_path)
+
+
+# compiled run over 100 samples 
+q_paths = random.sample(imagepaths, 100)  # random sample 100 items in list
+
+accStatssift = pd.DataFrame(columns=['file'])
+
+for q_path in q_paths: 
+    row_dict = {'file' : q_path }
+    
+    imagepredictions , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH (mydataSIFT, q_path, sift_features_limit, 0.75, 50)
+    a, d, i, cnt = accuracy.accuracy_matches(q_path, imagepredictions, 20 )
+
+    # adding to dict 
+    row_dict['kp_' + str(sift_features_limit) + '_predict10'] = a
+    row_dict['kp_'+str(sift_features_limit)+'_quality'] = d
+    row_dict['kp_'+str(sift_features_limit)+'_time'] = searchtime
+    row_dict['kp_'+str(sift_features_limit)+'matchposition'] = i
+    row_dict['kp_'+str(sift_features_limit)+'PCount'] = cnt
+
+    accStatssift = accStatssift.append( row_dict , ignore_index=True)
+    print ("Processing, time", q_paths.index(q_path), searchtime)
+
+
+# plt.plot(accStats['Acc'])
+# plt.plot (accStats['PCount'])
+# plt.hlines(accStats['kp_100_time'].mean(), 0, 100, 'r')
+
+print ("Mean Accuracy= ", accStatssift['kp_100_predict10'].mean())
+print ("Mean Quality = ", accStatssift['kp_100_quality'].mean())
+print ("Mean time    = ", accStatssift['kp_100_time'].mean())
+print ("Mean count   = ", accStatssift['hsvPCount'].mean())
+
+accStatssift.to_csv('data/accStatssift_kp100_query50_poolAll.csv')
 
 
 # ----------------- HASH ALGO TESTING CODE----------------------------
