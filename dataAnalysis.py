@@ -1,3 +1,4 @@
+
 import ImageSearch_Algo_Hash
 import ImageSearch_Algo_HSV
 import ImageSearch_Algo_HSV_Fast
@@ -26,7 +27,6 @@ IMGDIRPROCESSED[1] = r"V:\\Download\\imagesbooks2\\"
 IMGDIRPROCESSED[2] = r"V:\\Download\\imagesbooks3\\"
 IMGDIRPROCESSED[3] = r"V:\\Download\\imagesbooks4\\"
 IMGDIRPROCESSED[4] = r"V:\\Download\\imagesbooks_warp\\"
-
 
 ##############################################################################################
 
