@@ -18,9 +18,9 @@ import time
 from pprint import pprint
 from imutils import paths
 import matplotlib.pyplot as plt
-import pandas as pd 
+import pandas as pd
 import random
-import pickle 
+import pickle
 
 
 IMGDIR = "./imagesbooks/"
@@ -33,53 +33,56 @@ def GEN_ORB_FEATURES(imagelibrarypaths, ORB_features_limit):
     # init a ORB dataframe
     ORBdf = pd.DataFrame(columns=['file', 'ORBkey', 'ORBdes'])
 
-    # time the hashing operation 
+    # time the hashing operation
     start = time.time()
 
-    
     for f in imagelibrarypaths:
 
-        m_img = cv2.imread(f)        
+        m_img = cv2.imread(f)
         if m_img is None:
             continue
         m_img = cv2.cvtColor(m_img, cv2.COLOR_BGR2RGB)
         # Initiate STAR detector
-        orb = cv2.ORB_create( ORB_features_limit )
+        orb = cv2.ORB_create(ORB_features_limit)
 
         # find the keypoints with ORB
-        kp = orb.detect(m_img,None)
+        kp = orb.detect(m_img, None)
 
         # compute the descriptors with ORB
         kp, desc = orb.compute(m_img, kp)
-       
-        
-        ORBdf = ORBdf.append({'file':f, 'ORBkey':kp, 'ORBdes':desc}, ignore_index=True)
-        
-    t= time.time() - start
+
+        ORBdf = ORBdf.append(
+            {'file': f, 'ORBkey': kp, 'ORBdes': desc}, ignore_index=True)
+
+    t = time.time() - start
     # print("[INFO] processed {} images in {:.2f} seconds".format(len(imagelibrarypaths), t))
     # print (ORBdf.head())
     return (ORBdf,  t)
+
 
 '''
 Save Pandas dataframe to pickle 
 Datafram format : file , imagehist
 '''
 
-def ORB_SAVE_FEATURES ( mydataORB, savefile='testORB_Data') : 
+
+def ORB_SAVE_FEATURES(mydataORB, savefile='testORB_Data'):
 
     # save the tree #example # treeName = 'testORB_Data.pickle'
-    outfile = open (savefile + '.pickle', 'wb')
-    pickle.dump( mydataORB[['file', 'ORBdes']] , outfile)
+    outfile = open(savefile + '.pickle', 'wb')
+    pickle.dump(mydataORB[['file', 'ORBdes']], outfile)
 
 
 '''
 Load Pandas dataframe from pickle 
 Datafram format : file , ORBdes
 '''
-def ORB_LOAD_FEATURES ( openfile='testORB_Data') : 
-    
+
+
+def ORB_LOAD_FEATURES(openfile='testORB_Data'):
+
     # reading the pickle tree
-    infile = open(openfile + '.pickle','rb')
+    infile = open(openfile + '.pickle', 'rb')
     mydataORB = pickle.load(infile)
     infile.close()
 
@@ -88,24 +91,63 @@ def ORB_LOAD_FEATURES ( openfile='testORB_Data') :
 
 #------------------QUERY IMAGE FEATURE GEN---------------#
 
-def ORB_SEARCH (feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7, predictions_count=50):
+def ORB_SEARCH_BF (feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7, predictions_count=50):
     start = time.time()
-    q_img = cv2.imread(queryimagepath)    
+    q_img = cv2.imread(queryimagepath)
     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
     ORB = cv2.ORB_create(ORB_features_limit)
     q_kp, q_des = ORB.detectAndCompute(q_img, None)
-   
-   
+
+
+
+    # BF macher 
+    bf = cv2.BFMatcher()
+
+    matches_BF = []
+
+    for index, j in feature.iterrows():
+        m_des = j['ORBdes']
+        m_path = j['file']
+        # Calculating number of feature matches using FLANN
+        matches = bf.knnMatch(q_des, m_des, k=2)
+
+        # ratio query as per Lowe's paper
+        matches_count = 0
+        for x, (m, n) in enumerate(matches):
+            if m.distance < lowe_ratio*n.distance:
+                matches_count += 1
+        matches_BF.append((matches_count, m_path))
+
+    matches_BF.sort(key=lambda x: x[0], reverse=True)
+    predictions = matches_BF[:predictions_count]
+    t = time.time() - start
+    # print(predictions)
+    # print("[INFO] processed {} images in {:.2f} seconds".format(len(haystackPaths), t))
+    return (predictions, t)
+    # Search End
+
+
+# https://towardsdatascience.com/image-panorama-stitching-with-opencv-2402bde6b46c
+def ORB_SEARCH_FLANN(feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7, predictions_count=50):
+    start = time.time()
+    q_img = cv2.imread(queryimagepath)
+    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    ORB = cv2.ORB_create(ORB_features_limit)
+    q_kp, q_des = ORB.detectAndCompute(q_img, None)
+
+
     # FLANN matcher
-    FLANN_INDEX_LSH = 0
-    index_params = dict(algorithm = FLANN_INDEX_LSH,
+    FLANN_INDEX_LSH = 6
+    index_params= dict(algorithm = FLANN_INDEX_LSH,
                    table_number = 6, # 12
                    key_size = 12,     # 20
                    multi_probe_level = 1) #2
-    
-    search_params = dict(checks=50)   # or pass empty dictionary
+
+
+    search_params = dict(checks=100)   # or pass empty dictionary
     flann = cv2.FlannBasedMatcher(index_params,search_params)
-        
+    
+    
     matches_flann = []
 
     for index, j in feature.iterrows(): 
@@ -116,22 +158,55 @@ def ORB_SEARCH (feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7,
 
         #ratio query as per Lowe's paper
         matches_count = 0
-        for x,(m,n) in enumerate(matches):
-            if m.distance < lowe_ratio*n.distance:
+        for m in matches:
+            if len(m) == 2 and m[0].distance < m[1].distance * lowe_ratio:
                 matches_count += 1
         matches_flann.append((matches_count,m_path))
 
-    matches_flann.sort(key=lambda x : x[0] , reverse = True)
+
+    matches_flann.sort(key=lambda x: x[0], reverse=True)
     predictions = matches_flann[:predictions_count]
-    t= time.time() - start
+    t = time.time() - start
     # print(predictions)
     # print("[INFO] processed {} images in {:.2f} seconds".format(len(haystackPaths), t))
     return (predictions, t)
-    ## Search End
+    # Search End
 
 
+# Do not use yet 
+def ORB_SEARCH_MODBF(feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7, predictions_count=50):
+    start = time.time()
+    q_img = cv2.imread(queryimagepath)
+    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    ORB = cv2.ORB_create(ORB_features_limit)
+    q_kp, q_des = ORB.detectAndCompute(q_img, None)
 
+    # bf = cv2.BFMatcher ()
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 
+    matches_BF = []
+
+    for index, j in feature.iterrows():
+        m_des = j['ORBdes']
+        m_path = j['file']
+        # Calculating number of feature matches using FLANN
+        matches = bf.match(q_des, m_des)
+
+        # ratio query as per Lowe's paper
+        matches_count = 0
+        for m in matches:
+            if m.distance < lowe_ratio:
+                matches_count += 1
+        # matches_BF.append((matches_count, m_path))
+        matches_BF.append((len(matches), m_path))
+
+    matches_BF.sort(key=lambda x: x[0], reverse=True)
+    predictions = matches_BF[:predictions_count]
+    t = time.time() - start
+    # print(predictions)
+    # print("[INFO] processed {} images in {:.2f} seconds".format(len(haystackPaths), t))
+    return (predictions, t)
+    # Search End
 
 
 # # ------------ GENERATION TEST-------------------#
@@ -152,7 +227,7 @@ def ORB_SEARCH (feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7,
 # q_path = random.sample(imagepaths, 1)[0]
 # imagepredictions , searchtime = SIFT_SEARCH(mydata1, q_path, 300,0.75, 50)
 
-# # to reload module: uncomment use the following 
+# # to reload module: uncomment use the following
 # # %load_ext autoreload
 # # %autoreload 2
 
@@ -164,16 +239,13 @@ def ORB_SEARCH (feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7,
 # myplots.plot_predictions(imagepredictions[:20], q_path)
 
 
-
-
-
-# #---------------- Compile data and plot results 
+# #---------------- Compile data and plot results
 
 # accStats = pd.DataFrame(columns=['file','Acc', 'PCount'])
 
-# q_paths = random.sample(imagepaths, 50)  # random sample 100 items in list 
+# q_paths = random.sample(imagepaths, 50)  # random sample 100 items in list
 
-# for q_path in q_paths:    
+# for q_path in q_paths:
 #     print ("Processing, time", q_paths.index(q_path), searchtime)
 #     imagepredictions , searchtime = SIFT_SEARCH(mydata1, q_path, 1000,0.75, 50)
 #     a = accuracy.accuracy_matches(q_path, imagepredictions, 50)
@@ -206,11 +278,9 @@ def ORB_SEARCH (feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7,
 # plt.show()
 
 
-
-
 # sift_score = pd.DataFrame (columns=['score'])
-# for key in mylist: 
-#     b, a = key 
+# for key in mylist:
+#     b, a = key
 #     sift_score = sift_score.append(
 #         {
 #             'score' : b
@@ -219,4 +289,3 @@ def ORB_SEARCH (feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7,
 
 # sift_score.plot()
 # plt.show()
-
