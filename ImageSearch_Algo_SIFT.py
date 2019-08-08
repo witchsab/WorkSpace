@@ -85,6 +85,15 @@ def SIFT_LOAD_FEATURES ( openfile='testSIFT_Data') :
     return mydataSIFT
 
 
+def FEATURE (queryimagepath, sift_features_limit=100):
+    # start = time.time()
+    q_img = cv2.imread(queryimagepath)    
+    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
+    q_kp, q_des = sift.detectAndCompute(q_img, None)
+
+    return q_kp, q_des
+
 #------------------QUERY IMAGE FEATURE GEN---------------#
 
 def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50):

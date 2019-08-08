@@ -25,15 +25,25 @@ from sklearn import datasets
 iris = datasets.load_iris()
 X = iris.data
 
+# UPDATE X with np array of list of descriptors from cluster.py 
+# X = np.array(mydataSIFT['siftdes'])
+# X = mydataHSV['imagehist']
+# X = np.asarray(mydataRGB['imagehist'])
+# X = np.concatenate(X , axis=0)
+# YD = list(mydataHSV['imagehist'])
+# X = np.asarray(YD)
+
+
 # Calculate clusters using Elbow criteria 
 
 wcss = []
-for i in range(1, 51):
+n_clusters = 15
+for i in range(1, n_clusters):
     kmeans = KMeans(n_clusters = i, init = 'k-means++', random_state = 42)
     kmeans.fit(X)
     wcss.append(kmeans.inertia_)
 
-plt.plot(range(1, 51), wcss)
+plt.plot(range(1, n_clusters), wcss)
 # plt.plot(range(1, 11), elbowIndex)
 plt.title('The Elbow Method')
 plt.xlabel('Number of clusters')
@@ -44,7 +54,7 @@ plt.show()
 # https://github.com/arvkevi/kneed#find-knee
 
 from kneed import KneeLocator
-elbow = KneeLocator( list(range(1,51)), wcss, S=1.0, curve='convex', direction='decreasing')
+elbow = KneeLocator( list(range(1,n_clusters)), wcss, S=1.0, curve='convex', direction='decreasing')
 print ('Detected Elbow cluster value :', elbow.knee)
 
 
@@ -54,7 +64,6 @@ print ('Detected Elbow cluster value :', elbow.knee)
 # https://jakevdp.github.io/PythonDataScienceHandbook/05.08-random-forests.html
 # https://jakevdp.github.io/PythonDataScienceHandbook/05.09-principal-component-analysis.html
 # https://www.dummies.com/programming/big-data/data-science/how-to-visualize-the-clusters-in-a-k-means-unsupervised-learning-model/
-
 
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
