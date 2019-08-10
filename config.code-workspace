@@ -6,7 +6,8 @@
 	],
 	"settings": {
 		// "python.pythonPath": "/home/towshif/venv/bin/python",
-		"python.pythonPath": "H:\\WorkSpace_Python\\venv3\\Scripts\\python.exe",
+		"python.pythonPath": "/home/sab/venv/bin/python",
+		// "python.pythonPath": "H:\\WorkSpace_Python\\venv3\\Scripts\\python.exe",
 		"python.dataScience.jupyterServerURI": "local"
 		"editor.wordWrap": "on"
 
