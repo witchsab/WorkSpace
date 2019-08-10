@@ -471,11 +471,7 @@ q_paths = ['./imagesbooks/ukbench05960.jpg', './imagesbooks/ukbench00459.jpg', '
 # # print (q_paths)
 
 import Accuracy as accuracy  
-<<<<<<< HEAD
-keypoints = [300 ]
-=======
 keypoints = [50]
->>>>>>> eef30296b328059a5906fae41f0f265457542107
 # 100 ,300, 500, 700, 900
 accStatssiftkp100 = pd.DataFrame(columns=['file', 'PCount'])
 for q_path in q_paths: 
@@ -508,9 +504,16 @@ accStatssiftkp100.to_csv('accStatsSift_kp_train300_search100.csv')
 
 
 
-# sample test [DONOT USE ]
+# sample test [ DO NOT USE ]
+q_path = './imagesbooks/ukbench08595.jpg'
+q_path = './imagesbooks/ukbench05779.jpg'
+q_path = './imagesbooks/ukbench02722.jpg'
 imagepredictions , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH(mydatasift, q_path, 100, 0.75, 50)
 a ,d, i, cnt = accuracy.accuracy_matches(q_path, imagepredictions, 20 )
+print (a,d,i,cnt, searchtime)
+imagepredictions , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydatasift, q_path, 100, 0.75, 50)
+a ,d, i, cnt = accuracy.accuracy_matches(q_path, imagepredictions, 20 )
+print (a,d,i,cnt, searchtime)
 
 
 
