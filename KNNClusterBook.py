@@ -25,15 +25,25 @@ from sklearn import datasets
 iris = datasets.load_iris()
 X = iris.data
 
+# UPDATE X with np array of list of descriptors from cluster.py 
+# X = np.array(mydataSIFT['siftdes'])
+# X = mydataHSV['imagehist']
+# X = np.asarray(mydataRGB['imagehist'])
+# X = np.concatenate(X , axis=0)
+# YD = list(mydataHSV['imagehist'])
+# X = np.asarray(YD)
+
+
 # Calculate clusters using Elbow criteria 
 
 wcss = []
-for i in range(1, 51):
+n_clusters = 15
+for i in range(1, n_clusters):
     kmeans = KMeans(n_clusters = i, init = 'k-means++', random_state = 42)
     kmeans.fit(X)
     wcss.append(kmeans.inertia_)
 
-plt.plot(range(1, 51), wcss)
+plt.plot(range(1, n_clusters), wcss)
 # plt.plot(range(1, 11), elbowIndex)
 plt.title('The Elbow Method')
 plt.xlabel('Number of clusters')
@@ -44,7 +54,7 @@ plt.show()
 # https://github.com/arvkevi/kneed#find-knee
 
 from kneed import KneeLocator
-elbow = KneeLocator( list(range(1,51)), wcss, S=1.0, curve='convex', direction='decreasing')
+elbow = KneeLocator( list(range(1,n_clusters)), wcss, S=1.0, curve='convex', direction='decreasing')
 print ('Detected Elbow cluster value :', elbow.knee)
 
 
@@ -54,7 +64,6 @@ print ('Detected Elbow cluster value :', elbow.knee)
 # https://jakevdp.github.io/PythonDataScienceHandbook/05.08-random-forests.html
 # https://jakevdp.github.io/PythonDataScienceHandbook/05.09-principal-component-analysis.html
 # https://www.dummies.com/programming/big-data/data-science/how-to-visualize-the-clusters-in-a-k-means-unsupervised-learning-model/
-
 
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
@@ -363,7 +372,7 @@ newTree = pickle.load(infile)
 infile.close()
 
 
-#  Example with HASH metrices 
+# --------------------------- Example to search through a HASH Tree --------------------- 
 import ImageSearch_Algo_Hash 
 import Accuracy as accuracy
 
@@ -436,13 +445,13 @@ YA = np.asarray(result_array)
 nsamples, x, y, z = YA.shape  # know the shape before you flatten
 F = YA.reshape ( nsamples, x*y*z ) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 
-HASHTree = KDTree( F ,  metric='euclidean')
+HybridHASHTree = KDTree( F ,  metric='euclidean')
 
 # save to pickle file 
 import pickle
 treeName = 'testHASH.pickle'
 outfile = open (treeName, 'wb')
-pickle.dump(HASHTree,outfile)
+pickle.dump(HybridHASHTree,outfile)
 
 
 # load from pickle file 
@@ -478,7 +487,7 @@ fd = np.asarray( thisarray , dtype=float) # since hash is an array of bool -> nu
 x, y, z = fd.shape # know the shape before you flatten
 FF = fd.reshape (1, x*y*z) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 
-scores, ind = HASHTree.query(FF, k=100)
+scores, ind = HybridHASHTree.query(FF, k=100)
 t = time.time() - start 
 
 print (ind)

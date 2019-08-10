@@ -9,6 +9,7 @@ pip install opencv-contrib-python==3.4.2.16
 '''
 
 #-------------------------SIFT FUNCTIONAL FORMAT---------------------------#
+
 import PIL
 from PIL import Image
 import imagehash
@@ -20,6 +21,9 @@ from imutils import paths
 import matplotlib.pyplot as plt
 import pandas as pd 
 import random
+import pickle 
+
+
 IMGDIR = "./imagesbooks/"
 
 
@@ -55,21 +59,44 @@ def gen_sift_features(imagelibrarypaths, sift_features_limit):
     # print (siftdf.head())
     return (siftdf,  t)
 
+'''
+Save Pandas dataframe to pickle 
+Datafram format : file , imagehist
+'''
+
+def SIFT_SAVE_FEATURES ( mydataSIFT, savefile='testSIFT_Data') : 
+
+    # save the tree #example # treeName = 'testSIFT_Data.pickle'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump( mydataSIFT[['file', 'siftdes']] , outfile)
 
 
+'''
+Load Pandas dataframe from pickle 
+Datafram format : file , siftdes
+'''
+def SIFT_LOAD_FEATURES ( openfile='testSIFT_Data') : 
+    
+    # reading the pickle tree
+    infile = open(openfile + '.pickle','rb')
+    mydataSIFT = pickle.load(infile)
+    infile.close()
+
+    return mydataSIFT
 
 
-   
+def FEATURE (queryimagepath, sift_features_limit=100):
+    # start = time.time()
+    q_img = cv2.imread(queryimagepath)    
+    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
+    q_kp, q_des = sift.detectAndCompute(q_img, None)
 
-
-
-
-
-
+    return q_kp, q_des
 
 #------------------QUERY IMAGE FEATURE GEN---------------#
 
-def SIFT_SEARCH (feature, queryimagepath, sift_features_limit, lowe_ratio, predictions_count):
+def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50):
     start = time.time()
     q_img = cv2.imread(queryimagepath)    
     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
@@ -86,8 +113,6 @@ def SIFT_SEARCH (feature, queryimagepath, sift_features_limit, lowe_ratio, predi
     
     matches_flann = []
 
-
-
     for index, j in feature.iterrows(): 
         m_des = j['siftdes'] 
         m_path = j['file']     
@@ -101,6 +126,7 @@ def SIFT_SEARCH (feature, queryimagepath, sift_features_limit, lowe_ratio, predi
                 matches_count += 1
         matches_flann.append((matches_count,m_path))
 
+
     matches_flann.sort(key=lambda x : x[0] , reverse = True)
     predictions = matches_flann[:predictions_count]
     t= time.time() - start
@@ -108,6 +134,44 @@ def SIFT_SEARCH (feature, queryimagepath, sift_features_limit, lowe_ratio, predi
     # print("[INFO] processed {} images in {:.2f} seconds".format(len(haystackPaths), t))
     return (predictions, t)
     ## Search End
+
+
+def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50):
+    start = time.time()
+    q_img = cv2.imread(queryimagepath)    
+    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
+    q_kp, q_des = sift.detectAndCompute(q_img, None)
+   
+
+    # BF macher 
+    bf = cv2.BFMatcher()
+
+    matches_BF = []
+
+    for index, j in feature.iterrows():
+        m_des = j['siftdes']
+        m_path = j['file']
+        # Calculating number of feature matches using FLANN
+        matches = bf.knnMatch(q_des, m_des, k=2)
+
+        # ratio query as per Lowe's paper
+        matches_count = 0
+        for x, (m, n) in enumerate(matches):
+            if m.distance < lowe_ratio*n.distance:
+                matches_count += 1
+        matches_BF.append((matches_count, m_path))
+
+    matches_BF.sort(key=lambda x: x[0], reverse=True)
+    predictions = matches_BF[:predictions_count]
+    t = time.time() - start
+    # print(predictions)
+    # print("[INFO] processed {} images in {:.2f} seconds".format(len(haystackPaths), t))
+    return (predictions, t)
+    # Search End
+
+
+
 
 
 

@@ -471,7 +471,11 @@ q_paths = ['./imagesbooks/ukbench05960.jpg', './imagesbooks/ukbench00459.jpg', '
 # # print (q_paths)
 
 import Accuracy as accuracy  
+<<<<<<< HEAD
 keypoints = [300 ]
+=======
+keypoints = [50]
+>>>>>>> eef30296b328059a5906fae41f0f265457542107
 # 100 ,300, 500, 700, 900
 accStatssiftkp100 = pd.DataFrame(columns=['file', 'PCount'])
 for q_path in q_paths: 

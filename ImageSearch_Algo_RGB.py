@@ -130,7 +130,7 @@ def RGB_SEARCH_TREE ( RGBtree , mydataRGB,  searchimagepath, returnCount=100):
     fh = np.asarray(fh)
     # ft = raw feature 
     # process 
-    nz = fh.shape  # know the shape before you flatten
+    # nz = fh.shape  # know the shape before you flatten
     F = fh.reshape (1, -1) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 
     # the search; k = number of returns expected 
@@ -156,7 +156,7 @@ def RGB_SEARCH(feature, searchimagepath, correl_threshold):
     hist = cv2.normalize(hist, None)       
 
     matches = []
-    for index, row in feature.iterrows():        
+    for _ , row in feature.iterrows():        
         cmp = cv2.compareHist(hist, row['imagehist'], cv2.HISTCMP_CORREL)        
         if cmp > correl_threshold:
             matches.append((cmp, row['file']))
