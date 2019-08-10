@@ -10,19 +10,21 @@ pip install opencv-contrib-python==3.4.2.16
 
 #-------------------------SIFT FUNCTIONAL FORMAT---------------------------#
 
-import PIL
-from PIL import Image
-import imagehash
 import os
-import cv2
+import pickle
+import random
 import time
 from pprint import pprint
-from imutils import paths
-import matplotlib.pyplot as plt
-import pandas as pd 
-import random
-import pickle 
 
+import cv2
+import imagehash
+import matplotlib.pyplot as plt
+import pandas as pd
+import PIL
+from imutils import paths
+from PIL import Image
+from sklearn.cluster import MiniBatchKMeans
+from sklearn.neighbors import KDTree
 
 IMGDIR = "./imagesbooks/"
 
@@ -94,6 +96,8 @@ def FEATURE (queryimagepath, sift_features_limit=100):
 
     return q_kp, q_des
 
+
+    
 #------------------QUERY IMAGE FEATURE GEN---------------#
 
 def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50):
@@ -171,8 +175,52 @@ def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio
     # Search End
 
 
+def SIFT_CREATE_TREE ( mydataSIFT, n_clusters=500 ) : 
+    print ("Generating SIFT Clusters BOvW and SIFTtree")
+
+    ### Train KMeans and define Feature Vectors 
+    # define cluster size 
+    # n_clusters = 5000
+    # Concatenate all descriptors in the training set together
+    training_descs = list(mydataSIFT['siftdes'])
+    all_train_descriptors = [desc for desc_list in training_descs for desc in desc_list]
+    all_train_descriptors = np.array(all_train_descriptors)
+
+    # define the cluster model 
+    cluster_model = MiniBatchKMeans(n_clusters=n_clusters, random_state=0)
+    # train kmeans or other cluster model on those descriptors selected above
+    cluster_model.fit(all_train_descriptors)
+    print('done clustering. Using clustering model to generate BoW histograms for each image.')
+    # compute set of cluster-reduced words for each image
+    img_clustered_words = [cluster_model.predict(raw_words) for raw_words in training_descs]
+    # finally make a histogram of clustered word counts for each image. These are the final features.
+    img_bow_hist = np.array([np.bincount(clustered_words, minlength=n_clusters) for clustered_words in img_clustered_words])
+    # create Tree for histograms 
+    SIFTtree2 = KDTree(img_bow_hist)
 
 
+def SIFT_SEARCH_TREE (q_path, cluster_model, SIFTtree2) : 
+    print ("searching Tree.")
+    # # sample a image
+    # q_path = random.sample(imagepaths, 1)[0]
+    # print (q_path)
+    # log time 
+    start = time.time()
+    # get the feature for this image 
+    q_kp, q_des = FEATURE (q_path)
+    # get bow cluster
+    q_clustered_words = cluster_model.predict(q_des) 
+    # get FV histogram  
+    q_bow_hist = np.array([np.bincount(q_clustered_words, minlength=n_clusters)])
+    # search the KDTree for nearest match
+    dist, result = SIFTtree2.query(q_bow_hist, k=100)
+    t= time.time() - start
+    # Zip results to list of tuples 
+    flist = list (mydataSIFT.iloc[ result[0].tolist()]['file'])
+    slist = list (dist[0])
+    matches = tuple(zip( slist, flist)) # create a list of tuples frm 2 lists
+
+    return (matches, t)
 
 
 
@@ -263,4 +311,3 @@ def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio
 
 # sift_score.plot()
 # plt.show()
-
