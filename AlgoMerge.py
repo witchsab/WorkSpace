@@ -22,6 +22,7 @@ import ImageSearch_Algo_HSV
 import ImageSearch_Algo_RGB
 import ImageSearch_Algo_SIFT
 import Accuracy as accuracy  
+from kneed import KneeLocator
 
 IMGDIR = "./imagesbooks/"
 imagepaths = list(paths.list_images(IMGDIR))
@@ -48,6 +49,7 @@ q_paths = random.sample(imagepaths, 5)  # random sample 100 items in list
 # q_paths = ['./imagesbooks/ukbench05960.jpg','./imagesbooks/ukbench00459.jpg', './imagesbooks/ukbench06010.jpg', './imagesbooks/ukbench06104.jpg', './imagesbooks/ukbench00458.jpg']
 # q_paths = ['./imagesbooks/ukbench05960.jpg', './imagesbooks/ukbench00459.jpg', './imagesbooks/ukbench06010.jpg', './imagesbooks/ukbench06104.jpg', './imagesbooks/ukbench00458.jpg', './imagesbooks/ukbench00248.jpg', './imagesbooks/ukbench06408.jpg', './imagesbooks/ukbench00303.jpg', './imagesbooks/ukbench03124.jpg', './imagesbooks/ukbench05776.jpg', './imagesbooks/ukbench06113.jpg', './imagesbooks/ukbench05964.jpg', './imagesbooks/ukbench10164.jpg', './imagesbooks/ukbench02750.jpg', './imagesbooks/ukbench05951.jpg', './imagesbooks/ukbench05983.jpg', './imagesbooks/ukbench03867.jpg', './imagesbooks/ukbench05883.jpg', './imagesbooks/ukbench06049.jpg', './imagesbooks/ukbench06017.jpg', './imagesbooks/ukbench06150.jpg', './imagesbooks/ukbench06151.jpg', './imagesbooks/ukbench02749.jpg', './imagesbooks/ukbench02721.jpg', './imagesbooks/ukbench05879.jpg', './imagesbooks/ukbench06148.jpg', './imagesbooks/ukbench05880.jpg', './imagesbooks/ukbench05929.jpg', './imagesbooks/ukbench06048.jpg', './imagesbooks/ukbench08544.jpg', './imagesbooks/ukbench03058.jpg', './imagesbooks/ukbench10154.jpg', './imagesbooks/ukbench00000.jpg', './imagesbooks/ukbench05972.jpg', './imagesbooks/ukbench05872.jpg', './imagesbooks/ukbench08542.jpg', './imagesbooks/ukbench06004.jpg', './imagesbooks/ukbench05993.jpg', './imagesbooks/ukbench05988.jpg', './imagesbooks/ukbench00483.jpg', './imagesbooks/ukbench08546.jpg', './imagesbooks/ukbench06539.jpg', './imagesbooks/ukbench02748.jpg', './imagesbooks/ukbench05980.jpg', './imagesbooks/ukbench08001.jpg', './imagesbooks/ukbench03890.jpg', './imagesbooks/ukbench03059.jpg', './imagesbooks/ukbench10081.jpg', './imagesbooks/ukbench06519.jpg', './imagesbooks/ukbench05787.jpg']
 
+toplist = set()
 
 accStatsmerge = pd.DataFrame(columns=['file'])
 matcheshsv = []
@@ -59,7 +61,15 @@ for q_path in q_paths:
 
     row_dict = {'file':q_path }   
     imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (mytreeHSV, mydataHSV, q_path, 100)
+    x = set(shortlist (imagematcheshsv))
+    toplist.add(x)
+
+
     imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (mytreeRGB, mydataRGB, q_path, 100)
+    y= set(shortlist (imagematchesrgb))
+    toplist.add(y)
+
+
     matcheshsv.append((q_path, imagematcheshsv))
     matchesrgb.append((q_path, imagematchesrgb))
     a, d, i_hsv, cnt = accuracy.accuracy_matches(q_path, imagematcheshsv, 20)
@@ -146,3 +156,28 @@ def merge_result(imagematches1, imagematches2, mydataframe):
     filteredframe = mydataframe[mydataframe['file'].isin(mergelist)]
 
     return filteredframe
+
+
+
+    #merge with other algos after thresholding
+
+def shortlist (imagematches):
+    score = []
+    successScore = []
+    filelist = []
+    # score, file = item
+    for item in imagematches:
+        x, y = item
+        score.append(x)
+        filelist.append (y)
+    # print(score)
+    successPositions =i_rgb
+    for i in i_rgb: 
+        successScore.append(score[i])
+    
+    elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
+    print ('Detected Elbow cluster value :', elbow.knee)
+
+    qualifiedItems = min (elbow.knee , 6)
+
+    return filelist[:6]
