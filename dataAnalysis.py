@@ -476,6 +476,8 @@ ImageSearch_Algo_SIFT.SIFT_SAVE_FEATURES (mydataSIFT, savefile)
 mydataSIFT = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES(savefile)
 
 
+
+
 # ------------------SIFT  SEARCH TEST ---------------------#
 
 q_path = random.sample(imagepaths, 1)[0]

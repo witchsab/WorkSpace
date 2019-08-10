@@ -450,14 +450,19 @@ print ('Count', cnt, ' | position', pos)
 import ImageSearch_Algo_SIFT
 #generation
 # Hyper-Parameters for SIFT comparison
-sift_features_limit = 300
+sift_features_limit = 100
 lowe_ratio = 0.75
 predictions_count = 50
 
 IMGDIR = "./imagesbooks/"
 imagepaths = list(paths.list_images(IMGDIR))
-mydatasift, mytimesift = ImageSearch_Algo_SIFT.gen_sift_features(imagepaths, 100)
+mydatasift, mytimesift = ImageSearch_Algo_SIFT.gen_sift_features(imagepaths, 200)
 print('generationtime', mytimesift)
+
+
+savefile = 'data/SIFT_features_519set_kp200_pandas'
+ImageSearch_Algo_SIFT.SIFT_SAVE_FEATURES (mydatasift, savefile)
+# mydataSIFT = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES(savefile)
 
 
 # q_paths = random.sample(imagepaths, 50)  # random sample 100 items in list
@@ -519,9 +524,11 @@ print (a,d,i,cnt, searchtime)
 
 
 
+#################################################################################
+#############################     MERGE CODE  OLD  ##############################
+#################################################################################
 
-# #############################
-################################M Merging code
+
 
 import PIL
 from PIL import Image
@@ -549,13 +556,17 @@ print ('HSV Feature Generation time', mytimeHSV)
 mydataRGB, mytimeRGB = ImageSearch_Algo_RGB.RGB_GEN(imagepaths)
 print ('RGB Feature Generation time', mytimeRGB)
 
+mydatasift = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES('data/SIFT_features_519set_kp100_pandas')
+
+
 # to create a new tree from dataframe features 'mydataHSV'
 mytreeHSV = ImageSearch_Algo_HSV.HSV_Create_Tree (mydataHSV, savefile='HSV_Tree')
 mytreeRGB = ImageSearch_Algo_RGB.RGB_Create_Tree (mydataRGB, savefile='RGB_Tree')
 
-q_paths = random.sample(imagepaths, 50)  # random sample 100 items in list
+# q_paths = random.sample(imagepaths, 50)  # random sample 100 items in list
 
 # q_paths = ['./imagesbooks/ukbench05960.jpg','./imagesbooks/ukbench00459.jpg', './imagesbooks/ukbench06010.jpg', './imagesbooks/ukbench06104.jpg', './imagesbooks/ukbench00458.jpg']
+
 # q_paths = ['./imagesbooks/ukbench05960.jpg', './imagesbooks/ukbench00459.jpg', './imagesbooks/ukbench06010.jpg', './imagesbooks/ukbench06104.jpg', './imagesbooks/ukbench00458.jpg', './imagesbooks/ukbench00248.jpg', './imagesbooks/ukbench06408.jpg', './imagesbooks/ukbench00303.jpg', './imagesbooks/ukbench03124.jpg', './imagesbooks/ukbench05776.jpg', './imagesbooks/ukbench06113.jpg', './imagesbooks/ukbench05964.jpg', './imagesbooks/ukbench10164.jpg', './imagesbooks/ukbench02750.jpg', './imagesbooks/ukbench05951.jpg', './imagesbooks/ukbench05983.jpg', './imagesbooks/ukbench03867.jpg', './imagesbooks/ukbench05883.jpg', './imagesbooks/ukbench06049.jpg', './imagesbooks/ukbench06017.jpg', './imagesbooks/ukbench06150.jpg', './imagesbooks/ukbench06151.jpg', './imagesbooks/ukbench02749.jpg', './imagesbooks/ukbench02721.jpg', './imagesbooks/ukbench05879.jpg', './imagesbooks/ukbench06148.jpg', './imagesbooks/ukbench05880.jpg', './imagesbooks/ukbench05929.jpg', './imagesbooks/ukbench06048.jpg', './imagesbooks/ukbench08544.jpg', './imagesbooks/ukbench03058.jpg', './imagesbooks/ukbench10154.jpg', './imagesbooks/ukbench00000.jpg', './imagesbooks/ukbench05972.jpg', './imagesbooks/ukbench05872.jpg', './imagesbooks/ukbench08542.jpg', './imagesbooks/ukbench06004.jpg', './imagesbooks/ukbench05993.jpg', './imagesbooks/ukbench05988.jpg', './imagesbooks/ukbench00483.jpg', './imagesbooks/ukbench08546.jpg', './imagesbooks/ukbench06539.jpg', './imagesbooks/ukbench02748.jpg', './imagesbooks/ukbench05980.jpg', './imagesbooks/ukbench08001.jpg', './imagesbooks/ukbench03890.jpg', './imagesbooks/ukbench03059.jpg', './imagesbooks/ukbench10081.jpg', './imagesbooks/ukbench06519.jpg', './imagesbooks/ukbench05787.jpg']
 
 
