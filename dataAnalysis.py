@@ -17,7 +17,7 @@ import ImageSearch_Algo_RGB
 import ImageSearch_Algo_SIFT
 import ImageSearch_Plots as myplots
 
-# --------------- TEST COMMONS------------------
+# --------------- VAR COMMONS------------------
 
 IMGDIR = r'./imagesbooks/'
 IMGDIR = r"V:\\Download\\imagesbooks\\"
@@ -447,10 +447,10 @@ print ("Mean count   = ", accStatssift['hsvPCount'].mean())
 
 # Hyper-Parameters for SIFT comparison
 sift_features_limit = 100
-lowe_ratio = 0.9
+lowe_ratio = 0.7
 predictions_count = 50
 
-IMGDIR = "./imagesbooks/"
+# IMGDIR = "./imagesbooks/"
 imagepaths = list(paths.list_images(IMGDIR))
 mydataSIFT, mytime1 = ImageSearch_Algo_SIFT.gen_sift_features(
     imagepaths, sift_features_limit)
@@ -460,7 +460,7 @@ print("SIFT Feature Generation time :", mytime1)
 # Method 1
 # save to pickle : descriptors only; keypoints can be pickled directly
 # save the tree #example # treeName = 'testRGB.pickle'
-savefile = 'SIFT_features_pandas'
+savefile = 'SIFT_features_519set_100_pandas'
 outfile = open(savefile + '.pickle', 'wb')
 pickle.dump(mydataSIFT[['file', 'siftdes']], outfile)
 # note: cv2.keypoints cant be pickled directly
@@ -471,8 +471,9 @@ hdfSIFT = pd.HDFStore('SIFT_Features.h5')
 hdfSIFT.put('mydataSIFT', mydataSIFT[['file', 'siftdes']], data_columns=True)
 
 ## Consolidated 
-ImageSearch_Algo_SIFT.SIFT_SAVE_FEATURES (mydataSIFT, 'SIFT_Features_Frame_All')
-mynewDataSIFT = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES('SIFT_Features_Frame_All')
+savefile = 'data/SIFT_features_519set_kp100_pandas'
+ImageSearch_Algo_SIFT.SIFT_SAVE_FEATURES (mydataSIFT, savefile)
+mydataSIFT = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES(savefile)
 
 
 # ------------------SIFT  SEARCH TEST ---------------------#

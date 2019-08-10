@@ -78,7 +78,7 @@ from sklearn import datasets
 iris = datasets.load_iris()
 X = iris.data
 #KMeans
-km = KMeans(n_clusters=3)
+km = KMeans(n_clusters=200)
 # km = KMeans(n_clusters=10)  # for RBG dataset K = 33 
 km.fit(X)
 km.predict(X)
