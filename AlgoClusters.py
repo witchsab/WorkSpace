@@ -160,10 +160,16 @@ print('Count', cnt, ' | position', pos)
 
 
 
-
-
-
-
+from sklearn.cluster import KMeans
+# --------- find unsupervised cluster ID with KMEANS  
+X = img_bow_hist
+km = KMeans(n_clusters=200)
+km.fit(X)
+km.predict(X)
+labels = km.labels_
+print (labels)
+# # update labels to original dataframe
+mydataSIFT['clusterID'] = pd.DataFrame(labels)
 
 
 

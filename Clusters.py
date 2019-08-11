@@ -176,15 +176,16 @@ km.predict(X)
 labels = km.labels_
 print (labels)
 # # update labels to original dataframe
+mydataSIFT['clusterID'] = pd.DataFrame(labels)
 # mydataRGB['cluster'] = pd.DataFrame(labels)
 # mydataRGB[['file', 'cluster']].head
 
 # --------- find unsupervised cluster ID with GMM  
 # Gaussian Mixture Model
-gmm = GaussianMixture(n_components=100)
-gmm.fit(X)
-proba_lists = gmm.predict_proba(X)
-print (proba_list)
+# gmm = GaussianMixture(n_components=5)
+# gmm.fit(X)
+# proba_lists = gmm.predict_proba(X)
+# print (proba_list)
 
 
 
