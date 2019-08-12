@@ -43,6 +43,32 @@ def HSV_FEATURE (searchimagepath):
     return queryFeatures
 
 
+'''
+Save Pandas dataframe to pickle 
+Datafram format : file , imagehist
+'''
+def HSV_SAVE_FEATURES ( mydataHSV, savefile='testHSV_Data') : 
+    
+    # save the tree #example # treeName = 'testRGB_Data.pickle'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump( mydataHSV, outfile)
+
+    
+'''
+Load Pandas dataframe from pickle 
+Datafram format : file , imagehist
+'''
+def HASH_LOAD_FEATURES ( openfile='testHSV_Data') : 
+    
+    # reading the pickle tree
+    infile = open(openfile + '.pickle','rb')
+    mydataHSV = pickle.load(infile)
+    infile.close()
+
+    return mydataHSV
+
+
+
 def HSV_Create_Tree ( mydataHSV, savefile='testHSV'  ) : 
     
     YD = list(mydataHSV['imagehist'])

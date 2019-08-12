@@ -24,7 +24,8 @@ print (mytime)
 # q_path = random.sample(imagepaths, 1)[0]
 q_paths = random.sample(imagepaths, 20)  # random sample 100 items in list
 
-q_paths = ["./imagesbooks/ukbench00196.jpg", "./imagesbooks/ukbench00199.jpg",  "./imagesbooks/ukbench00296.jpg",  "./imagesbooks/ukbench00298.jpg",  "./imagesbooks/ukbench00299.jpg",  "./imagesbooks/ukbench00300.jpg",  "./imagesbooks/ukbench00302.jpg",  "./imagesbooks/ukbench00303.jpg",  "./imagesbooks/ukbench02730.jpg",  "./imagesbooks/ukbench02740.jpg",  "./imagesbooks/ukbench02743.jpg",  "./imagesbooks/ukbench05608.jpg",  "./imagesbooks/ukbench05932.jpg",  "./imagesbooks/ukbench05933.jpg",  "./imagesbooks/ukbench05934.jpg",  "./imagesbooks/ukbench05935.jpg",  "./imagesbooks/ukbench05952.jpg",  "./imagesbooks/ukbench05953.jpg",  "./imagesbooks/ukbench05954.jpg",  "./imagesbooks/ukbench05955.jpg",  "./imagesbooks/ukbench05956.jpg",  "./imagesbooks/ukbench05957.jpg",  "./imagesbooks/ukbench05958.jpg",  "./imagesbooks/ukbench05959.jpg",  "./imagesbooks/ukbench06148.jpg",  "./imagesbooks/ukbench06149.jpg",  "./imagesbooks/ukbench06150.jpg",  "./imagesbooks/ukbench06151.jpg",  "./imagesbooks/ukbench06558.jpg",  "./imagesbooks/ukbench06559.jpg",  "./imagesbooks/ukbench07285.jpg",  "./imagesbooks/ukbench07588.jpg",  "./imagesbooks/ukbench07589.jpg",  "./imagesbooks/ukbench07590.jpg",  "./imagesbooks/ukbench08540.jpg",  "./imagesbooks/ukbench08542.jpg",  "./imagesbooks/ukbench08592.jpg"]
+q_paths = [
+    "./imagesbooks/ukbench00196.jpg", "./imagesbooks/ukbench00199.jpg",  "./imagesbooks/ukbench00296.jpg",  "./imagesbooks/ukbench00298.jpg",  "./imagesbooks/ukbench00299.jpg",  "./imagesbooks/ukbench00300.jpg",  "./imagesbooks/ukbench00302.jpg",  "./imagesbooks/ukbench00303.jpg",  "./imagesbooks/ukbench02730.jpg",  "./imagesbooks/ukbench02740.jpg",  "./imagesbooks/ukbench02743.jpg",  "./imagesbooks/ukbench05608.jpg",  "./imagesbooks/ukbench05932.jpg",  "./imagesbooks/ukbench05933.jpg",  "./imagesbooks/ukbench05934.jpg",  "./imagesbooks/ukbench05935.jpg",  "./imagesbooks/ukbench05952.jpg",  "./imagesbooks/ukbench05953.jpg",  "./imagesbooks/ukbench05954.jpg",  "./imagesbooks/ukbench05955.jpg",  "./imagesbooks/ukbench05956.jpg",  "./imagesbooks/ukbench05957.jpg",  "./imagesbooks/ukbench05958.jpg",  "./imagesbooks/ukbench05959.jpg",  "./imagesbooks/ukbench06148.jpg",  "./imagesbooks/ukbench06149.jpg",  "./imagesbooks/ukbench06150.jpg",  "./imagesbooks/ukbench06151.jpg",  "./imagesbooks/ukbench06558.jpg",  "./imagesbooks/ukbench06559.jpg",  "./imagesbooks/ukbench07285.jpg",  "./imagesbooks/ukbench07588.jpg",  "./imagesbooks/ukbench07589.jpg",  "./imagesbooks/ukbench07590.jpg",  "./imagesbooks/ukbench08540.jpg",  "./imagesbooks/ukbench08542.jpg",  "./imagesbooks/ukbench08592.jpg"]
 
 
 
@@ -77,6 +78,7 @@ from kneed import KneeLocator
 q_path = random.sample(q_paths, 1)[0]
 
 imagematches , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (mytreeRGB, mydataRGB, q_path, 50)
+
 # imagematches , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH(mydataRGB, q_path, 0.5)
 
 # imagematches , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (mytreeHSV, mydataHSV, q_path, 100)
@@ -107,11 +109,11 @@ successPositions =i_rgb
 for i in i_rgb: 
     successScore.append(score[i])
 
-
+#  can throw exceptions in case of less points
 elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
 print ('Detected Elbow cluster value :', elbow.knee)
 
-qualifiedItems = min (elbow.knee , 6)
+qualifiedItems = min (elbow.knee, 6)
 
 # plt.scatter ( [counter]*len(imagematches), score, c=matchesposition)
 plt.plot(score)

@@ -273,7 +273,7 @@ print("Mean Search Time = ", accStats['Stime'].mean(), ' secs')
 
 
 # --------------- HYBRID HASH TREE TEST -----------------------------
-testAlgoList = ['phash']
+testAlgoList = ['whash', 'ahash', 'dhash']
 
 # to create a new tree from dataframe features 'mydataHSV'
 myHybridtree = ImageSearch_Algo_Hash.HASH_CREATE_HYBRIDTREE(mydataHASH, 'myHASH_Tree', testAlgoList)
@@ -499,6 +499,47 @@ print(q_path)
 a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
 print('Accuracy =',  a, '%', '| Quality:', q)
 print('Count', cnt, ' | position', pos)
+
+
+
+# ----- Alternative tree search code [Optimized search time ]
+
+# test SIFT TREE SEARCH code
+n_clusters = 500
+savefile = 'data/' + 'test' + '_SIFT_Tree_Cluster' + str(n_clusters)
+SIFTtree, SIFTmodel = ImageSearch_Algo_SIFT.SIFT_CREATE_TREE_MODEL(mydataSIFT, savefile, n_clusters)
+
+# to load an existing tree
+thistree, thismodel = ImageSearch_Algo_SIFT.SIFT_Load_Tree_Model (savefile)
+
+# sample 1 image 
+q_path = random.sample(imagepaths, 1)[0]
+
+# Run Tree Search 
+imagematches, searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_TREE(q_path, thismodel, thistree, mydataSIFT, returnCount=100, kp=100)
+print('SIFT Tree Search time', searchtime)
+
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
+
+# BF Macher faster 
+imagematches, searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, sift_features_limit , 0.6, 50 )
+print (" SIFT BF Search time :", searchtime)
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
+
+
+# FLANN Macher (slower)
+imagematches, searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH(mydataSIFT, q_path, sift_features_limit , 0.6, 50 )
+print (" SIFT FLANN Search time :", searchtime)
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
+
+# ----- END Alternative 
+
 
 
 # plot the results 

@@ -78,7 +78,7 @@ from sklearn import datasets
 iris = datasets.load_iris()
 X = iris.data
 #KMeans
-km = KMeans(n_clusters=200)
+km = KMeans(n_clusters=3)
 # km = KMeans(n_clusters=10)  # for RBG dataset K = 33 
 km.fit(X)
 km.predict(X)
@@ -99,7 +99,7 @@ ax.set_ylabel("Sepal length")
 ax.set_zlabel("Petal length")
 plt.title("K Means", fontsize=14)
 
-
+# X, Y Scatter 
 fig = plt.figure()
 ax = fig.add_subplot(111)
 scatter = ax.scatter(X[:,3],X [:,0], c=labels.astype(np.float),s=50)
@@ -107,7 +107,7 @@ ax.set_title('R')
 ax.set_xlabel('G')
 plt.colorbar(scatter)
 
-
+# Another Scatter 
 plt.scatter(X[:, 1], X[:, 0], c=labels.astype(np.float), s=50, cmap='viridis')
 centers = km.cluster_centers_
 plt.scatter(centers[:, 0], centers[:, 1], c='gray', s=200, alpha=0.5);

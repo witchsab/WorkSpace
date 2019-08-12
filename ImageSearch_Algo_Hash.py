@@ -69,6 +69,32 @@ def HASH_FEATURE (searchimagepath, hashAlgo='phash', hashsize=8) :
 
 
 '''
+Save Pandas dataframe to pickle 
+Datafram format : file , imagehist
+'''
+def HASH_SAVE_FEATURES ( mydataHASH, savefile='testHASH_Data') : 
+    
+    # save the tree #example # treeName = 'testRGB_Data.pickle'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump( mydataHASH, outfile)
+
+
+    
+'''
+Load Pandas dataframe from pickle 
+Datafram format : file , imagehist
+'''
+def HASH_LOAD_FEATURES ( openfile='testHASH_Data') : 
+    
+    # reading the pickle tree
+    infile = open(openfile + '.pickle','rb')
+    mydataHASH = pickle.load(infile)
+    infile.close()
+
+    return mydataHASH
+
+
+'''
 Create a KDTree with the hash 
 params: 
 mydataHash  = pandas dataframe; format: 'file', 'phash', 'dhash', 'ahash', 'whash'

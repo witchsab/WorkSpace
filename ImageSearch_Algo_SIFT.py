@@ -15,7 +15,7 @@ import pickle
 import random
 import time
 from pprint import pprint
-
+import numpy as np
 import cv2
 import imagehash
 import matplotlib.pyplot as plt
@@ -175,7 +175,7 @@ def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio
     # Search End
 
 
-def SIFT_CREATE_TREE ( mydataSIFT, n_clusters=500 ) : 
+def SIFT_CREATE_TREE_MODEL ( mydataSIFT, savefile='testSIFTtree', n_clusters=500 ) : 
 
     print ("Generating SIFT Clusters BOvW and SIFTtree")
     ### Train KMeans and define Feature Vectors 
@@ -197,11 +197,28 @@ def SIFT_CREATE_TREE ( mydataSIFT, n_clusters=500 ) :
     img_bow_hist = np.array([np.bincount(clustered_words, minlength=n_clusters) for clustered_words in img_clustered_words])
     # create Tree for histograms 
     SIFTtree = KDTree(img_bow_hist)
+    print('SIFT Tree generation complete.')
+
+    # save the tuple (model, tree)
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump( (SIFTtree , cluster_model) ,outfile)
+
+    print ('Saved (Tree, Model) as ', outfile)
 
     return ( SIFTtree , cluster_model)
 
 
-def SIFT_SEARCH_TREE (q_path, cluster_model, SIFTtree, kp=100) : 
+def SIFT_Load_Tree_Model ( openfile='testSIFTtree' ) : 
+    
+    # reading the pickle tree
+    infile = open(openfile + '.pickle','rb')
+    SIFTtree, cluster_model = pickle.load(infile)
+    infile.close()
+
+    return SIFTtree , cluster_model
+
+
+def SIFT_SEARCH_TREE (q_path, cluster_model, SIFTtree, mydataSIFT, returnCount=100, kp=100) : 
     print ("searching Tree.")
     # # sample a image
     # q_path = random.sample(imagepaths, 1)[0]
@@ -213,9 +230,9 @@ def SIFT_SEARCH_TREE (q_path, cluster_model, SIFTtree, kp=100) :
     # get bow cluster
     q_clustered_words = cluster_model.predict(q_des) 
     # get FV histogram  
-    q_bow_hist = np.array([np.bincount(q_clustered_words, minlength=n_clusters)])
+    q_bow_hist = np.array([np.bincount(q_clustered_words, minlength=cluster_model.n_clusters)])
     # search the KDTree for nearest match
-    dist, result = SIFTtree.query(q_bow_hist, k=100)
+    dist, result = SIFTtree.query(q_bow_hist, k=returnCount)
     t= time.time() - start
     # Zip results to list of tuples 
     flist = list (mydataSIFT.iloc[ result[0].tolist()]['file'])
@@ -223,7 +240,6 @@ def SIFT_SEARCH_TREE (q_path, cluster_model, SIFTtree, kp=100) :
     matches = tuple(zip( slist, flist)) # create a list of tuples frm 2 lists
 
     return (matches, t)
-
 
 
 

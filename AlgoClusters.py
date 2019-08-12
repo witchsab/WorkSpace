@@ -175,7 +175,6 @@ mydataSIFT['clusterID'] = pd.DataFrame(labels)
 
 
 
-
 # ----------------------- Clustering  RGB ---------------------
 
 from sklearn.neighbors import KDTree
