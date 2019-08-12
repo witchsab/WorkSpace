@@ -21,8 +21,8 @@ import ImageSearch_Plots as myplots
 
 # --------------- VAR COMMONS------------------
 
-IMGDIR = r'./imagesbooks/'
-# IMGDIR = r"V:\\Download\\imagesbooks\\"
+# IMGDIR = r'./imagesbooks/'
+IMGDIR = r"V:\\Download\\imagesbooks\\"
 # IMGDIRPROCESSED = ['']*5
 # IMGDIRPROCESSED[0] = r"V:\\Download\\imagesbooks1\\"
 # IMGDIRPROCESSED[1] = r"V:\\Download\\imagesbooks2\\"
@@ -35,7 +35,7 @@ TESTNAME = "Data519"
 
 # --------------- IMAGES  ----------------------#
 imagepaths = list(paths.list_images(IMGDIR))
-
+myDataFiles = pd.DataFrame( {'file' : imagepaths })
 
 # ----------- GENERATE ALL FEATURES & SAVE ------------ #
 
@@ -88,6 +88,8 @@ savefile = 'data/' + TESTNAME + '_PandasDF_HASH_Features'
 ImageSearch_Algo_Hash.HASH_SAVE_FEATURES (mydataHASH, savefile)
 # -- END
 
+print ("## Feature Generation Complete.")
+
 
 # ----------- GENERATE ALL TREES  ------------ #
 
@@ -120,15 +122,16 @@ SIFTtree, SIFTmodel = ImageSearch_Algo_SIFT.SIFT_CREATE_TREE_MODEL(mydataSIFT, s
 
 # ORB FV Tree and Cluster 
 ORB_features_limit = 200
-lowe_ratio = 0.75
-predictions_count = 50
 n_clusters = 500
 savefile = 'data/' + TESTNAME + '_ORB_Tree_Cluster' + str(n_clusters)
 ORBtree, ORBmodel = ImageSearch_Algo_ORB.ORB_CREATE_TREE_MODEL(mydataORB, savefile, n_clusters)
 
+print ("## Tree Generation Complete.")
+
 # ----------- GENERATE ALL CLUSTERS  ------------ #
 
-knee = ImageSearch_Algo_RGB.RGB_ANALYZE_CLUSTER(mydataRGB, len(mydataRGB.index), int(len(mydataRGB.index)/20))
+# # determine n_cluster RGB -> elbow method 
+# kneeRGB = ImageSearch_Algo_RGB.RGB_ANALYZE_CLUSTER(mydataRGB, len(mydataRGB.index), int(len(mydataRGB.index)/20))
 
-knee2 = ImageSearch_Algo_HSV.HSV_ANALYZE_CLUSTER (mydataHSV,  len(mydataRGB.index), int(len(mydataRGB.index)/20))
-
+# # determine n_cluster HSV -> elbow method 
+# kneeHSV = ImageSearch_Algo_HSV.HSV_ANALYZE_CLUSTER (mydataHSV,  len(mydataHSV.index), int(len(mydataHSV.index)/20))

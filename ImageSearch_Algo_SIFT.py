@@ -27,7 +27,7 @@ from PIL import Image
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.neighbors import KDTree
 
-IMGDIR = "./imagesbooks/"
+# IMGDIR = "./imagesbooks/"
 
 
 #-----------------TRAINING IMAGES SIFT FEATURE GENERATION-----------------------#
