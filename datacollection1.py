@@ -650,3 +650,8 @@ for q_path in q_paths:
 
 accStatsmerge.to_csv('accStatsmergetestrandsampl1lowe0.6.csv')
 
+
+
+# rslt_df = accStatsmerge.loc[accStatsmerge['hsv_Count'] < 2] 
+# print (rslt_df)
+
