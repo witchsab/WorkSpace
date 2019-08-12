@@ -1,27 +1,31 @@
 '''
-SIFT, SURF, ORB are patented and no longer available opencv 4.0 
+SIFT, SURF, SIFT are patented and no longer available opencv 4.0 
 install last opensource version 
 
-Ref: https://stackoverflow.com/questions/52305578/sift-cv2-xfeatures2d-sift-create-not-working-even-though-have-contrib-instal/52514095
+Ref: https://stackoverflow.com/questions/52305578/SIFT-cv2-xfeatures2d-SIFT-create-not-working-even-though-have-contrib-instal/52514095
 
 pip install opencv-python==3.4.2.16
 pip install opencv-contrib-python==3.4.2.16
 '''
 
 #-------------------------ORB FUNCTIONAL FORMAT---------------------------#
-import PIL
-from PIL import Image
-import imagehash
+
 import os
-import cv2
+import pickle
+import random
 import time
 from pprint import pprint
-from imutils import paths
-import matplotlib.pyplot as plt
-import pandas as pd
-import random
-import pickle
 
+import cv2
+import imagehash
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import PIL
+from imutils import paths
+from PIL import Image
+from sklearn.cluster import MiniBatchKMeans
+from sklearn.neighbors import KDTree
 
 IMGDIR = "./imagesbooks/"
 
@@ -89,6 +93,16 @@ def ORB_LOAD_FEATURES(openfile='testORB_Data'):
     return mydataORB
 
 
+def FEATURE (queryimagepath, ORB_features_limit=100):
+    # start = time.time()
+    q_img = cv2.imread(queryimagepath)    
+    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    ORB = cv2.ORB_create(ORB_features_limit)
+    q_kp, q_des = ORB.detectAndCompute(q_img, None)
+
+    return q_kp, q_des
+
+
 #------------------QUERY IMAGE FEATURE GEN---------------#
 
 def ORB_SEARCH_BF (feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7, predictions_count=50):
@@ -97,8 +111,6 @@ def ORB_SEARCH_BF (feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0
     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
     ORB = cv2.ORB_create(ORB_features_limit)
     q_kp, q_des = ORB.detectAndCompute(q_img, None)
-
-
 
     # BF macher 
     bf = cv2.BFMatcher()
@@ -209,6 +221,76 @@ def ORB_SEARCH_MODBF(feature, queryimagepath, ORB_features_limit=100, lowe_ratio
     # Search End
 
 
+
+def ORB_CREATE_TREE_MODEL ( mydataORB, savefile='testORBtree', n_clusters=500 ) : 
+
+    print ("Generating ORB Clusters BOvW and ORBtree")
+    ### Train KMeans and define Feature Vectors 
+    # define cluster size 
+    # n_clusters = 5000
+    # Concatenate all descriptors in the training set together
+    training_descs = list(mydataORB['ORBdes'])
+    all_train_descriptors = [desc for desc_list in training_descs for desc in desc_list]
+    all_train_descriptors = np.array(all_train_descriptors)
+
+    # define the cluster model 
+    cluster_model = MiniBatchKMeans(n_clusters=n_clusters, random_state=0)
+    # train kmeans or other cluster model on those descriptors selected above
+    cluster_model.fit(all_train_descriptors)
+    print('done clustering. Using clustering model to generate BoW histograms for each image.')
+    # compute set of cluster-reduced words for each image
+    img_clustered_words = [cluster_model.predict(raw_words) for raw_words in training_descs]
+    # finally make a histogram of clustered word counts for each image. These are the final features.
+    img_bow_hist = np.array([np.bincount(clustered_words, minlength=n_clusters) for clustered_words in img_clustered_words])
+    # create Tree for histograms 
+    ORBtree = KDTree(img_bow_hist)
+    print('ORB Tree generation complete.')
+
+    # save the tuple (model, tree)
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump( (ORBtree , cluster_model) ,outfile)
+
+    print ('Saved (Tree, Model) as ', outfile)
+
+    return ( ORBtree , cluster_model)
+
+
+def ORB_Load_Tree_Model ( openfile='testORBtree' ) : 
+    
+    # reading the pickle tree
+    infile = open(openfile + '.pickle','rb')
+    ORBtree, cluster_model = pickle.load(infile)
+    infile.close()
+
+    return ORBtree , cluster_model
+
+
+def ORB_SEARCH_TREE (q_path, cluster_model, ORBtree, mydataORB, returnCount=100, kp=100) : 
+    print ("searching Tree.")
+    # # sample a image
+    # q_path = random.sample(imagepaths, 1)[0]
+    # print (q_path)
+    # log time 
+    start = time.time()
+    # get the feature for this image 
+    q_kp, q_des = FEATURE (q_path , kp)
+    # get bow cluster
+    q_clustered_words = cluster_model.predict(q_des) 
+    # get FV histogram  
+    q_bow_hist = np.array([np.bincount(q_clustered_words, minlength=cluster_model.n_clusters)])
+    # search the KDTree for nearest match
+    dist, result = ORBtree.query(q_bow_hist, k=returnCount)
+    t= time.time() - start
+    # Zip results to list of tuples 
+    flist = list (mydataORB.iloc[ result[0].tolist()]['file'])
+    slist = list (dist[0])
+    matches = tuple(zip( slist, flist)) # create a list of tuples frm 2 lists
+
+    return (matches, t)
+
+    
+
+
 # # ------------ GENERATION TEST-------------------#
 
 
@@ -219,13 +301,13 @@ def ORB_SEARCH_MODBF(feature, queryimagepath, ORB_features_limit=100, lowe_ratio
 
 # IMGDIR = "./imagesbooks/"
 # imagepaths = list(paths.list_images(IMGDIR))
-# mydata1, mytime1 = gen_sift_features(imagepaths, 1000)
+# mydata1, mytime1 = gen_ORB_features(imagepaths, 1000)
 
 
 # # ------------------ SEARCH TEST ---------------------#
 
 # q_path = random.sample(imagepaths, 1)[0]
-# imagepredictions , searchtime = SIFT_SEARCH(mydata1, q_path, 300,0.75, 50)
+# imagepredictions , searchtime = ORB_SEARCH(mydata1, q_path, 300,0.75, 50)
 
 # # to reload module: uncomment use the following
 # # %load_ext autoreload
@@ -247,7 +329,7 @@ def ORB_SEARCH_MODBF(feature, queryimagepath, ORB_features_limit=100, lowe_ratio
 
 # for q_path in q_paths:
 #     print ("Processing, time", q_paths.index(q_path), searchtime)
-#     imagepredictions , searchtime = SIFT_SEARCH(mydata1, q_path, 1000,0.75, 50)
+#     imagepredictions , searchtime = ORB_SEARCH(mydata1, q_path, 1000,0.75, 50)
 #     a = accuracy.accuracy_matches(q_path, imagepredictions, 50)
 #     accStats = accStats.append({ 'file': q_path, 'Acc': a, 'PCount': len(imagepredictions) } , ignore_index=True)
 
@@ -278,14 +360,14 @@ def ORB_SEARCH_MODBF(feature, queryimagepath, ORB_features_limit=100, lowe_ratio
 # plt.show()
 
 
-# sift_score = pd.DataFrame (columns=['score'])
+# ORB_score = pd.DataFrame (columns=['score'])
 # for key in mylist:
 #     b, a = key
-#     sift_score = sift_score.append(
+#     ORB_score = ORB_score.append(
 #         {
 #             'score' : b
 #         }, ignore_index=True
 #     )
 
-# sift_score.plot()
+# ORB_score.plot()
 # plt.show()

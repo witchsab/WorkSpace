@@ -111,12 +111,24 @@ HybridAlgoList = ['whash', 'ahash']
 savefile = 'data/' + TESTNAME + '_HASH_Hybrid_Tree_' + str(('_').join (HybridAlgoList)) 
 myHybridtree = ImageSearch_Algo_Hash.HASH_CREATE_HYBRIDTREE(mydataHASH, savefile, HybridAlgoList)
 
-# SIFT Tree 
+
+# SIFT FV Tree and Cluster
 n_clusters = 500
 savefile = 'data/' + TESTNAME + '_SIFT_Tree_Cluster' + str(n_clusters)
 SIFTtree, SIFTmodel = ImageSearch_Algo_SIFT.SIFT_CREATE_TREE_MODEL(mydataSIFT, savefile, n_clusters)
 
-# ORB Tree
 
+# ORB FV Tree and Cluster 
+ORB_features_limit = 200
+lowe_ratio = 0.75
+predictions_count = 50
+n_clusters = 500
+savefile = 'data/' + TESTNAME + '_ORB_Tree_Cluster' + str(n_clusters)
+ORBtree, ORBmodel = ImageSearch_Algo_ORB.ORB_CREATE_TREE_MODEL(mydataORB, savefile, n_clusters)
 
+# ----------- GENERATE ALL CLUSTERS  ------------ #
+
+knee = ImageSearch_Algo_RGB.RGB_ANALYZE_CLUSTER(mydataRGB, len(mydataRGB.index), int(len(mydataRGB.index)/20))
+
+knee2 = ImageSearch_Algo_HSV.HSV_ANALYZE_CLUSTER (mydataHSV,  len(mydataRGB.index), int(len(mydataRGB.index)/20))
 

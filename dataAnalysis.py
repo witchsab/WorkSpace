@@ -81,6 +81,21 @@ print('Count', cnt, ' | position', pos)
 
 # ------ End Alternative
 
+# HSV Clusters 
+n_clusters = 50 
+savefile = 'data/' + 'test' + '_HSV_Cluster' + str(n_clusters)
+cluster = ImageSearch_Algo_HSV.HSV_CREATE_CLUSTER (mydataHSV, savefile, n_clusters)
+md = ImageSearch_Algo_HSV.HSV_RUN_CLUSTER(cluster, mydataHSV)
+md.sort_values('file')[['file', 'clusterID']]
+
+
+# RGB Clusters 
+n_clusters = 50 
+savefile = 'data/' + 'test' + '_RGB_Cluster' + str(n_clusters)
+cluster = ImageSearch_Algo_RGB.RGB_CREATE_CLUSTER (mydataRGB, savefile, n_clusters)
+md = ImageSearch_Algo_RGB.RGB_RUN_CLUSTER(cluster, mydataRGB)
+md.sort_values('file')[['file', 'clusterID']]
+
 
 # plot results
 myplots.plot_predictions(imagematches[:20], q_path)
@@ -378,27 +393,74 @@ print("ORB Feature Generation time :", mytime1)
 # THE SEARCH ---------
 
 q_path = random.sample(imagepaths, 1)[0]
-
-# FLANN Macher (slower)
-# imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_FLANN(mydataORB, q_path, ORB_features_limit , 0.7, 50 )
-
-# BF Macher (faster)
-imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_BF (mydataORB, q_path, ORB_features_limit , 0.7, 50 )
-
-print (" ORB Search time :", searchtime)
 print(q_path)
 
-# # to reload module: uncomment use the following
-# %load_ext autoreload
-# %autoreload 2
+# FLANN Macher (fastest) (non repeatable)
+imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_FLANN(mydataORB, q_path, ORB_features_limit , 0.7, 50 )
+print (" ORB Search time :", searchtime)
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
 
+# BF Macher (slowest)
+imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_BF (mydataORB, q_path, ORB_features_limit , 0.7, 50 )
+print (" ORB Search time :", searchtime)
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
 
+# Modified BF matcher (faster)
+imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_MODBF (mydataORB, q_path, ORB_features_limit , 0.7, 50 )
+print (" ORB Search time :", searchtime)
 a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
 print('Accuracy =',  a, '%', '| Quality:', q)
 print('Count', cnt, ' | position', pos)
 
 # plot the results 
 # myplots.plot_predictions(imagematches[:20], q_path)
+
+
+# ----- Alternative tree search code [Optimized search time ]
+
+# test ORB TREE SEARCH code
+ORB_features_limit = 200
+lowe_ratio = 0.75
+predictions_count = 50
+n_clusters = 500
+savefile = 'data/' + TESTNAME + '_ORB_Tree_Cluster' + str(n_clusters)
+ORBtree, ORBmodel = ImageSearch_Algo_ORB.ORB_CREATE_TREE_MODEL(mydataORB, savefile, n_clusters)
+
+# to load an existing tree
+thistree, thismodel = ImageSearch_Algo_ORB.ORB_Load_Tree_Model (savefile)
+
+# sample 1 image 
+q_path = random.sample(imagepaths, 1)[0]
+
+# Run Tree Search 
+imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_TREE(q_path, thismodel, thistree, mydataORB, returnCount=100, kp=ORB_features_limit)
+print('ORB Tree Search time', searchtime)
+
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
+
+# FLANN-LSH Macher (fastest) (non repeatable)
+imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_FLANN(mydataORB, q_path, ORB_features_limit , 0.7, 50 )
+print ("ORB FLANN-LSH Search time :", searchtime)
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
+
+# BF Macher (slowest)
+imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_BF (mydataORB, q_path, ORB_features_limit , 0.7, 50 )
+print ("ORB BF Search time :", searchtime)
+a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+print('Accuracy =',  a, '%', '| Quality:', q)
+print('Count', cnt, ' | position', pos)
+
+# ----- END Alternative 
+
+
 
 
 # compiled run over 100 samples 

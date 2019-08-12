@@ -15,10 +15,11 @@ import pickle
 import random
 import time
 from pprint import pprint
-import numpy as np
+
 import cv2
 import imagehash
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import PIL
 from imutils import paths

@@ -189,12 +189,54 @@ X = XA.reshape ((nsamples, nx*ny*nz)) # gives a 2 D matice (sample, value) which
 # Tree Fit 
 RGBtree = KDTree( X, metric='manhattan')
 
-
 # search : 
 ft = ImageSearch_Algo_RGB.RGB_FEATURE (q_path) 
 nx, ny, nz = ft.shape  # know the shape before you flatten
 F = ft.reshape ((1, nx*ny*nz)) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 scores, ind = RGBtree.query(F, k=50)
+print (ind)
+
+# Cluster ID generations w/ KMEANS
+YD = list(mydataHSV['imagehist'])
+X = np.asarray(YD)
+HSVCluster = KMeans(n_clusters=33)
+HSVCluster.fit(X)
+# predict and generate cluster labels/IDs
+HSVCluster.predict(X)
+labels = HSVCluster.labels_
+# print (labels)
+
+# update cluster labels/IDs to original dataframe
+mydataHSV['clusterID'] = pd.DataFrame(labels)
+
+# show Cluster IDs
+mydataHSV.sort_values('file')[['file', 'clusterID']]
+
+
+# Cluster generation with DB SCAN 
+from sklearn.cluster import DBSCAN 
+db = DBSCAN(eps=0.3, min_samples=10).fit(X) 
+core_samples_mask = np.zeros_like(db.labels_, dtype=bool) 
+core_samples_mask[db.core_sample_indices_] = True
+labels = db.labels_ 
+# Number of clusters in labels, ignoring noise if present. 
+n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0) 
+mydataHSV['DBID'] = pd.DataFrame(labels)
+mydataHSV.sort_values('file')[['file', 'clusterID', 'DBID']]
+
+
+from sklearn.cluster import DBSCAN
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+# cluster the data into five clusters
+dbscan = DBSCAN(eps=40, min_samples = 2)
+dbscan.fit_predict(X_scaled)
+
+
+
+
+
 
 
 # --------------------  Clustering  HSV ---------------------

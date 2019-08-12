@@ -1,11 +1,17 @@
-import numpy as np
+# HSV Functions
+
+import os
+import pickle
+import time
+
 import cv2
 import imutils
-import pandas as pd 
-import time
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from kneed import KneeLocator
+from sklearn.cluster import KMeans
 from sklearn.neighbors import KDTree
-import os 
-import pickle
 
 
 def HSV_GEN (listOfImagePaths): 
@@ -94,6 +100,77 @@ def HSV_Load_Tree ( openfile='testHSV'  ) :
     infile.close()
 
     return HSVTree
+
+
+def HSV_CREATE_CLUSTER ( mydataHSV, savefile='testHSVcluster', n_clusters=50 ) : 
+    
+    YD = list(mydataHSV['imagehist'])
+    X = np.asarray(YD)
+
+    HSVCluster = KMeans(n_clusters=n_clusters)
+    HSVCluster.fit(X)
+    # HSVCluster.predict(X)
+    # labels = HSVCluster.labels_
+    # # print (labels)
+
+    # # update labels to original dataframe
+    # mydataHSV['clusterID'] = pd.DataFrame(labels)
+    
+    # save the tree #example # treeName = 'testHSV.pickle'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump(HSVCluster,outfile)
+
+    return HSVCluster
+
+def HSV_RUN_CLUSTER ( HSVCluster, mydataHSV ) : 
+    YD = list(mydataHSV['imagehist'])
+    X = np.asarray(YD)
+    HSVCluster.predict(X)
+    labels = HSVCluster.labels_
+    # print (labels)
+
+    # update labels to original dataframe
+    mydataHSV['clusterID'] = pd.DataFrame(labels)
+
+    return mydataHSV
+    
+
+def HSV_ANALYZE_CLUSTER (mydataHSV, n_clusters=200, step=10) :  
+    print ('n_clusters:', n_clusters, '| step:',  step)
+    YD = list(mydataHSV['imagehist'])
+    X = np.asarray(YD)
+    
+    # Calculate clusters using Elbow criteria 
+    wcss = []
+    for i in range(1, n_clusters, step ):
+        kmeans = KMeans(n_clusters = i, init = 'k-means++', random_state = 42)
+        kmeans.fit(X)
+        wcss.append(kmeans.inertia_)
+    
+    plt.plot(range(1, n_clusters, step), wcss)
+    # plt.plot(range(1, 11), elbowIndex)
+    plt.title('The Elbow Method')
+    plt.xlabel('Number of clusters')
+    plt.ylabel('WCSS')
+    plt.show()
+    
+    # find elbow using Kneelocator package 
+    # https://github.com/arvkevi/kneed#find-knee
+    
+    elbow = KneeLocator( list(range(1,n_clusters, step)), wcss, S=1.0, curve='convex', direction='decreasing')
+    print ('Detected Elbow cluster value :', elbow.knee)
+
+    return elbow.knee
+
+
+def HSV_LOAD_CLUSTER ( openfile='testHSVcluster'  ) : 
+    
+    # reading the pickle tree
+    infile = open(openfile + '.pickle','rb')
+    HSVCluster = pickle.load(infile)
+    infile.close()
+
+    return HSVCluster
 
 
 '''

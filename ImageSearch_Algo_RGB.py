@@ -2,20 +2,22 @@
 
 #--------RGB functional form---------------------#
 
-import PIL
-from PIL import Image
-import imagehash
 import os
-import cv2
-import time
-from imutils import paths
-import matplotlib.pyplot as plt
-import pandas as pd 
-import numpy as np
-import random
-from sklearn.neighbors import KDTree
-import os 
 import pickle
+import random
+import time
+
+import cv2
+import imagehash
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import PIL
+from imutils import paths
+from kneed import KneeLocator
+from PIL import Image
+from sklearn.cluster import KMeans
+from sklearn.neighbors import KDTree
 
 
 #-----------Training Images RGB Hist GENERRATION----------#
@@ -109,6 +111,83 @@ def RGB_Load_Tree ( openfile='testRGB'  ) :
 
     return RGBTree
 
+def RGB_CREATE_CLUSTER ( mydataRGB, savefile='testRGBcluster', n_clusters=50 ) : 
+    
+    # for feature vector matrices from features daataframe 
+    XD = list(mydataRGB['imagehist'])
+    XA = np.asarray(XD)
+    nsamples, nx, ny, nz = XA.shape  # know the shape before you flatten
+    X = XA.reshape ((nsamples, nx*ny*nz)) # gives a 2 D 
+
+    RGBCluster = KMeans(n_clusters=n_clusters)
+    RGBCluster.fit(X)
+    # RGBCluster.predict(X)
+    # labels = RGBCluster.labels_
+    # # print (labels)
+
+    # # update labels to original dataframe
+    # mydataRGB['clusterID'] = pd.DataFrame(labels)
+    
+    # save the tree #example # treeName = 'testRGB.pickle'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump(RGBCluster,outfile)
+
+    return RGBCluster
+
+def RGB_RUN_CLUSTER ( RGBCluster, mydataRGB ) : 
+    XD = list(mydataRGB['imagehist'])
+    XA = np.asarray(XD)
+    nsamples, nx, ny, nz = XA.shape  # know the shape before you flatten
+    X = XA.reshape ((nsamples, nx*ny*nz)) # gives a 2 D 
+
+    RGBCluster.predict(X)
+    labels = RGBCluster.labels_
+    # print (labels)
+
+    # update labels to original dataframe
+    mydataRGB['clusterID'] = pd.DataFrame(labels)
+
+    return mydataRGB
+
+
+def RGB_ANALYZE_CLUSTER (mydataRGB, n_clusters=200, step=10) : 
+    print ('n_clusters:', n_clusters, '| step:',  step)
+    XD = list(mydataRGB['imagehist'])
+    XA = np.asarray(XD)
+    nsamples, nx, ny, nz = XA.shape  # know the shape before you flatten
+    X = XA.reshape ((nsamples, nx*ny*nz)) # gives a 2 D 
+    
+    # Calculate clusters using Elbow criteria 
+    wcss = []
+    for i in range(1, n_clusters, step ):
+        kmeans = KMeans(n_clusters = i, init = 'k-means++', random_state = 42)
+        kmeans.fit(X)
+        wcss.append(kmeans.inertia_)
+    
+    plt.plot(range(1, n_clusters, step), wcss)
+    # plt.plot(range(1, 11), elbowIndex)
+    plt.title('The Elbow Method')
+    plt.xlabel('Number of clusters')
+    plt.ylabel('WCSS')
+    plt.show()
+    
+    # find elbow using Kneelocator package 
+    # https://github.com/arvkevi/kneed#find-knee
+    
+    elbow = KneeLocator( list(range(1,n_clusters, step)), wcss, S=1.0, curve='convex', direction='decreasing')
+    print ('Detected Elbow cluster value :', elbow.knee)
+
+    return elbow.knee
+
+
+def RGB_LOAD_CLUSTER ( openfile='testRGBcluster'  ) : 
+    
+    # reading the pickle tree
+    infile = open(openfile + '.pickle','rb')
+    RGBCluster = pickle.load(infile)
+    infile.close()
+
+    return RGBCluster
 
 '''
 Params: 
