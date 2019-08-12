@@ -190,3 +190,29 @@ def accuracy_toplist(q_path, imagelist, window):
     # print (searchlist)
 
     return (acc, metricValue, sorted_position, len(sorted_position) )
+
+
+
+
+
+def accuracy_groundtruth(q_path):
+
+    
+    queryfilename = os.path.basename(q_path)
+    # print (queryfilename)
+
+    filenumber = int(queryfilename.split('.')[0].split('ukbench')[1])
+    fileext = queryfilename.split('.')[1]
+
+    start = filenumber - filenumber%4
+
+    #init a list of match file names
+
+    familyfilename = []
+
+    for i in range(start, start+4):
+        familyfilename.append(os.path.dirname(q_path) +'/ukbench'+ str(i).zfill(5)+ '.' + fileext)
+
+    # print(familyfilename)
+ 
+    return familyfilename

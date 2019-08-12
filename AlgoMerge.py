@@ -48,13 +48,14 @@ mytreeRGB = ImageSearch_Algo_RGB.RGB_Create_Tree (mydataRGB, savefile='RGB_Tree'
 
 # q_paths = random.sample(imagepaths, 5)  # random sample 100 items in list
 
-q_paths = imagepaths  
+# q_paths = imagepaths  
 
 # q_paths = ['./imagesbooks/ukbench05960.jpg']  #,'./imagesbooks/ukbench00459.jpg', './imagesbooks/ukbench06010.jpg', './imagesbooks/ukbench06104.jpg', './imagesbooks/ukbench00458.jpg']
 # q_paths = ['./imagesbooks/ukbench05960.jpg', './imagesbooks/ukbench00459.jpg', './imagesbooks/ukbench06010.jpg', './imagesbooks/ukbench06104.jpg', './imagesbooks/ukbench00458.jpg', './imagesbooks/ukbench00248.jpg', './imagesbooks/ukbench06408.jpg', './imagesbooks/ukbench00303.jpg', './imagesbooks/ukbench03124.jpg', './imagesbooks/ukbench05776.jpg', './imagesbooks/ukbench06113.jpg', './imagesbooks/ukbench05964.jpg', './imagesbooks/ukbench10164.jpg', './imagesbooks/ukbench02750.jpg', './imagesbooks/ukbench05951.jpg', './imagesbooks/ukbench05983.jpg', './imagesbooks/ukbench03867.jpg', './imagesbooks/ukbench05883.jpg', './imagesbooks/ukbench06049.jpg', './imagesbooks/ukbench06017.jpg', './imagesbooks/ukbench06150.jpg', './imagesbooks/ukbench06151.jpg', './imagesbooks/ukbench02749.jpg', './imagesbooks/ukbench02721.jpg', './imagesbooks/ukbench05879.jpg', './imagesbooks/ukbench06148.jpg', './imagesbooks/ukbench05880.jpg', './imagesbooks/ukbench05929.jpg', './imagesbooks/ukbench06048.jpg', './imagesbooks/ukbench08544.jpg', './imagesbooks/ukbench03058.jpg', './imagesbooks/ukbench10154.jpg', './imagesbooks/ukbench00000.jpg', './imagesbooks/ukbench05972.jpg', './imagesbooks/ukbench05872.jpg', './imagesbooks/ukbench08542.jpg', './imagesbooks/ukbench06004.jpg', './imagesbooks/ukbench05993.jpg', './imagesbooks/ukbench05988.jpg', './imagesbooks/ukbench00483.jpg', './imagesbooks/ukbench08546.jpg', './imagesbooks/ukbench06539.jpg', './imagesbooks/ukbench02748.jpg', './imagesbooks/ukbench05980.jpg', './imagesbooks/ukbench08001.jpg', './imagesbooks/ukbench03890.jpg', './imagesbooks/ukbench03059.jpg', './imagesbooks/ukbench10081.jpg', './imagesbooks/ukbench06519.jpg', './imagesbooks/ukbench05787.jpg']
 
 # q_paths = ["./imagesbooks/ukbench00196.jpg",  "./imagesbooks/ukbench00199.jpg",  "./imagesbooks/ukbench00296.jpg",  "./imagesbooks/ukbench00298.jpg",  "./imagesbooks/ukbench00299.jpg",  "./imagesbooks/ukbench00300.jpg",  "./imagesbooks/ukbench00302.jpg",  "./imagesbooks/ukbench00303.jpg",  "./imagesbooks/ukbench02730.jpg",  "./imagesbooks/ukbench02740.jpg",  "./imagesbooks/ukbench02743.jpg",  "./imagesbooks/ukbench05608.jpg",  "./imagesbooks/ukbench05932.jpg",  "./imagesbooks/ukbench05933.jpg",  "./imagesbooks/ukbench05934.jpg",  "./imagesbooks/ukbench05935.jpg",  "./imagesbooks/ukbench05952.jpg",  "./imagesbooks/ukbench05953.jpg",  "./imagesbooks/ukbench05954.jpg",  "./imagesbooks/ukbench05955.jpg",  "./imagesbooks/ukbench05956.jpg",  "./imagesbooks/ukbench05957.jpg",  "./imagesbooks/ukbench05958.jpg",  "./imagesbooks/ukbench05959.jpg",  "./imagesbooks/ukbench06148.jpg",  "./imagesbooks/ukbench06149.jpg",  "./imagesbooks/ukbench06150.jpg",  "./imagesbooks/ukbench06151.jpg",  "./imagesbooks/ukbench06558.jpg",  "./imagesbooks/ukbench06559.jpg",  "./imagesbooks/ukbench07285.jpg",  "./imagesbooks/ukbench07588.jpg",  "./imagesbooks/ukbench07589.jpg",  "./imagesbooks/ukbench07590.jpg",  "./imagesbooks/ukbench08540.jpg",  "./imagesbooks/ukbench08542.jpg",  "./imagesbooks/ukbench08592.jpg", "./imagesbooks/ukbench08594.jpg","./imagesbooks/ukbench08595.jpg","./imagesbooks/ukbench08609.jpg","./imagesbooks/ukbench09364.jpg","./imagesbooks/ukbench09365.jpg","./imagesbooks/ukbench09366.jpg","./imagesbooks/ukbench10061.jpg","./imagesbooks/ukbench10065.jpg","./imagesbooks/ukbench10066.jpg","./imagesbooks/ukbench10085.jpg","./imagesbooks/ukbench10087.jpg","./imagesbooks/ukbench10108.jpg","./imagesbooks/ukbench10109.jpg","./imagesbooks/ukbench10110.jpg","./imagesbooks/ukbench10112.jpg","./imagesbooks/ukbench10113.jpg","./imagesbooks/ukbench10114.jpg","./imagesbooks/ukbench10116.jpg","./imagesbooks/ukbench10118.jpg","./imagesbooks/ukbench10119.jpg","./imagesbooks/ukbench10124.jpg","./imagesbooks/ukbench10125.jpg","./imagesbooks/ukbench10126.jpg","./imagesbooks/ukbench10128.jpg","./imagesbooks/ukbench10129.jpg","./imagesbooks/ukbench10130.jpg","./imagesbooks/ukbench10131.jpg","./imagesbooks/ukbench10152.jpg","./imagesbooks/ukbench10153.jpg","./imagesbooks/ukbench10154.jpg","./imagesbooks/ukbench10164.jpg","./imagesbooks/ukbench10165.jpg","./imagesbooks/ukbench10166.jpg","./imagesbooks/ukbench10167.jpg"]
 
+q_paths = ["./imagesbooks/ukbench00196.jpg"]
 
 accStatsmerge = pd.DataFrame(columns=['file'])
 matcheshsv = []
@@ -164,6 +165,11 @@ for q_path in q_paths:
 # print ("Mean Acc = ", accStatsmerge['hsv' + '_predict20'].mean())
 
 accStatsmerge.to_csv('accStatsmergetestmerge519.csv')
+
+
+
+
+
 
 
 
