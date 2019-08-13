@@ -23,8 +23,9 @@ import numpy as np
 import pandas as pd
 import PIL
 from imutils import paths
+from kneed import KneeLocator
 from PIL import Image
-from sklearn.cluster import MiniBatchKMeans
+from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.neighbors import KDTree
 
 # IMGDIR = "./imagesbooks/"
@@ -202,21 +203,64 @@ def SIFT_CREATE_TREE_MODEL ( mydataSIFT, savefile='testSIFTtree', n_clusters=500
 
     # save the tuple (model, tree)
     outfile = open (savefile + '.pickle', 'wb')
-    pickle.dump( (SIFTtree , cluster_model) ,outfile)
+    pickle.dump( (SIFTtree , cluster_model, img_bow_hist) ,outfile)
 
     print ('Saved (Tree, Model) as ', outfile)
 
-    return ( SIFTtree , cluster_model)
+    return ( SIFTtree , cluster_model, img_bow_hist)
 
 
 def SIFT_Load_Tree_Model ( openfile='testSIFTtree' ) : 
     
     # reading the pickle tree
     infile = open(openfile + '.pickle','rb')
-    SIFTtree, cluster_model = pickle.load(infile)
+    SIFTtree, cluster_model, img_bow_hist = pickle.load(infile)
     infile.close()
 
     return SIFTtree , cluster_model
+
+
+'''
+Creates Cluster from FVHistograms and returns ID
+'''
+def SIFT_RUN_CLUSTER ( img_bow_hist, mydataSIFT, n_clusters ) : 
+    SIFTCluster = KMeans(n_clusters=n_clusters)
+    SIFTCluster.fit(img_bow_hist)
+    SIFTCluster.predict(img_bow_hist)
+    labels = SIFTCluster.labels_
+    # print (labels)
+
+    # update labels to original dataframe
+    mydataSIFT['clusterID'] = pd.DataFrame(labels)
+
+    return mydataSIFT
+
+
+def SIFT_ANALYZE_CLUSTER (img_bow_hist, n_clusters=200, step=10) :  
+    print ('n_clusters:', n_clusters, '| step:',  step)
+    
+    X = img_bow_hist
+    # Calculate clusters using Elbow criteria 
+    wcss = []
+    for i in range(1, n_clusters, step ):
+        kmeans = KMeans(n_clusters = i, init = 'k-means++', random_state = 42)
+        kmeans.fit(X)
+        wcss.append(kmeans.inertia_)
+    
+    plt.plot(range(1, n_clusters, step), wcss)
+    # plt.plot(range(1, 11), elbowIndex)
+    plt.title('The Elbow Method')
+    plt.xlabel('Number of clusters')
+    plt.ylabel('WCSS')
+    plt.show()
+    
+    # find elbow using Kneelocator package 
+    # https://github.com/arvkevi/kneed#find-knee
+    
+    elbow = KneeLocator( list(range(1,n_clusters, step)), wcss, S=1.0, curve='convex', direction='decreasing')
+    print ('Detected Elbow cluster value :', elbow.knee)
+
+    return elbow.knee
 
 
 def SIFT_SEARCH_TREE (q_path, cluster_model, SIFTtree, mydataSIFT, returnCount=100, kp=100) : 

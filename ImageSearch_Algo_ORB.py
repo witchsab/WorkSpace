@@ -1,8 +1,8 @@
 '''
-SIFT, SURF, SIFT are patented and no longer available opencv 4.0 
+ORB, SURF, ORB are patented and no longer available opencv 4.0 
 install last opensource version 
 
-Ref: https://stackoverflow.com/questions/52305578/SIFT-cv2-xfeatures2d-SIFT-create-not-working-even-though-have-contrib-instal/52514095
+Ref: https://stackoverflow.com/questions/52305578/ORB-cv2-xfeatures2d-ORB-create-not-working-even-though-have-contrib-instal/52514095
 
 pip install opencv-python==3.4.2.16
 pip install opencv-contrib-python==3.4.2.16
@@ -23,8 +23,9 @@ import numpy as np
 import pandas as pd
 import PIL
 from imutils import paths
+from kneed import KneeLocator
 from PIL import Image
-from sklearn.cluster import MiniBatchKMeans
+from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.neighbors import KDTree
 
 # IMGDIR = "./imagesbooks/"
@@ -252,7 +253,7 @@ def ORB_CREATE_TREE_MODEL ( mydataORB, savefile='testORBtree', n_clusters=500 ) 
 
     print ('Saved (Tree, Model) as ', outfile)
 
-    return ( ORBtree , cluster_model)
+    return ( ORBtree , cluster_model, img_bow_hist)
 
 
 def ORB_Load_Tree_Model ( openfile='testORBtree' ) : 
@@ -263,6 +264,52 @@ def ORB_Load_Tree_Model ( openfile='testORBtree' ) :
     infile.close()
 
     return ORBtree , cluster_model
+
+
+
+
+'''
+Creates Cluster from FVHistograms and returns ID
+'''
+def ORB_RUN_CLUSTER ( img_bow_hist, mydataORB, n_clusters ) : 
+    ORBCluster = KMeans(n_clusters=n_clusters)
+    ORBCluster.fit(img_bow_hist)
+    ORBCluster.predict(img_bow_hist)
+    labels = ORBCluster.labels_
+    # print (labels)
+
+    # update labels to original dataframe
+    mydataORB['clusterID'] = pd.DataFrame(labels)
+
+    return mydataORB
+
+
+def ORB_ANALYZE_CLUSTER (img_bow_hist, n_clusters=200, step=10) :  
+    print ('n_clusters:', n_clusters, '| step:',  step)
+    
+    X = img_bow_hist
+    # Calculate clusters using Elbow criteria 
+    wcss = []
+    for i in range(1, n_clusters, step ):
+        kmeans = KMeans(n_clusters = i, init = 'k-means++', random_state = 42)
+        kmeans.fit(X)
+        wcss.append(kmeans.inertia_)
+    
+    plt.plot(range(1, n_clusters, step), wcss)
+    # plt.plot(range(1, 11), elbowIndex)
+    plt.title('The Elbow Method')
+    plt.xlabel('Number of clusters')
+    plt.ylabel('WCSS')
+    plt.show()
+    
+    # find elbow using Kneelocator package 
+    # https://github.com/arvkevi/kneed#find-knee
+    
+    elbow = KneeLocator( list(range(1,n_clusters, step)), wcss, S=1.0, curve='convex', direction='decreasing')
+    print ('Detected Elbow cluster value :', elbow.knee)
+
+    return elbow.knee
+
 
 
 def ORB_SEARCH_TREE (q_path, cluster_model, ORBtree, mydataORB, returnCount=100, kp=100) : 

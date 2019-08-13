@@ -16,13 +16,13 @@ import ImageSearch_Algo_SIFT
 import ImageSearch_Plots as myplots
 
 # # --------------- Reload modules on : 
-# %load_ext autoreload
-# %autoreload 2
+%load_ext autoreload
+%autoreload 2
 
 # --------------- VAR COMMONS------------------
 
-# IMGDIR = r'./imagesbooks/'
-IMGDIR = r"V:\\Download\\imagesbooks\\"
+IMGDIR = r'./imagesbooks/'
+# IMGDIR = r"V:\\Download\\imagesbooks\\"
 # IMGDIRPROCESSED = ['']*5
 # IMGDIRPROCESSED[0] = r"V:\\Download\\imagesbooks1\\"
 # IMGDIRPROCESSED[1] = r"V:\\Download\\imagesbooks2\\"
@@ -95,7 +95,7 @@ print ("## Feature Generation Complete.")
 
 # RGB TREE
 savefile = 'data/' + TESTNAME + '_RGB_Tree'
-myHSVtree = ImageSearch_Algo_RGB.RGB_Create_Tree(mydataRGB, savefile=savefile)
+myRGBtree = ImageSearch_Algo_RGB.RGB_Create_Tree(mydataRGB, savefile=savefile)
 
 # HSV TREE
 savefile = 'data/' + TESTNAME + '_HSV_Tree'
@@ -107,7 +107,6 @@ for algo in AlgoGenList :
     savefile = 'data/' + TESTNAME + '_HASH_Tree_' + str(algo) 
     myHASHTree = ImageSearch_Algo_Hash.HASH_Create_Tree(mydataHASH, savefile=savefile)
 
-
 # HASH TREE USE HYBRID HASH 
 HybridAlgoList = ['whash', 'ahash']
 savefile = 'data/' + TESTNAME + '_HASH_Hybrid_Tree_' + str(('_').join (HybridAlgoList)) 
@@ -117,14 +116,14 @@ myHybridtree = ImageSearch_Algo_Hash.HASH_CREATE_HYBRIDTREE(mydataHASH, savefile
 # SIFT FV Tree and Cluster
 n_clusters = 500
 savefile = 'data/' + TESTNAME + '_SIFT_Tree_Cluster' + str(n_clusters)
-SIFTtree, SIFTmodel = ImageSearch_Algo_SIFT.SIFT_CREATE_TREE_MODEL(mydataSIFT, savefile, n_clusters)
+SIFTtree, SIFTmodel, SIFTFVHist = ImageSearch_Algo_SIFT.SIFT_CREATE_TREE_MODEL(mydataSIFT, savefile, n_clusters)
 
 
 # ORB FV Tree and Cluster 
 ORB_features_limit = 200
 n_clusters = 500
 savefile = 'data/' + TESTNAME + '_ORB_Tree_Cluster' + str(n_clusters)
-ORBtree, ORBmodel = ImageSearch_Algo_ORB.ORB_CREATE_TREE_MODEL(mydataORB, savefile, n_clusters)
+ORBtree, ORBmodel, ORBFVHist = ImageSearch_Algo_ORB.ORB_CREATE_TREE_MODEL(mydataORB, savefile, n_clusters)
 
 print ("## Tree Generation Complete.")
 
@@ -135,3 +134,41 @@ print ("## Tree Generation Complete.")
 
 # # determine n_cluster HSV -> elbow method 
 # kneeHSV = ImageSearch_Algo_HSV.HSV_ANALYZE_CLUSTER (mydataHSV,  len(mydataHSV.index), int(len(mydataHSV.index)/20))
+
+# ----
+
+
+# determine RBG Cluster Size 
+# kneeRGB = ImageSearch_Algo_RGB.RGB_ANALYZE_CLUSTER (mydataRGB, 100, 5)
+# create RGB Cluster 
+savefile = 'data/' + 'test' + '_RGB_Cluster' + str(kneeRGB)
+RGBClusterModel = ImageSearch_Algo_RGB.RGB_CREATE_CLUSTER (mydataRGB, savefile, n_clusters=150)
+RGBClusterTable = ImageSearch_Algo_RGB.RGB_RUN_CLUSTER(RGBClusterModel, mydataRGB)
+RGBClusterTable.sort_values('file')[['file', 'clusterID']]
+
+
+# determine HSV Cluster Size 
+# kneeHSV = ImageSearch_Algo_HSV.HSV_ANALYZE_CLUSTER (mydataHSV, 100, 5)
+savefile = 'data/' + 'test' + '_HSV_Cluster' + str(kneeHSV)
+# create RGB Cluster 
+HSVClusterModel = ImageSearch_Algo_HSV.HSV_CREATE_CLUSTER (mydataHSV, savefile, n_clusters=200)
+HSVClusterTable = ImageSearch_Algo_HSV.HSV_RUN_CLUSTER(HSVClusterModel, mydataHSV)
+# HSVClusterTable.sort_values('file')[['file', 'clusterID']]
+
+
+# determine SIFT FVHist Cluster Size 
+# kneeSIFT = ImageSearch_Algo_SIFT.SIFT_ANALYZE_CLUSTER(FVHist, 500, 10)
+# create SIFT Cluster 
+savefile = 'data/' + 'test' + '_SIFT_Cluster' + str(kneeSIFT)
+# SIFTClusterModel = ImageSearch_Algo_SIFT.SIFT_CREATE_CLUSTER (mydataSIFT, savefile, n_clusters=kneeSIFT)
+SIFTClusterTable = ImageSearch_Algo_SIFT.SIFT_RUN_CLUSTER (SIFTFVHist, mydataSIFT, n_clusters=115)
+# SIFTClusterTable.sort_values('file')[['file', 'clusterID']]
+
+
+# determine ORB FVHist Cluster Size 
+# kneeORB = ImageSearch_Algo_ORB.ORB_ANALYZE_CLUSTER(FVHist, 500, 10)
+# create ORB Cluster 
+savefile = 'data/' + 'test' + '_ORB_Cluster' + str(kneeORB)
+# ORBClusterModel = ImageSearch_Algo_ORB.ORB_CREATE_CLUSTER (mydataORB, savefile, n_clusters=kneeORB)
+ORBClusterTable = ImageSearch_Algo_ORB.ORB_RUN_CLUSTER (ORBFVHist, mydataORB, n_clusters=50)
+ORBClusterTable.sort_values('file')[['file', 'clusterID']]

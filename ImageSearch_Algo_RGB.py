@@ -111,7 +111,7 @@ def RGB_Load_Tree ( openfile='testRGB'  ) :
 
     return RGBTree
 
-def RGB_CREATE_CLUSTER ( mydataRGB, savefile='testRGBcluster', n_clusters=50 ) : 
+def RGB_CREATE_CLUSTER ( mydataRGB, savefile='testRGBcluster', n_clusters=50) : 
     
     # for feature vector matrices from features daataframe 
     XD = list(mydataRGB['imagehist'])
@@ -120,6 +120,7 @@ def RGB_CREATE_CLUSTER ( mydataRGB, savefile='testRGBcluster', n_clusters=50 ) :
     X = XA.reshape ((nsamples, nx*ny*nz)) # gives a 2 D 
 
     RGBCluster = KMeans(n_clusters=n_clusters)
+    # RGBCluster = KMeans()
     RGBCluster.fit(X)
     # RGBCluster.predict(X)
     # labels = RGBCluster.labels_
