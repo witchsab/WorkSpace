@@ -194,6 +194,10 @@ def HASH_CREATE_HYBRIDTREE ( mydataHASH, savefile='testHash', hashAlgoList=['wha
 
     HybridHASHTree = KDTree( F ,  metric='euclidean')
 
+    # save the tree #example # treeName = 'testHash.pickle'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump(HybridHASHTree,outfile)
+
     return HybridHASHTree
 
 

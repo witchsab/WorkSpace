@@ -177,6 +177,8 @@ def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio
     # Search End
 
 
+# SIFT TREE GENERATION and SEARCH using BOVW histograms method 
+
 def SIFT_CREATE_TREE_MODEL ( mydataSIFT, savefile='testSIFTtree', n_clusters=500 ) : 
 
     print ("Generating SIFT Clusters BOvW and SIFTtree")
@@ -220,6 +222,34 @@ def SIFT_Load_Tree_Model ( openfile='testSIFTtree' ) :
     return SIFTtree , cluster_model
 
 
+
+def SIFT_SEARCH_TREE (q_path, cluster_model, SIFTtree, mydataSIFT, returnCount=100, kp=100) : 
+    # print ("searching Tree.")
+    # # sample a image
+    # q_path = random.sample(imagepaths, 1)[0]
+    # print (q_path)
+    # log time 
+    start = time.time()
+    # get the feature for this image 
+    q_kp, q_des = FEATURE (q_path , kp)
+    # get bow cluster
+    q_clustered_words = cluster_model.predict(q_des) 
+    # get FV histogram  
+    q_bow_hist = np.array([np.bincount(q_clustered_words, minlength=cluster_model.n_clusters)])
+    # search the KDTree for nearest match
+    dist, result = SIFTtree.query(q_bow_hist, k=returnCount)
+    t= time.time() - start
+    # Zip results to list of tuples 
+    flist = list (mydataSIFT.iloc[ result[0].tolist()]['file'])
+    slist = list (dist[0])
+    matches = tuple(zip( slist, flist)) # create a list of tuples frm 2 lists
+
+    return (matches, t)
+
+
+# Clustering codes (Advanced Use Only)
+
+
 '''
 Creates Cluster from FVHistograms and returns ID
 '''
@@ -261,32 +291,6 @@ def SIFT_ANALYZE_CLUSTER (img_bow_hist, n_clusters=200, step=10) :
     print ('Detected Elbow cluster value :', elbow.knee)
 
     return elbow.knee
-
-
-def SIFT_SEARCH_TREE (q_path, cluster_model, SIFTtree, mydataSIFT, returnCount=100, kp=100) : 
-    print ("searching Tree.")
-    # # sample a image
-    # q_path = random.sample(imagepaths, 1)[0]
-    # print (q_path)
-    # log time 
-    start = time.time()
-    # get the feature for this image 
-    q_kp, q_des = FEATURE (q_path , kp)
-    # get bow cluster
-    q_clustered_words = cluster_model.predict(q_des) 
-    # get FV histogram  
-    q_bow_hist = np.array([np.bincount(q_clustered_words, minlength=cluster_model.n_clusters)])
-    # search the KDTree for nearest match
-    dist, result = SIFTtree.query(q_bow_hist, k=returnCount)
-    t= time.time() - start
-    # Zip results to list of tuples 
-    flist = list (mydataSIFT.iloc[ result[0].tolist()]['file'])
-    slist = list (dist[0])
-    matches = tuple(zip( slist, flist)) # create a list of tuples frm 2 lists
-
-    return (matches, t)
-
-
 
 
 # # ------------ GENERATION TEST-------------------#

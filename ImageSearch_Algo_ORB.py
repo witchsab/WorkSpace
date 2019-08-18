@@ -223,6 +223,8 @@ def ORB_SEARCH_MODBF(feature, queryimagepath, ORB_features_limit=100, lowe_ratio
 
 
 
+# ORB TREE GENERATION and SEARCH using BOVW histograms method 
+
 def ORB_CREATE_TREE_MODEL ( mydataORB, savefile='testORBtree', n_clusters=500 ) : 
 
     print ("Generating ORB Clusters BOvW and ORBtree")
@@ -266,7 +268,31 @@ def ORB_Load_Tree_Model ( openfile='testORBtree' ) :
     return ORBtree , cluster_model
 
 
+def ORB_SEARCH_TREE (q_path, cluster_model, ORBtree, mydataORB, returnCount=100, kp=100) : 
+    # print ("searching Tree.")
+    # # sample a image
+    # q_path = random.sample(imagepaths, 1)[0]
+    # print (q_path)
+    # log time 
+    start = time.time()
+    # get the feature for this image 
+    q_kp, q_des = FEATURE (q_path , kp)
+    # get bow cluster
+    q_clustered_words = cluster_model.predict(q_des) 
+    # get FV histogram  
+    q_bow_hist = np.array([np.bincount(q_clustered_words, minlength=cluster_model.n_clusters)])
+    # search the KDTree for nearest match
+    dist, result = ORBtree.query(q_bow_hist, k=returnCount)
+    t= time.time() - start
+    # Zip results to list of tuples 
+    flist = list (mydataORB.iloc[ result[0].tolist()]['file'])
+    slist = list (dist[0])
+    matches = tuple(zip( slist, flist)) # create a list of tuples frm 2 lists
 
+    return (matches, t)
+
+    
+# Clustering codes (Advanced Use Only)
 
 '''
 Creates Cluster from FVHistograms and returns ID
@@ -310,32 +336,6 @@ def ORB_ANALYZE_CLUSTER (img_bow_hist, n_clusters=200, step=10) :
 
     return elbow.knee
 
-
-
-def ORB_SEARCH_TREE (q_path, cluster_model, ORBtree, mydataORB, returnCount=100, kp=100) : 
-    print ("searching Tree.")
-    # # sample a image
-    # q_path = random.sample(imagepaths, 1)[0]
-    # print (q_path)
-    # log time 
-    start = time.time()
-    # get the feature for this image 
-    q_kp, q_des = FEATURE (q_path , kp)
-    # get bow cluster
-    q_clustered_words = cluster_model.predict(q_des) 
-    # get FV histogram  
-    q_bow_hist = np.array([np.bincount(q_clustered_words, minlength=cluster_model.n_clusters)])
-    # search the KDTree for nearest match
-    dist, result = ORBtree.query(q_bow_hist, k=returnCount)
-    t= time.time() - start
-    # Zip results to list of tuples 
-    flist = list (mydataORB.iloc[ result[0].tolist()]['file'])
-    slist = list (dist[0])
-    matches = tuple(zip( slist, flist)) # create a list of tuples frm 2 lists
-
-    return (matches, t)
-
-    
 
 
 # # ------------ GENERATION TEST-------------------#

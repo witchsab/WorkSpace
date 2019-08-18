@@ -101,7 +101,6 @@ def RGB_Create_Tree ( mydataRGB, savefile='testRGB'  ) :
     return RGBtree
 
 
-
 def RGB_Load_Tree ( openfile='testRGB'  ) : 
     
     # reading the pickle tree
@@ -110,6 +109,9 @@ def RGB_Load_Tree ( openfile='testRGB'  ) :
     infile.close()
 
     return RGBTree
+
+
+# Clustering codes (Advanced Use Only)
 
 def RGB_CREATE_CLUSTER ( mydataRGB, savefile='testRGBcluster', n_clusters=50) : 
     

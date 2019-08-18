@@ -104,7 +104,7 @@ def metricCalc(indexlist) :
 
 
 
-def accuracy_toplist(q_path, imagelist, window):
+def accuracy_from_list(q_path, imagelist, window):
 
     # q_path = './imagesbooks/ukbench07994.jpg'
     # print (q_path)

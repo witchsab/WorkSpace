@@ -70,7 +70,7 @@ for q_path in q_paths:
     row_dict = {'file':q_path }   
     imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (mytreeHSV, mydataHSV, q_path, 100)
 
-    x = shortlist (imagematcheshsv)
+    x = autothreshold (imagematcheshsv)
     toplist = toplist + x
     # print (x)
     a, d, i_hsv, cnt = accuracy.accuracy_matches(q_path, imagematcheshsv, 20)
@@ -83,7 +83,7 @@ for q_path in q_paths:
   
 
     imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (mytreeRGB, mydataRGB, q_path, 100)
-    y= shortlist (imagematchesrgb)
+    y= autothreshold (imagematchesrgb)
     toplist = toplist + y
     # print (y)
     a, d, i_rgb, cnt = accuracy.accuracy_matches(q_path, imagematchesrgb, 20)
@@ -94,9 +94,11 @@ for q_path in q_paths:
     print ('RGB Accuracy =',  a, '%', '| Quality:', d )
     print ('Count', cnt, ' | position', i_rgb)
 
-    
-    filteredsift = merge_result(imagematcheshsv, imagematchesrgb, mydatasift)
 
+    # generate 200 candidates for SIFT (top 100 from each RGB, HSV etc.)
+    filteredsift = filtered_SIFT_Candidates(imagematcheshsv, imagematchesrgb, mydatasift)
+
+    # Run SIFT SEARCH for the 200 candidates 
     imagepredictions , searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH(filteredsift, q_path, 100, 0.6, 50)
     a ,d, i_sift, cnt = accuracy.accuracy_matches(q_path, imagepredictions, 20 )
     print (q_paths.index(q_path), q_path)
@@ -115,7 +117,7 @@ for q_path in q_paths:
     print ('total processing time = ', t, 'seconds')
     # print( toplist)
 
-
+    # append top 20 results from SIFT to end of TOPLIST 
     for myitem in imagepredictions[:20]:
         x, y = myitem
         toplist.append(y)
@@ -123,10 +125,10 @@ for q_path in q_paths:
     
     # print( toplist)
 
-    # print(f7(toplist))
-    toplist = f7(toplist)
+    # print sanitize_List(toplist))
+    toplist = sanitize_List(toplist)
 
-    a ,d, i_toplist, cnt = accuracy.accuracy_toplist(q_path, toplist, 20 )
+    a ,d, i_toplist, cnt = accuracy.accuracy_from_list(q_path, toplist, 20 )
     print (q_paths.index(q_path), q_path)
     print ('Final Accuracy =',  a, '%', '| Quality:', d )
     print ('Final Count', cnt, ' | position', i_toplist)
@@ -175,7 +177,7 @@ accStatsmerge.to_csv('accStatsmergetestmerge519.csv')
 
 
 
-def merge_result(imagematches1, imagematches2, mydataframe):
+def filtered_SIFT_Candidates(imagematches1, imagematches2, mydataframe):
     # create a mergelist 
     mergelist = set ()
 
@@ -205,7 +207,7 @@ def merge_result(imagematches1, imagematches2, mydataframe):
 
 # merge with other algos after thresholding
 
-def shortlist (imagematches):
+def autothreshold (imagematches):
     score = []
     successScore = []
     filelist = []
@@ -232,7 +234,12 @@ def shortlist (imagematches):
 
     return filelist[:qualifiedItems]
 
-def f7(seq):
+
+'''
+Removes duplicates from list while preserving order 
+Fast implementation (check stackoverflow)
+'''
+def sanitize_List(seq):
     seen = set()
     seen_add = seen.add
     return [x for x in seq if not (x in seen or seen_add(x))]
