@@ -64,7 +64,7 @@ def HSV_SAVE_FEATURES ( mydataHSV, savefile='testHSV_Data') :
 Load Pandas dataframe from pickle 
 Datafram format : file , imagehist
 '''
-def HASH_LOAD_FEATURES ( openfile='testHSV_Data') : 
+def HSV_LOAD_FEATURES ( openfile='testHSV_Data') : 
     
     # reading the pickle tree
     infile = open(openfile + '.pickle','rb')

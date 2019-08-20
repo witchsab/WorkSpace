@@ -251,7 +251,7 @@ def ORB_CREATE_TREE_MODEL ( mydataORB, savefile='testORBtree', n_clusters=500 ) 
 
     # save the tuple (model, tree)
     outfile = open (savefile + '.pickle', 'wb')
-    pickle.dump( (ORBtree , cluster_model) ,outfile)
+    pickle.dump( (ORBtree, cluster_model, img_bow_hist), outfile)
 
     print ('Saved (Tree, Model) as ', outfile)
 
@@ -262,10 +262,10 @@ def ORB_Load_Tree_Model ( openfile='testORBtree' ) :
     
     # reading the pickle tree
     infile = open(openfile + '.pickle','rb')
-    ORBtree, cluster_model = pickle.load(infile)
+    ORBtree, cluster_model, img_bow_hist = pickle.load(infile)
     infile.close()
 
-    return ORBtree , cluster_model
+    return (ORBtree , cluster_model, img_bow_hist)
 
 
 def ORB_SEARCH_TREE (q_path, cluster_model, ORBtree, mydataORB, returnCount=100, kp=100) : 

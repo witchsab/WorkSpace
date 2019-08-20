@@ -219,7 +219,7 @@ def SIFT_Load_Tree_Model ( openfile='testSIFTtree' ) :
     SIFTtree, cluster_model, img_bow_hist = pickle.load(infile)
     infile.close()
 
-    return SIFTtree , cluster_model
+    return (SIFTtree, cluster_model, img_bow_hist)
 
 
 

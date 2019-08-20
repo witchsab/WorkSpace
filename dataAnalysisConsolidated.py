@@ -6,6 +6,7 @@ import time
 import matplotlib.pyplot as plt
 import pandas as pd
 from imutils import paths
+from kneed import KneeLocator
 
 import Accuracy as accuracy
 import ImageSearch_Algo_Hash
@@ -14,6 +15,7 @@ import ImageSearch_Algo_ORB
 import ImageSearch_Algo_RGB
 import ImageSearch_Algo_SIFT
 import ImageSearch_Plots as myplots
+import Thresholding
 
 # # --------------- Reload modules on :
 %load_ext autoreload
@@ -36,13 +38,17 @@ IMGDIR = r'./imagesbooks/'
 
 # --------------- CONFIG PARAMETERS ----------------------#
 
-ORB_FEATURES_LIMIT = 200
+ORB_FEATURES_LIMIT = 100
 ORB_N_CLUSTERS = 500
 SIFT_N_CLUSTERS = 500
 SIFT_FEATURES_LIMIT = 100
 LOWE_RATIO = 0.7
 SIFT_PREDICTIONS_COUNT = 100
 RGB_PARAMETERCORRELATIONTHRESHOLD = 0.70 # not needed for generation
+kneeHSV = 2
+kneeRGB = 2
+kneeORB = 2
+kneeSIFT = 2
 
 # --------------- IMAGES  ----------------------#
 imagepaths = sorted (list(paths.list_images(IMGDIR)))
@@ -130,13 +136,13 @@ myHybridtree = ImageSearch_Algo_Hash.HASH_CREATE_HYBRIDTREE(mydataHASH, savefile
 # SIFT FV Tree and Cluster
 n_clusters = SIFT_N_CLUSTERS
 savefile = 'data/' + TESTNAME + '_SIFT_Tree_Cluster' + str(n_clusters)
-SIFTtree, SIFTmodel, SIFTFVHist = ImageSearch_Algo_SIFT.SIFT_CREATE_TREE_MODEL(mydataSIFT, savefile, n_clusters)
+mySIFTtree, mySIFTmodel, mySIFTFVHist = ImageSearch_Algo_SIFT.SIFT_CREATE_TREE_MODEL(mydataSIFT, savefile, n_clusters)
 
 
 # ORB FV Tree and Cluster
 n_clusters = ORB_N_CLUSTERS
 savefile = 'data/' + TESTNAME + '_ORB_Tree_Cluster' + str(n_clusters)
-ORBtree, ORBmodel, ORBFVHist = ImageSearch_Algo_ORB.ORB_CREATE_TREE_MODEL(mydataORB, savefile, n_clusters)
+myORBtree, myORBmodel, myORBFVHist = ImageSearch_Algo_ORB.ORB_CREATE_TREE_MODEL(mydataORB, savefile, n_clusters)
 
 print ("## Tree Generation Complete.")
 
@@ -174,7 +180,7 @@ HSVClusterTable = ImageSearch_Algo_HSV.HSV_RUN_CLUSTER(HSVClusterModel, mydataHS
 # create SIFT Cluster
 savefile = 'data/' + 'test' + '_SIFT_Cluster' + str(kneeSIFT)
 # SIFTClusterModel = ImageSearch_Algo_SIFT.SIFT_CREATE_CLUSTER (mydataSIFT, savefile, n_clusters=kneeSIFT)
-SIFTClusterTable = ImageSearch_Algo_SIFT.SIFT_RUN_CLUSTER (SIFTFVHist, mydataSIFT, n_clusters=115)
+SIFTClusterTable = ImageSearch_Algo_SIFT.SIFT_RUN_CLUSTER (mySIFTFVHist, mydataSIFT, n_clusters=115)
 # SIFTClusterTable.sort_values('file')[['file', 'clusterID']]
 
 
@@ -183,39 +189,65 @@ SIFTClusterTable = ImageSearch_Algo_SIFT.SIFT_RUN_CLUSTER (SIFTFVHist, mydataSIF
 # create ORB Cluster
 savefile = 'data/' + 'test' + '_ORB_Cluster' + str(kneeORB)
 # ORBClusterModel = ImageSearch_Algo_ORB.ORB_CREATE_CLUSTER (mydataORB, savefile, n_clusters=kneeORB)
-ORBClusterTable = ImageSearch_Algo_ORB.ORB_RUN_CLUSTER (ORBFVHist, mydataORB, n_clusters=50)
+ORBClusterTable = ImageSearch_Algo_ORB.ORB_RUN_CLUSTER (myORBFVHist, mydataORB, n_clusters=50)
 ORBClusterTable.sort_values('file')[['file', 'clusterID']]
 
 
 #######################################################################
-# -----------  DATA COLLECTION START    ------------ #
+# -----------  LOAD FEATUTES AND TREES from file  ------------ #
 
+HybridAlgoList = ['whash', 'ahash']
+AlgoGenList = ['whash', 'phash', 'dhash', 'ahash'] 
 
-# initialize 
-Results = pd.DataFrame(columns=['file'])
+# Files 
+file_HASH_Feature = 'data/' + TESTNAME + '_PandasDF_HASH_Features'
+file_HASH_HybridTree = 'data/' + TESTNAME + '_HASH_Hybrid_Tree_' + str(('_').join (HybridAlgoList))
+file_HSV_Cluster = 'data/' + 'test' + '_HSV_Cluster' + str(kneeHSV)
+file_HSV_Feature = 'data/' + TESTNAME + '_PandasDF_HSV_Features'
+file_HSV_Tree = 'data/' + TESTNAME + '_HSV_Tree'
+file_ORB_Cluster = 'data/' + 'test' + '_ORB_Cluster' + str(kneeORB)
+file_ORB_Feature = 'data/' + TESTNAME + '_PandasDF_ORB_Features_kp'+ str(ORB_FEATURES_LIMIT)
+file_ORB_TreeCluster = 'data/' + TESTNAME + '_ORB_Tree_Cluster' + str(ORB_N_CLUSTERS)
+file_Results = 'data/' + TESTNAME + '_Results'
+file_RGB_Cluster = 'data/' + 'test' + '_RGB_Cluster' + str(kneeRGB)
+file_RGB_Feature = 'data/' + TESTNAME + '_PandasDF_RGB_Features'
+file_RGB_Tree = 'data/' + TESTNAME + '_RGB_Tree'
+file_SIFT_Cluster = 'data/' + 'test' + '_SIFT_Cluster' + str(kneeSIFT)
+file_SIFT_Feature = 'data/' + TESTNAME + '_PandasDF_SIFT_Features_kp'+ str(SIFT_FEATURES_LIMIT)
+file_SIFT_TreeCluster = 'data/' + TESTNAME + '_SIFT_Tree_Cluster' + str(SIFT_N_CLUSTERS)
 
-# load all TREES 
-AlgoGenList = ['whash', 'phash', 'dhash', 'ahash']    
-hashAlgoDict = {}
+# Features 
+mydataRGB = ImageSearch_Algo_RGB.RGB_LOAD_FEATURES (file_RGB_Feature)
+mydataHSV = ImageSearch_Algo_HSV.HSV_LOAD_FEATURES (file_HSV_Feature)
+mydataSIFT = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES (file_SIFT_Feature)
+mydataORB = ImageSearch_Algo_ORB.ORB_LOAD_FEATURES(file_ORB_Feature)
+mydataHASH = ImageSearch_Algo_Hash.HASH_LOAD_FEATURES(file_HASH_Feature)
+
+# Tree & Clusters 
+myRGBtree = ImageSearch_Algo_RGB.RGB_Load_Tree (file_RGB_Tree)
+myHSVtree = ImageSearch_Algo_HSV.HSV_Load_Tree (file_HSV_Tree)
+mySIFTtree, mySIFTmodel, mySIFTFVHist = ImageSearch_Algo_SIFT.SIFT_Load_Tree_Model (file_SIFT_TreeCluster)
+myORBtree, myORBmodel, myORBFVHist = ImageSearch_Algo_ORB.ORB_Load_Tree_Model(file_ORB_TreeCluster)
+myHybridtree =ImageSearch_Algo_Hash.HASH_Load_Tree (file_HASH_HybridTree)
+
+# Hash Algo load all TREES 
+myHASH_Trees = {}
 for algo in AlgoGenList : 
     savefile = 'data/' + TESTNAME + '_HASH_Tree_' + str(algo)
     myHASHTree = ImageSearch_Algo_Hash.HASH_Load_Tree(savefile)
-    hashAlgoDict[algo] = myHASHTree
-    
-
-imagepaths = list(paths.list_images(IMGDIR))
-
-# iterate over all samples: 
-for q_path in imagepaths[:80]: 
-
-    # initialize locals  
-    toplist = []
-    row_dict = {'file':q_path }   
+    myHASH_Trees[algo] = myHASHTree
 
 
-    start = time.time()
 
-    # ---------- search HSV Tree
+
+
+
+################################################################################
+#                               ALGO CALLS 
+################################################################################
+
+# ---------- search HSV Tree
+def searchHSV(): 
     imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE ( myHSVtree, mydataHSV, q_path, returnCount=100)
     a, d, i_hsv, cnt = accuracy.accuracy_matches(q_path, imagematcheshsv, 20)
     row_dict['acc_hsv'] = a
@@ -229,7 +261,8 @@ for q_path in imagepaths[:80]:
     # toplist = toplist + x
     # # print (x)
 
-    # ---------- search RGB Tree
+# # ---------- search RGB Tree
+def search_RGB() : 
     imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, returnCount=100)
     # y= autothreshold (imagematchesrgb)
     # toplist = toplist + y
@@ -244,7 +277,8 @@ for q_path in imagepaths[:80]:
     # print ('Count', cnt, ' | position', ind)
 
 
-    # ---------- search RGB Correlation
+# # ---------- search RGB Correlation
+def search_RGB_Corr(): 
     imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH(mydataRGB, q_path, correl_threshold=RGB_PARAMETERCORRELATIONTHRESHOLD)
     # y= autothreshold (imagematchesrgb)
     # toplist = toplist + y
@@ -259,7 +293,8 @@ for q_path in imagepaths[:80]:
     # print ('Count', cnt, ' | position', ind)
 
 
-    # ---------- search SIFT FLANN
+# # ---------- search SIFT FLANN
+def search_SIFT_FLANN(): 
     imagepredictions , searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH(mydataSIFT, q_path, sift_features_limit=100 , lowe_ratio=LOWE_RATIO, predictions_count=SIFT_PREDICTIONS_COUNT)
     a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagepredictions, 20 )
     # print ('Accuracy =',  a, '%', '| Quality:', d )
@@ -271,7 +306,8 @@ for q_path in imagepaths[:80]:
     row_dict['time_sift_Flann'] = searchtimesift
 
 
-    # ---------- search SIFT BF
+# # ---------- search SIFT BF
+def search_SIFT_BF(): 
     imagepredictions , searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, sift_features_limit=100 , lowe_ratio=LOWE_RATIO, predictions_count=SIFT_PREDICTIONS_COUNT)
     a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagepredictions, 20 )
     # print ('Accuracy =',  a, '%', '| Quality:', d )
@@ -283,8 +319,9 @@ for q_path in imagepaths[:80]:
     row_dict['time_sift_BF'] = searchtimesift
 
 
-    # ---------- search SIFT BOVW Tree
-    imagematches, searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_TREE(q_path, SIFTmodel, SIFTtree, mydataSIFT, returnCount=100, kp=100)
+# # ---------- search SIFT BOVW Tree
+def search_SIFT_BOVW(): 
+    imagematches, searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_TREE(q_path, mySIFTmodel, mySIFTtree, mydataSIFT, returnCount=100, kp=100)
     a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
     # print ('Accuracy =',  a, '%', '| Quality:', d )
     # print ('Count', cnt, ' | position', ind)
@@ -295,7 +332,8 @@ for q_path in imagepaths[:80]:
     row_dict['time_sift_tree'] = searchtime
 
 
-    # ---------- search ORB FLANN-LSH 
+# # ---------- search ORB FLANN-LSH 
+def search_ORB_FLANN() : 
     imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_FLANN(mydataORB, q_path, ORB_FEATURES_LIMIT , lowe_ratio=LOWE_RATIO, predictions_count=SIFT_PREDICTIONS_COUNT )
     a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
     # print ('Accuracy =',  a, '%', '| Quality:', d )
@@ -307,7 +345,8 @@ for q_path in imagepaths[:80]:
     row_dict['time_orb_Flann'] = searchtime
 
 
-    # ---------- search ORB BF
+# # ---------- search ORB BF
+def search_ORB_BF() : 
     imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_BF(mydataORB, q_path, ORB_FEATURES_LIMIT , lowe_ratio=LOWE_RATIO, predictions_count=SIFT_PREDICTIONS_COUNT )
     a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
     # print ('Accuracy =',  a, '%', '| Quality:', d )
@@ -319,7 +358,8 @@ for q_path in imagepaths[:80]:
     row_dict['time_orb_BF'] = searchtime
 
 
-    # ---------- search ORB BF NEW
+# # ---------- search ORB BF NEW
+def search_ORB_BF2() :
     imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_MODBF(mydataORB, q_path, ORB_FEATURES_LIMIT , lowe_ratio=LOWE_RATIO, predictions_count=SIFT_PREDICTIONS_COUNT )
     a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
     # print ('Accuracy =',  a, '%', '| Quality:', d )
@@ -331,8 +371,9 @@ for q_path in imagepaths[:80]:
     row_dict['time_orb_BF2'] = searchtime
 
 
-    # ---------- search ORB BOVW Tree
-    imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_TREE(q_path, ORBmodel, ORBtree, mydataORB, returnCount=100, kp=ORB_FEATURES_LIMIT)
+# # ---------- search ORB BOVW Tree
+def search_ORB_BOVW () : 
+    imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_TREE(q_path, myORBmodel, myORBtree, mydataORB, returnCount=100, kp=ORB_FEATURES_LIMIT)
     a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
     # print ('Accuracy =',  a, '%', '| Quality:', d )
     # print ('Count', cnt, ' | position', ind)
@@ -343,10 +384,11 @@ for q_path in imagepaths[:80]:
     row_dict['time_orb_tree'] = searchtime
 
 
-    # ---------- search HASH All
-    AlgoGenList = ['whash', 'phash', 'dhash', 'ahash']    
+# # ---------- search HASH All
+def search_HASH (): 
+    # AlgoGenList = ['whash', 'phash', 'dhash', 'ahash']    
     for algo in AlgoGenList :
-        imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH_TREE(hashAlgoDict[algo], mydataHASH, q_path,hashAlgo=algo, hashsize=16, returnCount=100)
+        imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH_TREE(myHASH_Trees[algo], mydataHASH, q_path,hashAlgo=algo, hashsize=16, returnCount=100)
         a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
         # print ('Accuracy =',  a, '%', '| Quality:', d )
         # print ('Count', cnt, ' | position', ind)
@@ -355,10 +397,11 @@ for q_path in imagepaths[:80]:
         row_dict['Count_HASH_'+str(algo)] = cnt
         row_dict['quality_HASH_'+str(algo)] = d
         row_dict['time_HASH_'+str(algo)] = searchtime
-    
 
-    # ---------- search Hybrid HASH
-    HybridAlgoList = ['whash', 'ahash']
+
+# # ---------- search Hybrid HASH
+def search_HASH_HYBRID (): 
+    # HybridAlgoList = ['whash', 'ahash']
     imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH_HYBRIDTREE( myHybridtree, mydataHASH, q_path,hashAlgoList=HybridAlgoList, hashsize=16, returnCount=100)
     a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
     # print ('Accuracy =',  a, '%', '| Quality:', d )
@@ -370,10 +413,121 @@ for q_path in imagepaths[:80]:
     row_dict['time_HASH_Hybrid'] = searchtime
 
 
+# ---------- Algo A = ( HSV(100) + RGB (100) => SIFT BF )
+def search_AlgoA(): 
+    toplist = []
+    start = time.time()
+    # run RGB
+    imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, returnCount=100)
+    # run HSV
+    imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE ( myHSVtree, mydataHSV, q_path, returnCount=100)
+    # create shortlist for SIFT 
+    filteredSIFTData = Thresholding.filter_SIFT_Candidates ([imagematcheshsv, imagematchesrgb], mydataSIFT)
+    # run SIFT 
+    imagepredictions , searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(filteredSIFTData, q_path, sift_features_limit=100 , lowe_ratio=LOWE_RATIO, predictions_count=SIFT_PREDICTIONS_COUNT)
+    # append SIFT Results 
+    a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagepredictions, 20 )
+    print ('SIFT-A Accuracy =',  a, '%', '| Quality:', d )
+    print ('SIFT-A Count', cnt, ' | position', ind)
+    row_dict['acc_Algo_A_SIFT'] = a
+    row_dict['index_Algo_A_SIFT'] = ind
+    row_dict['Count_Algo_A_SIFT'] = cnt
+    row_dict['quality_Algo_A_SIFT'] = d
+    # row_dict['time_Algo_A_SIFT'] = searchtime
+
+    # threshold RGB 
+    a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematchesrgb, 20)
+    print ('index RGB   : ', ind)
+    final_RGB_List = Thresholding.autothreshold_Knee (imagematchesrgb)
+    a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, final_RGB_List, 20 )
+    print ('index RGB Th:', ind)
+    row_dict['index_Algo_A_cRGB'] = ind
+
+
+    # thresold HSV 
+    a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematcheshsv, 20)
+    print ('index HSV   : ', ind)
+    final_HSV_List = Thresholding.autothreshold_Knee (imagematcheshsv)
+    a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, final_HSV_List, 20 )
+    print ('index HSV Th: ', ind)
+    row_dict['index_Algo_A_cHSV'] = ind
+
+
+    # SIFT LIST 
+    final_SIFT_List = Thresholding.getListfromImagepredictions (imagepredictions)
+    # merge HSV Thresh, RGB Thresh, SIFT
+    toplist = Thresholding.merge_results ([final_HSV_List, final_RGB_List, final_SIFT_List], False)
+    # # print (toplist)
+    # # # Append result to toplist  
+    # a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, 20 )
+    # print ('index Crude AlgoA: ', ind)
+
+    # toplist = Thresholding.sanitize_List(toplist)
+    # print (toplist)
+    a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, 20 )
+    print ('index AlgoA: ', ind)
+
+    t = time.time() - start
+    row_dict['acc_algo_A'] = a
+    row_dict['index_algo_A'] = ind
+    row_dict['Count_algo_A'] = cnt
+    row_dict['quality_algo_A'] = d
+    row_dict['time_algo_A'] = t
+
+
+def algomixer ( algos ) : 
+    # myAlgos = [ search_RGB, search_SIFT_BF ]
+    # algomixer (myAlgos)
+    algoResults = []
+    algoTimes = []
+    for algo in algos: 
+        algoResult, algoTime = algo
+
+
+
+#######################################################################
+# -----------  DATA COLLECTION START    ------------ #
+
+
+# initialize 
+Results = pd.DataFrame(columns=['file'])
+
+imagepaths = (list(paths.list_images(IMGDIR)))
+
+# iterate over all samples: 
+for q_path in imagepaths[77:88]: 
+
+    # initialize locals  
+    row_dict = {'file':q_path } 
+
+    search_AlgoA()
+
+    # searchHSV()
+    # search_RGB() 
+    # search_RGB_Corr() 
+
+    # search_SIFT_BF()
+    # search_SIFT_FLANN()
+    # search_SIFT_BOVW()
+
+    # search_ORB_FLANN()
+    # search_ORB_BF()
+    # search_ORB_BF2()
+    # search_ORB_BOVW()   
+    
+    # search_HASH()
+    # search_HASH_HYBRID()
+
     # --------- Append Results to Results
     Results = Results.append( row_dict , ignore_index=True)
     print ( 'Completed ', imagepaths.index(q_path), q_path)
 
 
+# Save Frame to pickle
+savefile = 'data/' + TESTNAME + '_Results'
+outfile = open (savefile + '.pickle', 'wb')
+pickle.dump( Results, outfile )
+
+# Save Frame to csv 
 Results.to_csv( 'data/' + TESTNAME + '_RESULTS.csv')
 print ("Data Collection Completed ")
