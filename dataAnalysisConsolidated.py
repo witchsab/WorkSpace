@@ -731,7 +731,8 @@ pickle.dump( Results, outfile )
 # initialize 
 Results = pd.DataFrame(columns=['file'])
 # for q_path in imagepaths[30:35]: 
-for q_path in imagepaths[100:201]: 
+# for q_path in imagepaths[100:201]: 
+for q_path in imagepaths: 
     row_dict = {'file':q_path } 
 
     # ------------Generic Algo Full Sample 
@@ -763,6 +764,7 @@ for q_path in imagepaths[100:201]:
     algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoA')
     # algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_FLANN', mydataSIFT, 'F_SIFT2')
     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB')
+    algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoBA')
     algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC')
 
     Results = Results.append( row_dict , ignore_index=True)
@@ -770,11 +772,11 @@ for q_path in imagepaths[100:201]:
 
 # ---------- SAVE ALL FILES TO DISK
 # Save Frame to csv 
-Results.to_csv( 'data/' + TESTNAME + '_RESULTS_mix100.csv')
+Results.to_csv( 'data/' + TESTNAME + '_RESULTS_mix100_ALL.csv')
 print ("Data Collection Completed ")
 
 # Save Frame to pickle
-savefile = 'data/' + TESTNAME + '_Results_mix' # + str(int(time.time())) 
+savefile = 'data/' + TESTNAME + '_Results_mix100_ALL' # + str(int(time.time())) 
 outfile = open (savefile + '.pickle', 'wb')
 pickle.dump( Results, outfile )
 # ---------- SAVED
