@@ -119,5 +119,6 @@ config.code-workspace
 
 # other data 
 *.csv
-*.~
+.~lock.*
 *.pickle
+*.ods
