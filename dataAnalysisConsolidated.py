@@ -579,10 +579,10 @@ def algo_selector_final( algo, algoFrame,  return_count = 100):
 def algomixerAppend (algos, return_count, algoname='NewAlgo') : 
     # myAlgos = [ search_RGB, search_SIFT_BF ]
     # algomixerFunnel (myAlgos)
-    # start = time.time()
+    start = time.time()
 
     algoResults = []
-    # algoTimes = []
+    algoTimes = []
     for algo in algos: 
         thisResult, thisTime = algo_selector (algo, return_count=return_count)
         algoResults.append(thisResult)
@@ -604,11 +604,13 @@ def algomixerAppend (algos, return_count, algoname='NewAlgo') :
 
     # merge lists of algo results and remove duplicates order[[commons], [algo1], [algo2]...]
     toplist = Thresholding.merge_results( toplist, False)
-    
+
+    t = time.time() - start
+
     # find accuracy and append to dict 
     a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, 20 )
     print ('index F_'+algoname+': ', ind)
-    t = time.time() - start
+
     row_dict['acc_'+ algoname] = a
     row_dict['index_'+ algoname] = ind
     row_dict['Count_'+ algoname] = cnt
@@ -651,11 +653,12 @@ def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algonam
     toplist.append(final_algo_List)
     # merge lists of algo results: HSV Thresh, RGB Thresh, SIFT
     toplist = Thresholding.merge_results( toplist, False)
-    
+
+    t = time.time() - start
+
     # find accuracy and append to dict 
     a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, 20 )
     print ('index F_'+algoname+': ', ind)
-    t = time.time() - start
     row_dict['acc_'+ algoname] = a
     row_dict['index_'+ algoname] = ind
     row_dict['Count_'+ algoname] = cnt
@@ -754,7 +757,7 @@ for q_path in imagepaths[100:201]:
 
     # ----------- generate custom combination algos w/ adaptive thresholding
     algomixerAppend(['search_HSV', 'search_RGB'], 100, 'AlgoS')
-
+    algomixerAppend(['search_ORB_BOVW', 'search_SIFT_BOVW'], 100, 'AlgoF')
 
     # ----------- generate custom Funnel algos
     algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoA')
@@ -767,7 +770,7 @@ for q_path in imagepaths[100:201]:
 
 # ---------- SAVE ALL FILES TO DISK
 # Save Frame to csv 
-Results.to_csv( 'data/' + TESTNAME + '_RESULTS_mix.csv')
+Results.to_csv( 'data/' + TESTNAME + '_RESULTS_mix100.csv')
 print ("Data Collection Completed ")
 
 # Save Frame to pickle
