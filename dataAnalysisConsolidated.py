@@ -595,13 +595,14 @@ def algomixerAppend (algos, return_count, algoname='NewAlgo') :
 
     # MERGE OPEARATION FROM ALL RESULTS 
     # algo uniques + final algo detections results 
-    
+
     toplist = unique_final_list.copy()
 
+    # retaining all the individual results as well (P.S: note difference from algomixerFunnel)
     for result in algoResults :    
         toplist.append(Thresholding.imagepredictions_to_list(result))
 
-    # merge lists of algo results: HSV Thresh, RGB Thresh, SIFT
+    # merge lists of algo results and remove duplicates order[[commons], [algo1], [algo2]...]
     toplist = Thresholding.merge_results( toplist, False)
     
     # find accuracy and append to dict 
@@ -727,16 +728,35 @@ pickle.dump( Results, outfile )
 # initialize 
 Results = pd.DataFrame(columns=['file'])
 # for q_path in imagepaths[30:35]: 
-for q_path in imagepaths[100:151]: 
+for q_path in imagepaths[100:201]: 
     row_dict = {'file':q_path } 
 
+    # ------------Generic Algo Full Sample 
+    search_HSV()
+    search_RGB() 
+    search_RGB_Corr() 
+
+    search_SIFT_BF()
+    search_SIFT_FLANN()
+    search_SIFT_BOVW()
+
+    search_ORB_FLANN()
+    search_ORB_BF()
+    search_ORB_BF2()
+    search_ORB_BOVW()   
+    
+    search_HASH_All()
+    search_HASH_HYBRID()
+
+    # ---------- ALGO SELECTOR 
     # algo_selector('search_HSV', 100)
     # search_RGB()
 
-    # generate custom combination algos w/ adaptive thresholding
+    # ----------- generate custom combination algos w/ adaptive thresholding
     algomixerAppend(['search_HSV', 'search_RGB'], 100, 'AlgoS')
 
-    # generate custom Funnel algos
+
+    # ----------- generate custom Funnel algos
     algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoA')
     # algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_FLANN', mydataSIFT, 'F_SIFT2')
     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB')
