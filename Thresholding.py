@@ -16,7 +16,7 @@ import Accuracy as accuracy
 
 
 def autothreshold_knee(imagematches, cutoff=6, verbose=False):
-    """ Knee thresholding on based on scores in imagematches """
+    """ Knee thresholding on scores in imagematches """
 
     score = []
     # successScore = []
@@ -113,7 +113,7 @@ def merge_results(seq, verbose=False):
     Merges list if final candidates in the order of list
     1. Create a top list of common elements
     2. Append remainder unique elements in list order
-    seq is a list of lists
+    Remember: seq is a list of lists
     """
     start = time.time()
     merged_list = []

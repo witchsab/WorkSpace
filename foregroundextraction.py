@@ -122,7 +122,8 @@ def foregroundExtractAndWarp(filename) :
 
 
         # ----------------from countours draw rotated rectangular bounding box
-        contours, _ = cv2.findContours(mask2.copy(), 1, 1) # not copying here will throw an error
+        # for open CV4: use countours, _ 
+        _, contours, _ = cv2.findContours(mask2.copy(), 1, 1) # not copying here will throw an error
 
         # sort by max area of contour
         # boundingBoxes = [cv2.boundingRect(c) for c in contours]
@@ -168,7 +169,7 @@ def foregroundExtractAndWarp(filename) :
 
 
     except Exception as e: 
-        print ("Some Exception")
+        print ("Some Exception", e)
         img_BGRA = orig.copy()
         warped1 = orig.copy()
         warped2 = orig.copy()

@@ -23,11 +23,15 @@ import Thresholding
 
 
 # --------------- TEST PARAMETERS ----------------------#
-TESTNAME = "Data519"
+TESTNAME = "Data519_RESIZE320"
 
 # --------------- VAR COMMONS------------------
 
-IMGDIR = r'./imagesbooks/'
+# IMGDIR = r'./imagesbooks/'
+# IMGDIR = r'./images/imagesbooks_DENOISE2/'
+# IMGDIR = r'./images/imagesbooks_S160/'
+IMGDIR = r'./images/imagesbooks_S320/'
+# IMGDIR = r'./images/imagesbooks_CT2.0/'
 # IMGDIR = r"V:\\Download\\imagesbooks\\"
 # IMGDIRPROCESSED = ['']*5
 # IMGDIRPROCESSED[0] = r"V:\\Download\\imagesbooks1\\"
@@ -148,49 +152,49 @@ print ("## Tree Generation Complete.")
 
 # ----------- GENERATE ALL CLUSTERS  ------------ #
 
-# # determine n_cluster RGB -> elbow method
-# kneeRGB = ImageSearch_Algo_RGB.RGB_ANALYZE_CLUSTER(mydataRGB, len(mydataRGB.index), int(len(mydataRGB.index)/20))
+# # # determine n_cluster RGB -> elbow method
+# # kneeRGB = ImageSearch_Algo_RGB.RGB_ANALYZE_CLUSTER(mydataRGB, len(mydataRGB.index), int(len(mydataRGB.index)/20))
 
-# # determine n_cluster HSV -> elbow method
-# kneeHSV = ImageSearch_Algo_HSV.HSV_ANALYZE_CLUSTER (mydataHSV,  len(mydataHSV.index), int(len(mydataHSV.index)/20))
+# # # determine n_cluster HSV -> elbow method
+# # kneeHSV = ImageSearch_Algo_HSV.HSV_ANALYZE_CLUSTER (mydataHSV,  len(mydataHSV.index), int(len(mydataHSV.index)/20))
 
-# ----
-
-
-# determine RBG Cluster Size
-# kneeRGB = ImageSearch_Algo_RGB.RGB_ANALYZE_CLUSTER (mydataRGB, 100, 5)
-# create RGB Cluster
-savefile = 'data/' + 'test' + '_RGB_Cluster' + str(kneeRGB)
-RGBClusterModel = ImageSearch_Algo_RGB.RGB_CREATE_CLUSTER (mydataRGB, savefile, n_clusters=150)
-RGBClusterTable = ImageSearch_Algo_RGB.RGB_RUN_CLUSTER(RGBClusterModel, mydataRGB)
-RGBClusterTable.sort_values('file')[['file', 'clusterID']]
+# # ----
 
 
-# determine HSV Cluster Size
-# kneeHSV = ImageSearch_Algo_HSV.HSV_ANALYZE_CLUSTER (mydataHSV, 100, 5)
-savefile = 'data/' + 'test' + '_HSV_Cluster' + str(kneeHSV)
-# create RGB Cluster
-HSVClusterModel = ImageSearch_Algo_HSV.HSV_CREATE_CLUSTER (mydataHSV, savefile, n_clusters=200)
-HSVClusterTable = ImageSearch_Algo_HSV.HSV_RUN_CLUSTER(HSVClusterModel, mydataHSV)
-# HSVClusterTable.sort_values('file')[['file', 'clusterID']]
+# # determine RBG Cluster Size
+# # kneeRGB = ImageSearch_Algo_RGB.RGB_ANALYZE_CLUSTER (mydataRGB, 100, 5)
+# # create RGB Cluster
+# savefile = 'data/' + 'test' + '_RGB_Cluster' + str(kneeRGB)
+# RGBClusterModel = ImageSearch_Algo_RGB.RGB_CREATE_CLUSTER (mydataRGB, savefile, n_clusters=150)
+# RGBClusterTable = ImageSearch_Algo_RGB.RGB_RUN_CLUSTER(RGBClusterModel, mydataRGB)
+# RGBClusterTable.sort_values('file')[['file', 'clusterID']]
 
 
-# determine SIFT FVHist Cluster Size
-# kneeSIFT = ImageSearch_Algo_SIFT.SIFT_ANALYZE_CLUSTER(FVHist, 500, 10)
-# create SIFT Cluster
-savefile = 'data/' + 'test' + '_SIFT_Cluster' + str(kneeSIFT)
-# SIFTClusterModel = ImageSearch_Algo_SIFT.SIFT_CREATE_CLUSTER (mydataSIFT, savefile, n_clusters=kneeSIFT)
-SIFTClusterTable = ImageSearch_Algo_SIFT.SIFT_RUN_CLUSTER (mySIFTFVHist, mydataSIFT, n_clusters=115)
-# SIFTClusterTable.sort_values('file')[['file', 'clusterID']]
+# # determine HSV Cluster Size
+# # kneeHSV = ImageSearch_Algo_HSV.HSV_ANALYZE_CLUSTER (mydataHSV, 100, 5)
+# savefile = 'data/' + 'test' + '_HSV_Cluster' + str(kneeHSV)
+# # create RGB Cluster
+# HSVClusterModel = ImageSearch_Algo_HSV.HSV_CREATE_CLUSTER (mydataHSV, savefile, n_clusters=200)
+# HSVClusterTable = ImageSearch_Algo_HSV.HSV_RUN_CLUSTER(HSVClusterModel, mydataHSV)
+# # HSVClusterTable.sort_values('file')[['file', 'clusterID']]
 
 
-# determine ORB FVHist Cluster Size
-# kneeORB = ImageSearch_Algo_ORB.ORB_ANALYZE_CLUSTER(FVHist, 500, 10)
-# create ORB Cluster
-savefile = 'data/' + 'test' + '_ORB_Cluster' + str(kneeORB)
-# ORBClusterModel = ImageSearch_Algo_ORB.ORB_CREATE_CLUSTER (mydataORB, savefile, n_clusters=kneeORB)
-ORBClusterTable = ImageSearch_Algo_ORB.ORB_RUN_CLUSTER (myORBFVHist, mydataORB, n_clusters=50)
-ORBClusterTable.sort_values('file')[['file', 'clusterID']]
+# # determine SIFT FVHist Cluster Size
+# # kneeSIFT = ImageSearch_Algo_SIFT.SIFT_ANALYZE_CLUSTER(FVHist, 500, 10)
+# # create SIFT Cluster
+# savefile = 'data/' + 'test' + '_SIFT_Cluster' + str(kneeSIFT)
+# # SIFTClusterModel = ImageSearch_Algo_SIFT.SIFT_CREATE_CLUSTER (mydataSIFT, savefile, n_clusters=kneeSIFT)
+# SIFTClusterTable = ImageSearch_Algo_SIFT.SIFT_RUN_CLUSTER (mySIFTFVHist, mydataSIFT, n_clusters=115)
+# # SIFTClusterTable.sort_values('file')[['file', 'clusterID']]
+
+
+# # determine ORB FVHist Cluster Size
+# # kneeORB = ImageSearch_Algo_ORB.ORB_ANALYZE_CLUSTER(FVHist, 500, 10)
+# # create ORB Cluster
+# savefile = 'data/' + 'test' + '_ORB_Cluster' + str(kneeORB)
+# # ORBClusterModel = ImageSearch_Algo_ORB.ORB_CREATE_CLUSTER (mydataORB, savefile, n_clusters=kneeORB)
+# ORBClusterTable = ImageSearch_Algo_ORB.ORB_RUN_CLUSTER (myORBFVHist, mydataORB, n_clusters=50)
+# ORBClusterTable.sort_values('file')[['file', 'clusterID']]
 
 
 #######################################################################
@@ -646,7 +650,7 @@ def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algonam
     final_algo_List = Thresholding.imagepredictions_to_list(imagepredictions)
     
     toplist = unique_final_list.copy()
-    # copy all commons to front (2 lists)
+    # copy all commons from candidates threshold list to front (2 lists)
     toplist = [Thresholding.merge_results( toplist, False)]
 
     # Add final algo derivatives to toplist 
@@ -675,48 +679,49 @@ imagepaths = (list(paths.list_images(IMGDIR)))
 
 
 # ********************** ALL INDIVIDUAL ALGO DATA ********************* #
-# initialize 
-Results = pd.DataFrame(columns=['file'])
-# iterate over all samples: 
-for q_path in imagepaths[100:151]: 
+def runBenchmark50() : 
+    # initialize 
+    Results = pd.DataFrame(columns=['file'])
+    # iterate over all samples: 
+    for q_path in imagepaths[:50]: 
 
-    # initialize locals  
-    row_dict = {'file':q_path } 
+        # initialize locals  
+        row_dict = {'file':q_path } 
 
-    search_HSV()
-    search_RGB() 
-    search_RGB_Corr() 
+        search_HSV()
+        search_RGB() 
+        search_RGB_Corr() 
 
-    search_SIFT_BF()
-    search_SIFT_FLANN()
-    search_SIFT_BOVW()
+        search_SIFT_BF()
+        search_SIFT_FLANN()
+        search_SIFT_BOVW()
 
-    search_ORB_FLANN()
-    search_ORB_BF()
-    search_ORB_BF2()
-    search_ORB_BOVW()   
-    
-    search_HASH_All()
-    search_HASH_HYBRID()
+        search_ORB_FLANN()
+        search_ORB_BF()
+        search_ORB_BF2()
+        search_ORB_BOVW()   
+        
+        search_HASH_All()
+        search_HASH_HYBRID()
 
-    # Funnel algo 
-    search_AlgoA(100, False)
+        # Funnel algo 
+        search_AlgoA(100, False)
 
-    # --------- Append Results to Results
-    Results = Results.append( row_dict , ignore_index=True)
-    print ( 'Completed ', imagepaths.index(q_path), q_path)
+        # --------- Append Results to Results
+        Results = Results.append( row_dict , ignore_index=True)
+        print ( 'Completed ', imagepaths.index(q_path), q_path)
 
 
-# ---------- SAVE ALL FILES TO DISK
-# Save Frame to csv 
-Results.to_csv( 'data/' + TESTNAME + '_RESULTS_50Test.csv')
-print ("Data Collection Completed ")
+    # ---------- SAVE ALL FILES TO DISK
+    # Save Frame to csv 
+    Results.to_csv( 'data/' + TESTNAME + '_RESULTS_50Bench.csv')
+    print ("Data Collection Completed ")
 
-# Save Frame to pickle
-savefile = 'data/' + TESTNAME + '_Results_50Test'
-outfile = open (savefile + '.pickle', 'wb')
-pickle.dump( Results, outfile )
-# ---------- SAVED
+    # Save Frame to pickle
+    savefile = 'data/' + TESTNAME + '_Results_50Bench'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump( Results, outfile )
+    # ---------- SAVED
 
 
 # *************************  CUSTOM ALGO DATA **************************** #
@@ -780,5 +785,36 @@ savefile = 'data/' + TESTNAME + '_Results_mix100_ALL' # + str(int(time.time()))
 outfile = open (savefile + '.pickle', 'wb')
 pickle.dump( Results, outfile )
 # ---------- SAVED
+
+
+
+
+
+# ## EXAMPLE of single candidate generator --------
+# # initialize 
+# Results = pd.DataFrame(columns=['file'])
+# for q_path in imagepaths[30:35]: 
+# # for q_path in imagepaths[100:201]: 
+# # for q_path in imagepaths: 
+#     row_dict = {'file':q_path } 
+
+#     algomixerFunnel(['search_SIFT_BOVW'], 200, 'search_SIFT_BF', mydataSIFT, 'AlgoBA')
+#     algomixerFunnel(['search_ORB_BOVW'], 200, 'search_SIFT_BF', mydataSIFT, 'AlgoC')
+
+#     Results = Results.append( row_dict , ignore_index=True)
+#     print ( 'Completed ', imagepaths.index(q_path), q_path)
+
+# # ---------- SAVE ALL FILES TO DISK
+# # Save Frame to csv 
+# Results.to_csv( 'data/' + TESTNAME + '_RESULTS_mix100_1P.csv')
+# print ("Data Collection Completed ")
+
+# # Save Frame to pickle
+# savefile = 'data/' + TESTNAME + '_Results_mix100_1P' # + str(int(time.time())) 
+# outfile = open (savefile + '.pickle', 'wb')
+# pickle.dump( Results, outfile )
+# # ---------- SAVED
+
+
 
 
