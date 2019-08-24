@@ -23,14 +23,15 @@ import Thresholding
 
 
 # --------------- TEST PARAMETERS ----------------------#
-TESTNAME = "Data519_RESIZE320"
+# TESTNAME = "Data519_RESIZE320"
+TESTNAME = "Data519"
 
 # --------------- VAR COMMONS------------------
 
-# IMGDIR = r'./imagesbooks/'
+IMGDIR = r'./imagesbooks/'
 # IMGDIR = r'./images/imagesbooks_DENOISE2/'
 # IMGDIR = r'./images/imagesbooks_S160/'
-IMGDIR = r'./images/imagesbooks_S320/'
+# IMGDIR = r'./images/imagesbooks_S320/'
 # IMGDIR = r'./images/imagesbooks_CT2.0/'
 # IMGDIR = r"V:\\Download\\imagesbooks\\"
 # IMGDIRPROCESSED = ['']*5
@@ -53,6 +54,7 @@ kneeHSV = 2
 kneeRGB = 2
 kneeORB = 2
 kneeSIFT = 2
+HASHLENGTH = 16
 
 # --------------- IMAGES  ----------------------#
 imagepaths = sorted (list(paths.list_images(IMGDIR)))
@@ -106,7 +108,7 @@ print("HSV Feature saved to : ", savefile)
 
 
 # GEN HASH
-mydataHASH, mytime = ImageSearch_Algo_Hash.HASH_GEN(imagepaths, 16)
+mydataHASH, mytime = ImageSearch_Algo_Hash.HASH_GEN(imagepaths, HASHLENGTH)
 print("HASH Features Generation time :", mytime)
 savefile = 'data/' + TESTNAME + '_PandasDF_HASH_Features'
 ImageSearch_Algo_Hash.HASH_SAVE_FEATURES (mydataHASH, savefile)
@@ -129,7 +131,7 @@ myHSVtree = ImageSearch_Algo_HSV.HSV_Create_Tree(mydataHSV, savefile=savefile)
 AlgoGenList = ['whash', 'phash', 'dhash', 'ahash']
 for algo in AlgoGenList :
     savefile = 'data/' + TESTNAME + '_HASH_Tree_' + str(algo)
-    myHASHTree = ImageSearch_Algo_Hash.HASH_Create_Tree(mydataHASH, savefile=savefile)
+    myHASHTree = ImageSearch_Algo_Hash.HASH_Create_Tree(mydataHASH, savefile=savefile, hashAlgo=algo)
 
 # HASH TREE USE HYBRID HASH
 HybridAlgoList = ['whash', 'ahash']
@@ -415,7 +417,7 @@ def search_ORB_BOVW (returnCount=100) :
 def search_HASH_All(returnCount=100): 
     # AlgoGenList = ['whash', 'phash', 'dhash', 'ahash']    
     for algo in AlgoGenList :
-        imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH_TREE(myHASH_Trees[algo], mydataHASH, q_path,hashAlgo=algo, hashsize=16, returnCount=returnCount)
+        imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH_TREE(myHASH_Trees[algo], mydataHASH, q_path, hashAlgo=algo, hashsize=16, returnCount=returnCount)
         a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
         # print ('Accuracy =',  a, '%', '| Quality:', d )
         # print ('Count', cnt, ' | position', ind)
@@ -679,11 +681,11 @@ imagepaths = (list(paths.list_images(IMGDIR)))
 
 
 # ********************** ALL INDIVIDUAL ALGO DATA ********************* #
-def runBenchmark50() : 
+def runBenchmark50(count=50) : 
     # initialize 
     Results = pd.DataFrame(columns=['file'])
     # iterate over all samples: 
-    for q_path in imagepaths[:50]: 
+    for q_path in imagepaths[:count]: 
 
         # initialize locals  
         row_dict = {'file':q_path } 
@@ -817,4 +819,28 @@ pickle.dump( Results, outfile )
 
 
 
+# --------------------- HASH CUSTOM TEST 
+# image dirs path 
+imagepaths = sorted(list(paths.list_images(IMGDIR)))
+Results = pd.DataFrame(columns=['file'])
+# iterate over all samples: 
+for q_path in imagepaths: 
 
+    # initialize locals  
+    row_dict = {'file':q_path } 
+    search_HASH_All()
+    search_HASH_HYBRID()
+    # --------- Append Results to Results
+    Results = Results.append( row_dict , ignore_index=True)
+    print ( 'Completed ', imagepaths.index(q_path), q_path)
+
+# ---------- SAVE ALL FILES TO DISK
+# Save Frame to csv 
+Results.to_csv( 'data/' + TESTNAME + '_RESULTS_HASH_Bench.csv')
+print ("Data Collection Completed ")
+
+# Save Frame to pickle
+savefile = 'data/' + TESTNAME + '_Results_HASH_Bench'
+outfile = open (savefile + '.pickle', 'wb')
+pickle.dump( Results, outfile )
+# ---------- SAVED

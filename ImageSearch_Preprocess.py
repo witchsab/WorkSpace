@@ -28,7 +28,7 @@ IMGDIRPROCESSED[5]  = r'./images/imagesbooks_S320/'         # Resize to w=320 (5
 IMGDIRPROCESSED[6]  = r'./images/imagesbooks_S160/'         # Resize to w=160 (25%)
 IMGDIRPROCESSED[7]  = r'./images/imagesbooks_EQ2/'           # Equalized Histogram 
 IMGDIRPROCESSED[8]  = r'./images/imagesbooks_EQRGB/'        # Equalized Histogram 
-IMGDIRPROCESSED[9]  = r'./images/imagesbooks_CT4.0/'        # increased  contrast
+IMGDIRPROCESSED[9]  = r'./images/imagesbooks_CT2.0/'        # increased  contrast
 IMGDIRPROCESSED[10]  = r'./images/imagesbooks_S32/'         # Resize to w=32 (very small)
 IMGDIRPROCESSED[11]  = r'./images/imagesbooks_R90/'         # Rotate by 90 deg 
 IMGDIRPROCESSED[12]  = r'./images/imagesbooks_R180/'         # Rotate by 180 deg 
@@ -261,15 +261,43 @@ print("[INFO] DENOISE processed {} images in {:.2f} seconds".format(len(haystack
 
 
 
-
-# ------- GLOBAL MIX 
-
-
-
 # ------- UPDATE ACCURACY DICT 
 # dict source 
 # dict 
 
+import Accuracy as accuracy
+def update_Preprocessed_Dicts() : 
+    for DIR in IMGDIRPROCESSED :
+        # DIR = IMGDIRPROCESSED[5] # test 
+        thisDict = {}
+        haystackPaths = sorted(list(paths.list_images(DIR))) #[:2]
+        imagefiles = haystackPaths # [:50]
+        # print(haystackPaths)
+
+        for f in imagefiles: 
+            gList = accuracy.accuracy_groundtruth(f)
+            thisDict[f] = gList
+
+        # store the file list 
+        seedFile = DIR + 'seed'
+        outfile = open (seedFile + '.pickle', 'wb')
+        pickle.dump( Results, outfile )
+        print ("[INFO] Saving file ", seedFile)
+
+        # store the file matches (ground truth) dictionary 
+        matchesFile = DIR + 'groundTruth'
+        outfile = open (matchesFile + '.pickle', 'wb')
+        pickle.dump( Results, outfile )
+        print ("[INFO] Saving file ", matchesFile)
+
+# Run an updates on the preprocessed dicts 
+update_Preprocessed_Dicts()
+
+# ------- GLOBAL MIX 
+def create_global() : 
+    # Todo
+    
+    return None
 
 
 
@@ -302,3 +330,6 @@ def run_foregroundExtractor ():
 
     print("[INFO] processed {} images in {:.2f} seconds".format( len(haystackPaths), time.time() - start))
     # ------- END 
+
+
+

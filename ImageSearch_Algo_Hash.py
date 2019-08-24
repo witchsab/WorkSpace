@@ -84,7 +84,7 @@ def HASH_SAVE_FEATURES ( mydataHASH, savefile='testHASH_Data') :
 Load Pandas dataframe from pickle 
 Datafram format : file , imagehist
 '''
-def HASH_LOAD_FEATURES ( openfile='testHASH_Data') : 
+def HASH_LOAD_FEATURES (openfile='testHASH_Data') : 
     
     # reading the pickle tree
     infile = open(openfile + '.pickle','rb')
@@ -105,12 +105,12 @@ output/return:
 HashTree (KDTree)
 
 '''
-def HASH_Create_Tree ( mydataHASH, savefile='testHash', hashAlgo='dhash' ) : 
+def HASH_Create_Tree ( mydataHASH, savefile='testHash', hashAlgo='dhash'): 
     
     # YD = np.array(mydataHASH['phash'].apply(imagehash.ImageHash.__hash__))
     YD = list(mydataHASH[hashAlgo])
 
-    # a = np.empty((h, w)) # create an empty array 
+    # a = np.empty((h, w)) # create an empty array
     result_array = []
 
     for item in YD : 
@@ -121,7 +121,7 @@ def HASH_Create_Tree ( mydataHASH, savefile='testHash', hashAlgo='dhash' ) :
     nsamples, x, y = YA.shape  # know the shape before you flatten
     F = YA.reshape ( nsamples, x*y ) # gives a 2 D matice (sample, value) which can be fed to KMeans 
 
-    HASHTree = KDTree( F ,  metric='euclidean')
+    HASHTree = KDTree(F, metric='euclidean')
     
     # save the tree #example # treeName = 'testHash.pickle'
     outfile = open (savefile + '.pickle', 'wb')

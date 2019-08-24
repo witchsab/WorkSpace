@@ -291,7 +291,7 @@ print("Mean Search Time = ", accStats['Stime'].mean(), ' secs')
 testAlgoList = ['whash', 'ahash', 'dhash']
 
 # to create a new tree from dataframe features 'mydataHSV'
-myHybridtree = ImageSearch_Algo_Hash.HASH_CREATE_HYBRIDTREE(mydataHASH, 'myHASH_Tree', testAlgoList)
+myHybridtree = ImageSearch_Algo_Hash.HASH_CREATE_HYBRIDTREE(mydataHASH, './data/myHHASH_Tree', testAlgoList)
 
 # test over a single sample 
 # q_path = random.sample(imagepaths, 1)[0]
@@ -305,19 +305,104 @@ print('Count', cnt, ' | position', pos)
 # -----------------HYBRID HASH Tree test on 100 statistical sample ---------------
 
 accStats = pd.DataFrame(columns=['file', 'Acc', 'PCount', 'Stime'])
+q_paths = imagepaths # random.sample(imagepaths, 200)  # random sample 100 items in list
+
 for q_path in q_paths:
     imagematches, searchtime =  ImageSearch_Algo_Hash.HASH_SEARCH_HYBRIDTREE (myHybridtree, mydataHASH, q_path, testAlgoList, 16, 100)
     a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 50)
-    accStats = accStats.append({'file': q_path, 'Acc': a, 'PCount': cnt,  'Stime': searchtime}, ignore_index=True)
+    accStats = accStats.append({'file': q_path, 'Acc_HHash': a, 'Count_HHash_': cnt,  'STime_HHash': searchtime, 'Index_HHash': pos}, ignore_index=True)
 
 # plt.plot(accStats['Acc'])
 # plt.plot (accStats['PCount'])
 # plt.hlines(accStats['Acc'].mean(), 0, 100, 'r')
 
-print("Mean Acc = ", accStats['Acc'].mean(), '%')
-print("Mean Search Time = ", accStats['Stime'].mean(), ' secs')
+print("Mean Acc = ", accStats['Acc_HHash'].mean(), '%')
+print("Mean Search Time = ", accStats['STime_HHash'].mean(), ' secs')
 
 # ----------------END HYBRID TREE SEARCH STASTICAL DATA COLLECTION ----------------------------
+
+# --------------- ALL COMBINATIONS HYBRID HASH TREE TEST -----------------------------
+IMGDIR = r'./imagesbooks/'
+imagepaths = sorted(list(paths.list_images(IMGDIR)))
+# random.shuffle(imagepaths)
+mydataHASH, mytime = ImageSearch_Algo_Hash.HASH_GEN(imagepaths, 16)
+print("HASH All Feature Generation time :", mytime)
+
+accStats = pd.DataFrame(columns=['file'])
+q_paths = imagepaths # random.sample(imagepaths, 200)  # random sample 100 items in list
+testAlgoList = ['ahash','dhash','whash','phash']
+for algo in testAlgoList: 
+    mytree = ImageSearch_Algo_Hash.HASH_Create_Tree(mydataHASH, './data/myHHASH_'+ str(algo)+'_Tree', algo)
+    for q_path in q_paths:
+        imagematches, searchtime =  ImageSearch_Algo_Hash.HASH_SEARCH_TREE ( mytree, mydataHASH, q_path, algo, 16, 100)
+        a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+        accStats = accStats.append({'file': q_path, 'Acc_HASH_'+str(algo): a, 'Count_HASH_'+str(algo): cnt,  'STime_HASH_'+str(algo): searchtime, 'Index_HASH_'+str(algo): pos}, ignore_index=True)
+    print(str(algo),"Samples=",len(q_paths), "Mean Acc = ", accStats['Acc_HASH_'+str(algo)].mean(), '%')
+    print(str(algo), "Mean Search Time = ", accStats['STime_HASH_'+str(algo)].mean(), ' secs')
+
+    # accStats.set_index('file', inplace=True)
+    accStats.to_csv('./data/test_hash_'+str(algo)+'.csv')
+
+
+# all combinations of whash 
+IMGDIR = r'./imagesbooks/'
+imagepaths = sorted(list(paths.list_images(IMGDIR)))
+random.shuffle(imagepaths)
+mydataHASH, mytime = ImageSearch_Algo_Hash.HASH_GEN(imagepaths, 16)
+print("HASH All Feature Generation time :", mytime)
+
+accStats = pd.DataFrame(columns=['file'])
+AlgoList = ['whash', 'ahash', 'dhash', 'phash']
+hybridlist1 = ['whash', 'ahash', 'dhash']
+hybridlist2 = ['whash', 'ahash']
+hybridlist3 = ['whash', 'dhash']
+
+mytree = {}
+for algo in AlgoList: 
+    mytree[algo] = ImageSearch_Algo_Hash.HASH_Create_Tree(mydataHASH, './data/myHHASH_'+ str(algo)+'_Tree', algo)
+myHybridtree1 = ImageSearch_Algo_Hash.HASH_CREATE_HYBRIDTREE(mydataHASH, './data/myHHASH_WAD0_Tree', hybridlist1)
+myHybridtree2 = ImageSearch_Algo_Hash.HASH_CREATE_HYBRIDTREE(mydataHASH, './data/myHHASH_WA00_Tree', hybridlist2)
+myHybridtree3 = ImageSearch_Algo_Hash.HASH_CREATE_HYBRIDTREE(mydataHASH, './data/myHHASH_WD00_Tree', hybridlist3)
+
+for q_path in q_paths:
+    row_dict = {'file':q_path}
+    for algo in AlgoList: 
+        imagematches, searchtime =  ImageSearch_Algo_Hash.HASH_SEARCH_TREE(mytree[algo], mydataHASH, q_path, algo, 16, 100)
+        a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)     
+        row_dict['acc_HASH_'+str(algo)] = a
+        row_dict['index_HASH_'+str(algo)] = pos
+        row_dict['Count_HASH_'+str(algo)] = cnt
+        row_dict['quality_HASH_'+str(algo)] = q
+        row_dict['time_HASH_'+str(algo)] = searchtime
+
+    imagematches, searchtime =  ImageSearch_Algo_Hash.HASH_SEARCH_HYBRIDTREE(myHybridtree1, mydataHASH, q_path, hybridlist1, 16, 100)
+    a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 50)
+    row_dict['acc_HHASH1'] = a
+    row_dict['index_HHASH1'] = pos
+    row_dict['Count_HHASH1'] = cnt
+    row_dict['quality_HHASH1'] = q
+    row_dict['time_HHASH1'] = searchtime
+    imagematches, searchtime =  ImageSearch_Algo_Hash.HASH_SEARCH_HYBRIDTREE(myHybridtree2, mydataHASH, q_path, hybridlist2, 16, 100)
+    a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 50)
+    row_dict['acc_HHASH2'] = a
+    row_dict['index_HHASH2'] = pos
+    row_dict['Count_HHASH2'] = cnt
+    row_dict['quality_HHASH2'] = q
+    row_dict['time_HHASH2'] = searchtime
+    imagematches, searchtime =  ImageSearch_Algo_Hash.HASH_SEARCH_HYBRIDTREE(myHybridtree3, mydataHASH, q_path, hybridlist3, 16, 100)
+    a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 50)
+    row_dict['acc_HHASH3'] = a
+    row_dict['index_HHASH3'] = pos
+    row_dict['Count_HHASH3'] = cnt
+    row_dict['quality_HHASH3'] = q
+    row_dict['time_HHASH3'] = searchtime
+
+    accStats = accStats.append(row_dict, ignore_index=True)
+
+accStats.to_csv('./data/HASH_519_ALL_Hybrid_TEST_acc50.csv')
+
+
+
 
 
 
