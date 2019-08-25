@@ -839,7 +839,7 @@ for q_path in imagepaths:
     Results = Results.append( row_dict , ignore_index=True)
     print ( 'Completed ', imagepaths.index(q_path), q_path)
 
-# ---------- SAVE ALL FILES TO DISK
+# SAVE ALL FILES TO DISK
 # Save Frame to csv 
 Results.to_csv( 'data/' + TESTNAME + '_RESULTS_HASH_Bench_GlobalTest.csv')
 print ("Data Collection Completed ")
@@ -848,4 +848,4 @@ print ("Data Collection Completed ")
 savefile = 'data/' + TESTNAME + '_Results_HASH_Bench_Global'
 outfile = open (savefile + '.pickle', 'wb')
 pickle.dump( Results, outfile )
-# ---------- SAVED
+# ---------- SAVED --- HASH END

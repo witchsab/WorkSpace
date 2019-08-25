@@ -1,5 +1,3 @@
-
-
 ##############################################################################
 #######################------  RGB THRESHOLDING------ ########################
 ##############################################################################
@@ -25,8 +23,7 @@ print (mytime)
 # q_path = random.sample(imagepaths, 1)[0]
 q_paths = random.sample(imagepaths, 20)  # random sample 100 items in list
 
-q_paths = [
-    "./imagesbooks/ukbench00196.jpg", "./imagesbooks/ukbench00199.jpg",  "./imagesbooks/ukbench00296.jpg",  "./imagesbooks/ukbench00298.jpg",  "./imagesbooks/ukbench00299.jpg",  "./imagesbooks/ukbench00300.jpg",  "./imagesbooks/ukbench00302.jpg",  "./imagesbooks/ukbench00303.jpg",  "./imagesbooks/ukbench02730.jpg",  "./imagesbooks/ukbench02740.jpg",  "./imagesbooks/ukbench02743.jpg",  "./imagesbooks/ukbench05608.jpg",  "./imagesbooks/ukbench05932.jpg",  "./imagesbooks/ukbench05933.jpg",  "./imagesbooks/ukbench05934.jpg",  "./imagesbooks/ukbench05935.jpg",  "./imagesbooks/ukbench05952.jpg",  "./imagesbooks/ukbench05953.jpg",  "./imagesbooks/ukbench05954.jpg",  "./imagesbooks/ukbench05955.jpg",  "./imagesbooks/ukbench05956.jpg",  "./imagesbooks/ukbench05957.jpg",  "./imagesbooks/ukbench05958.jpg",  "./imagesbooks/ukbench05959.jpg",  "./imagesbooks/ukbench06148.jpg",  "./imagesbooks/ukbench06149.jpg",  "./imagesbooks/ukbench06150.jpg",  "./imagesbooks/ukbench06151.jpg",  "./imagesbooks/ukbench06558.jpg",  "./imagesbooks/ukbench06559.jpg",  "./imagesbooks/ukbench07285.jpg",  "./imagesbooks/ukbench07588.jpg",  "./imagesbooks/ukbench07589.jpg",  "./imagesbooks/ukbench07590.jpg",  "./imagesbooks/ukbench08540.jpg",  "./imagesbooks/ukbench08542.jpg",  "./imagesbooks/ukbench08592.jpg"]
+q_paths = ["./imagesbooks/ukbench00196.jpg", "./imagesbooks/ukbench00199.jpg",  "./imagesbooks/ukbench00296.jpg",  "./imagesbooks/ukbench00298.jpg",  "./imagesbooks/ukbench00299.jpg",  "./imagesbooks/ukbench00300.jpg",  "./imagesbooks/ukbench00302.jpg",  "./imagesbooks/ukbench00303.jpg",  "./imagesbooks/ukbench02730.jpg",  "./imagesbooks/ukbench02740.jpg",  "./imagesbooks/ukbench02743.jpg",  "./imagesbooks/ukbench05608.jpg",  "./imagesbooks/ukbench05932.jpg",  "./imagesbooks/ukbench05933.jpg",  "./imagesbooks/ukbench05934.jpg",  "./imagesbooks/ukbench05935.jpg",  "./imagesbooks/ukbench05952.jpg",  "./imagesbooks/ukbench05953.jpg",  "./imagesbooks/ukbench05954.jpg",  "./imagesbooks/ukbench05955.jpg",  "./imagesbooks/ukbench05956.jpg",  "./imagesbooks/ukbench05957.jpg",  "./imagesbooks/ukbench05958.jpg",  "./imagesbooks/ukbench05959.jpg",  "./imagesbooks/ukbench06148.jpg",  "./imagesbooks/ukbench06149.jpg",  "./imagesbooks/ukbench06150.jpg",  "./imagesbooks/ukbench06151.jpg",  "./imagesbooks/ukbench06558.jpg",  "./imagesbooks/ukbench06559.jpg",  "./imagesbooks/ukbench07285.jpg",  "./imagesbooks/ukbench07588.jpg",  "./imagesbooks/ukbench07589.jpg",  "./imagesbooks/ukbench07590.jpg",  "./imagesbooks/ukbench08540.jpg",  "./imagesbooks/ukbench08542.jpg",  "./imagesbooks/ukbench08592.jpg"]
 
 
 
@@ -97,11 +94,11 @@ myRGBtree = ImageSearch_Algo_RGB.RGB_Load_Tree (file_RGB_Tree)
 myHSVtree = ImageSearch_Algo_HSV.HSV_Load_Tree (file_HSV_Tree)
 
 
-imagematches , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 100)
+# imagematches , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 100)
 
 # imagematches , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH(mydataRGB, q_path, 0.5)
 
-# imagematches , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
+imagematches , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
 # imagematches , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH(mydataHSV, q_path)
 
 
@@ -177,22 +174,22 @@ q_paths = ["./imagesbooks/ukbench00196.jpg",  "./imagesbooks/ukbench00199.jpg", 
 ,"./imagesbooks/ukbench08595.jpg","./imagesbooks/ukbench08609.jpg","./imagesbooks/ukbench09364.jpg","./imagesbooks/ukbench09365.jpg","./imagesbooks/ukbench09366.jpg","./imagesbooks/ukbench10061.jpg","./imagesbooks/ukbench10065.jpg","./imagesbooks/ukbench10066.jpg","./imagesbooks/ukbench10085.jpg","./imagesbooks/ukbench10087.jpg","./imagesbooks/ukbench10108.jpg","./imagesbooks/ukbench10109.jpg","./imagesbooks/ukbench10110.jpg","./imagesbooks/ukbench10112.jpg","./imagesbooks/ukbench10113.jpg","./imagesbooks/ukbench10114.jpg","./imagesbooks/ukbench10116.jpg","./imagesbooks/ukbench10118.jpg","./imagesbooks/ukbench10119.jpg","./imagesbooks/ukbench10124.jpg","./imagesbooks/ukbench10125.jpg","./imagesbooks/ukbench10126.jpg","./imagesbooks/ukbench10128.jpg","./imagesbooks/ukbench10129.jpg","./imagesbooks/ukbench10130.jpg","./imagesbooks/ukbench10131.jpg","./imagesbooks/ukbench10152.jpg","./imagesbooks/ukbench10153.jpg","./imagesbooks/ukbench10154.jpg","./imagesbooks/ukbench10164.jpg","./imagesbooks/ukbench10165.jpg","./imagesbooks/ukbench10166.jpg","./imagesbooks/ukbench10167.jpg"]
 
 
+# # to reload module: uncomment use the following 
+# %load_ext autoreload
+# %autoreload 2
+import matplotlib.pyplot as plt
+from matplotlib import colors
+import Accuracy as accuracy
 
-
+customcmap = colors.ListedColormap(['green', 'red'])
 counter = 1 
-for q_path in q_paths: 
+for q_path in q_paths[:20]: 
     imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
+    # imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 100)
        
-
-    # to reload module: uncomment use the following 
-    # %load_ext autoreload
-    # %autoreload 2
-
-    import Accuracy as accuracy
     a, d, i_hsv, cnt = accuracy.accuracy_matches(q_path, imagematcheshsv, 20)
     # print ('Accuracy =',  a, '%', '| Quality:', d )
     # print ('Count', cnt, ' | position', i_rgb)
-
 
     # import ImageSearch_Plots as myplots
     # myplots.plot_predictions(imagematchesrgb, q_path)
@@ -207,15 +204,71 @@ for q_path in q_paths:
         x, y = item
         score.append(x)
     # print(score)
-
-    import matplotlib.pyplot as plt 
-    plt.scatter ( [counter]*len(imagematcheshsv), score, c=matchesposition)
-
-    counter +=1 
+    plt.scatter ( [counter]*len(imagematcheshsv), score, c=matchesposition, cmap=customcmap)
+    counter +=1 # DONT FORGET 
 
 plt.colorbar()
 plt.show()
 
-# 
+
+#####################################################################
+########  STATISTICAL HSV vs. RGB  score/thresholding comparison
+#####################################################################
+
+import pandas as pd
+
+# X, Y Scatter HSV vs RGB 
+customcmap = colors.ListedColormap(['green', 'red'])
+# customcmap = colors.ListedColormap(['gray', 'red'])
+# customcmap = colors.ListedColormap(['cyan', 'magenta'])
+fig = plt.figure()
+ax = fig.add_subplot(111)
+
+counter = 0 
+for q_path in q_paths[:30]: 
+    
+    counter +=1 # DONT FORGET 
+
+    hsv_match_score=[]
+    hsv_match_file=[]
+    rgb_match_score=[]
+    rgb_match_file=[]
+
+    imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
+    imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 100)
+    space = 100
+    # create a dataframe for HSV ans RGB 
+    imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, space)
+    for myitem in imagematcheshsv:
+        x, y = myitem
+        hsv_match_score.append(x)
+        hsv_match_file.append(y)
+    data = { 'file' : hsv_match_file , 'HSVScore' : hsv_match_score }
+    hsvTable = pd.DataFrame ( data )
+
+    for myitem in imagematchesrgb:
+        x, y = myitem
+        rgb_match_score.append(x)
+        rgb_match_file.append(y)
+    data = { 'file' : rgb_match_file , 'RGBScore' : rgb_match_score }
+    rgbTable = pd.DataFrame ( data )
+
+    finalTable = pd.merge(hsvTable,rgbTable, on='file')
+    truth = accuracy.accuracy_groundtruth(q_path) 
+    finalTable ['Truth'] = 0 
+    finalTable.loc [finalTable['file'].isin(truth) , 'Truth' ] = 1     
+    finalTable = finalTable[finalTable.file != q_path]
+    finalTable = finalTable.sort_values(by=['Truth']) # sort by Truth for plotting overlay
+
+    scatter = ax.scatter( list(finalTable['HSVScore']), list(finalTable['RGBScore']), c= list(finalTable["Truth"]),s=30, cmap=customcmap)
+
+ax.set_title('HSV vs RGB ')
+ax.set_xlabel('HSV ')
+ax.set_ylabel('RGB ')
+plt.colorbar(scatter)
+plt.show()
+
+
+
 
 

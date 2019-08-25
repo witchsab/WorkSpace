@@ -109,51 +109,6 @@ finalTable = finalTable[finalTable.file != q_path]
 # finalTable.to_csv('finalscoreTable.csv')
 
 
-
-#################################################################################
-##########              PLOT SCATTERS for SCORES            #####################
-#################################################################################
-
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-
-
-# Plotting
-fig = plt.figure(1, figsize=(7,7))
-ax = Axes3D(fig, rect=[0, 0, 0.95, 1], elev=40, azim=134)
-
-# fig = plt.figure()
-# ax = fig.add_subplot(1, 1, 1, projection='3d')
-ax.scatter(list(finalTable['HSVScore']), list(finalTable['RGBScore']), list(finalTable['SIFTScore']), c=list(finalTable['Truth']), marker='o')
-ax.set_xlabel('HSVScore')
-ax.set_ylabel('RGBScore')
-ax.set_zlabel('SIFTScore')
-plt.title('Score Comparison')
-# plt.legend(loc=2)
-plt.show()
-
-
-# X, Y Scatter HSV vs RGB 
-fig = plt.figure()
-ax = fig.add_subplot(111)
-scatter = ax.scatter( list(finalTable['HSVScore']), list(finalTable['RGBScore']), c= list(finalTable["Truth"]),s=10)
-ax.set_title('HSV vs RGB ')
-ax.set_xlabel('HSV ')
-ax.set_ylabel('RGB ')
-plt.colorbar(scatter)
-
-
-# X, Y Scatter SIFT vs RGB 
-fig = plt.figure()
-ax = fig.add_subplot(111)
-scatter = ax.scatter( list(finalTable['SIFTScore']), list(finalTable['RGBScore']), c= list(finalTable["Truth"]),s=10)
-ax.set_title('SIFT vs RGB ')
-ax.set_xlabel('SIFT ')
-ax.set_ylabel('RGB ')
-plt.colorbar(scatter)
-
-
 ##################################################################################
 ##########  PLOT THRESHOLDING CURVE 
 ##################################################################################
@@ -239,7 +194,7 @@ plt.vlines( qualifiedItems , 0, max(score), colors='g')
 ##########  PLOT DISTRIBUTION 2D SCATTER and 3D  
 ##################################################################################
 
-# Consolidate all to 1 final table table 
+# Consolidate all to 1 final table of scores for all images in datset 
 
 hsv_match_score=[]
 hsv_match_file=[]
@@ -248,7 +203,10 @@ rgb_match_file=[]
 sift_match_score=[]
 sift_match_file=[]
 
-imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, len(mydataHSV.index))
+space = len(mydataHSV.index)
+space = 100
+
+imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, space)
 for myitem in imagematcheshsv:
     x, y = myitem
     hsv_match_score.append(x)
@@ -256,7 +214,7 @@ for myitem in imagematcheshsv:
 data = { 'file' : hsv_match_file , 'HSVScore' : hsv_match_score }
 hsvTable = pd.DataFrame ( data )
 
-imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, len(mydataRGB.index))
+imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, space)
 for myitem in imagematchesrgb:
     x, y = myitem
     rgb_match_score.append(x)
@@ -264,7 +222,7 @@ for myitem in imagematchesrgb:
 data = { 'file' : rgb_match_file , 'RGBScore' : rgb_match_score }
 rgbTable = pd.DataFrame ( data )
 
-imagematchesSIFT, searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF_DIST(mydataSIFT, q_path, 100, 0.75, len(mydataSIFT.index))
+imagematchesSIFT, searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF_DIST(mydataSIFT, q_path, 100, 0.75, space)
 for myitem in imagematchesSIFT:
     x, y = myitem
     sift_match_score.append(x)
@@ -281,6 +239,97 @@ finalTable ['Truth'] = 0
 finalTable.loc [finalTable['file'].isin(truth) , 'Truth' ] = 1     
 finalTable = finalTable[finalTable.file != q_path]
 
+finalTable = finalTable.sort_values(by=['Truth'])
 
+plot_match_scores(imagematcheshsv)
+plot_match_scores(imagematchesrgb)
+plot_match_scores(imagematchesSIFT)
+
+
+
+
+
+#################################################################################
+##########              PLOT SCATTERS for SCORES            #####################
+#################################################################################
+
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import colors
+from mpl_toolkits.mplot3d import Axes3D
+
+# colormaps 
+customcmap = colors.ListedColormap(['green', 'red'])
+
+# Plotting
+fig = plt.figure(1, figsize=(7,7))
+ax = Axes3D(fig, rect=[0, 0, 0.95, 1], elev=40, azim=134)
+
+# fig = plt.figure()
+# ax = fig.add_subplot(1, 1, 1, projection='3d')
+ax.scatter(list(finalTable['HSVScore']), list(finalTable['RGBScore']), list(finalTable['SIFTScore']), c=list(finalTable['Truth']), s=50 ,cmap=customcmap) 
+# marker='o', cmap=plt.cm.RdYlGn)
+ax.set_xlabel('HSVScore')
+ax.set_ylabel('RGBScore')
+ax.set_zlabel('SIFTScore')
+plt.title('Score Comparison')
+# plt.legend(loc=2)
+plt.show()
+
+
+# X, Y Scatter HSV vs RGB 
+customcmap = colors.ListedColormap(['green', 'red'])
+# customcmap = colors.ListedColormap(['gray', 'red'])
+# customcmap = colors.ListedColormap(['cyan', 'magenta'])
+fig = plt.figure()
+ax = fig.add_subplot(111)
+scatter = ax.scatter( list(finalTable['HSVScore']), list(finalTable['RGBScore']), c= list(finalTable["Truth"]),s=30, cmap=customcmap)
+ax.set_title('HSV vs RGB ')
+ax.set_xlabel('HSV ')
+ax.set_ylabel('RGB ')
+plt.colorbar(scatter)
+
+
+# X, Y Scatter SIFT vs RGB 
+customcmap = colors.ListedColormap(['gray', 'red'])
+fig = plt.figure()
+ax = fig.add_subplot(111)
+scatter = ax.scatter( list(finalTable['SIFTScore']), list(finalTable['RGBScore']), c= list(finalTable["Truth"]),s=30, cmap=customcmap)
+ax.set_title('SIFT vs RGB ')
+ax.set_xlabel('SIFT ')
+ax.set_ylabel('RGB ')
+plt.colorbar(scatter)
+
+# Threshold chart Score vs Sorted Samples
+def plot_match_scores(imagematches): 
+    score = []
+    successScore = []
+    # score, file = item
+    for item in imagematches:
+        x, y = item
+        score.append(x)
+    # print(score)
+    successPositions =i_rgb
+    for i in i_rgb: 
+        successScore.append(score[i])
+
+    #  can throw exceptions in case of less points
+
+    knee = 6
+    try : 
+        elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
+        print ('Detected Elbow cluster value :', elbow.knee)
+        knee = elbow.knee
+    except: 
+        pass    
+    qualifiedItems = min (knee, 6)
+
+    # plt.scatter ( [counter]*len(imagematches), score, c=matchesposition)
+    plt.plot(score)
+    plt.scatter(successPositions, successScore, c='r' )
+    plt.vlines( qualifiedItems , 0, max(score), colors='g')
+    plt.xlabel('n_samples')
+    plt.ylabel('Score')
+    plt.show()
 
 
