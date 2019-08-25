@@ -33,7 +33,7 @@ q_paths = [
 
 counter = 1 
 for q_path in q_paths: 
-    imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (mytreeRGB, mydataRGB, q_path, 100)
+    imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 100)
     # imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH(mydataRGB, q_path, 0.7)
 
     # to reload module: uncomment use the following 
@@ -73,17 +73,35 @@ plt.show()
 #### check Gaussian nature of scores and success positions
 import ImageSearch_Algo_HSV
 import ImageSearch_Algo_RGB
+import ImageSearch_Algo_SIFT
 import Accuracy as accuracy
 from kneed import KneeLocator
 import random 
+import matplotlib.pyplot as plt
 
 q_path = random.sample(q_paths, 1)[0]
 
-imagematches , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (mytreeRGB, mydataRGB, q_path, 50)
+
+# Features 
+TESTNAME = 'Data519'
+file_HSV_Feature = 'data/' + TESTNAME + '_PandasDF_HSV_Features'
+file_HSV_Tree = 'data/' + TESTNAME + '_HSV_Tree'
+file_RGB_Feature = 'data/' + TESTNAME + '_PandasDF_RGB_Features'
+file_RGB_Tree = 'data/' + TESTNAME + '_RGB_Tree'
+file_SIFT_Feature = 'data/' + TESTNAME + '_PandasDF_SIFT_Features_kp100'
+mydataRGB = ImageSearch_Algo_RGB.RGB_LOAD_FEATURES (file_RGB_Feature)
+mydataHSV = ImageSearch_Algo_HSV.HSV_LOAD_FEATURES (file_HSV_Feature)
+mydataSIFT = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES (file_SIFT_Feature)
+# Tree & Clusters 
+myRGBtree = ImageSearch_Algo_RGB.RGB_Load_Tree (file_RGB_Tree)
+myHSVtree = ImageSearch_Algo_HSV.HSV_Load_Tree (file_HSV_Tree)
+
+
+imagematches , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 100)
 
 # imagematches , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH(mydataRGB, q_path, 0.5)
 
-# imagematches , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (mytreeHSV, mydataHSV, q_path, 100)
+# imagematches , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
 # imagematches , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH(mydataHSV, q_path)
 
 
@@ -112,9 +130,11 @@ for i in i_rgb:
     successScore.append(score[i])
 
 #  can throw exceptions in case of less points
-elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
-print ('Detected Elbow cluster value :', elbow.knee)
-
+try : 
+    elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
+    print ('Detected Elbow cluster value :', elbow.knee)
+except: 
+    pass    
 qualifiedItems = min (elbow.knee, 6)
 
 # plt.scatter ( [counter]*len(imagematches), score, c=matchesposition)
@@ -161,7 +181,7 @@ q_paths = ["./imagesbooks/ukbench00196.jpg",  "./imagesbooks/ukbench00199.jpg", 
 
 counter = 1 
 for q_path in q_paths: 
-    imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (mytreeHSV, mydataHSV, q_path, 100)
+    imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
        
 
     # to reload module: uncomment use the following 

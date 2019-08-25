@@ -177,6 +177,45 @@ def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio
     # Search End
 
 
+def SIFT_SEARCH_BF_DIST (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50):
+    start = time.time()
+    q_img = cv2.imread(queryimagepath)    
+    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
+    q_kp, q_des = sift.detectAndCompute(q_img, None)
+   
+    # BF macher 
+    bf = cv2.BFMatcher()
+
+    matches_BF = []
+
+    for index, j in feature.iterrows():
+        m_des = j['siftdes']
+        m_path = j['file']
+        # Calculating number of feature matches using FLANN
+        matches = bf.knnMatch(q_des, m_des, k=2)
+
+        # ratio query as per Lowe's paper
+        matches_count = 0
+        matches_dist = 0
+        for x, (m, n) in enumerate(matches):
+            if m.distance < lowe_ratio*n.distance:
+                matches_count += 1
+                matches_dist += m.distance
+                # print (matches_dist)
+        matches_dist = matches_dist if matches_count !=0 else 0
+        matches_BF.append((matches_dist, m_path))
+
+    matches_BF.sort(key=lambda x: x[0], reverse=True)
+    predictions = matches_BF[:predictions_count]
+    t = time.time() - start
+    # print(predictions)
+    # print("[INFO] processed {} images in {:.2f} seconds".format(len(haystackPaths), t))
+    return (predictions, t)
+    # Search End
+
+
+
 # SIFT TREE GENERATION and SEARCH using BOVW histograms method 
 
 def SIFT_CREATE_TREE_MODEL ( mydataSIFT, savefile='testSIFTtree', n_clusters=500 ) : 
