@@ -265,8 +265,11 @@ print("[INFO] DENOISE processed {} images in {:.2f} seconds".format(len(haystack
 # dict source 
 # dict 
 
-import Accuracy as accuracy
-def update_Preprocessed_Dicts() : 
+import AccuracyGlobal 
+accuracy = AccuracyGlobal.AccuracyGlobal() # empty class genrated 
+
+def update_Preprocessed_Dicts() :
+    IMGDIRPROCESSED.append(IMGDIR) 
     for DIR in IMGDIRPROCESSED :
         # DIR = IMGDIRPROCESSED[5] # test 
         thisDict = {}
@@ -275,19 +278,19 @@ def update_Preprocessed_Dicts() :
         # print(haystackPaths)
 
         for f in imagefiles: 
-            gList = accuracy.accuracy_groundtruth(f)
-            thisDict[f] = gList
-
+            gkey, gList = accuracy.accuracy_groundtruth_gen(f)
+            thisDict[gkey] = gList
+        # print (gList)
         # store the file list 
         seedFile = DIR + 'seed'
         outfile = open (seedFile + '.pickle', 'wb')
-        pickle.dump( Results, outfile )
+        pickle.dump( thisDict.keys, outfile )
         print ("[INFO] Saving file ", seedFile)
 
         # store the file matches (ground truth) dictionary 
         matchesFile = DIR + 'groundTruth'
         outfile = open (matchesFile + '.pickle', 'wb')
-        pickle.dump( Results, outfile )
+        pickle.dump( thisDict, outfile )
         print ("[INFO] Saving file ", matchesFile)
 
 # Run an updates on the preprocessed dicts 

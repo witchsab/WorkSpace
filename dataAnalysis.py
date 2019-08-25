@@ -376,21 +376,21 @@ for q_path in q_paths:
         row_dict['time_HASH_'+str(algo)] = searchtime
 
     imagematches, searchtime =  ImageSearch_Algo_Hash.HASH_SEARCH_HYBRIDTREE(myHybridtree1, mydataHASH, q_path, hybridlist1, 16, 100)
-    a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 50)
+    a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
     row_dict['acc_HHASH1'] = a
     row_dict['index_HHASH1'] = pos
     row_dict['Count_HHASH1'] = cnt
     row_dict['quality_HHASH1'] = q
     row_dict['time_HHASH1'] = searchtime
     imagematches, searchtime =  ImageSearch_Algo_Hash.HASH_SEARCH_HYBRIDTREE(myHybridtree2, mydataHASH, q_path, hybridlist2, 16, 100)
-    a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 50)
+    a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
     row_dict['acc_HHASH2'] = a
     row_dict['index_HHASH2'] = pos
     row_dict['Count_HHASH2'] = cnt
     row_dict['quality_HHASH2'] = q
     row_dict['time_HHASH2'] = searchtime
     imagematches, searchtime =  ImageSearch_Algo_Hash.HASH_SEARCH_HYBRIDTREE(myHybridtree3, mydataHASH, q_path, hybridlist3, 16, 100)
-    a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 50)
+    a, q, pos, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
     row_dict['acc_HHASH3'] = a
     row_dict['index_HHASH3'] = pos
     row_dict['Count_HHASH3'] = cnt
@@ -399,7 +399,7 @@ for q_path in q_paths:
 
     accStats = accStats.append(row_dict, ignore_index=True)
 
-accStats.to_csv('./data/HASH_519_ALL_Hybrid_TEST_acc50.csv')
+accStats.to_csv('./data/HASH_519_ALL_Hybrid_TEST.csv')
 
 
 

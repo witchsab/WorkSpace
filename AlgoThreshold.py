@@ -6,12 +6,13 @@
 
 
 import ImageSearch_Algo_RGB
+from imutils import paths
 
 # Hyper-Parameter for comparing histograms
 parametercorrelationthreshold = 0.70
 
 IMGDIR = "./imagesbooks/"
-imagepaths = list(paths.list_images(IMGDIR))
+imagepaths = qpaths = list(paths.list_images(IMGDIR))
 # print (imagepathss)
 
 mydata, mytime = ImageSearch_Algo_RGB.RGB_GEN(imagepaths)
@@ -74,6 +75,7 @@ import ImageSearch_Algo_HSV
 import ImageSearch_Algo_RGB
 import Accuracy as accuracy
 from kneed import KneeLocator
+import random 
 
 q_path = random.sample(q_paths, 1)[0]
 
