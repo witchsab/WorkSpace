@@ -261,7 +261,7 @@ print("[INFO] DENOISE processed {} images in {:.2f} seconds".format(len(haystack
 
 
 
-# ------- UPDATE ACCURACY DICT 
+# ------- UPDATE ACCURACY DICT in each directory 
 # dict source 
 # dict 
 

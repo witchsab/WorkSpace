@@ -24,6 +24,22 @@ from kneed import KneeLocator
 %load_ext autoreload
 %autoreload 2
 
+# --------------- CONFIG PARAMETERS ----------------------#
+
+ORB_FEATURES_LIMIT = 100
+ORB_N_CLUSTERS = 500
+SIFT_N_CLUSTERS = 500
+SIFT_FEATURES_LIMIT = 100
+LOWE_RATIO = 0.7
+SIFT_PREDICTIONS_COUNT = 100
+RGB_PARAMETERCORRELATIONTHRESHOLD = 0.70 # not needed for generation
+kneeHSV = 2
+kneeRGB = 2
+kneeORB = 2
+kneeSIFT = 2
+HASHLENGTH = 16
+
+
 IMGDIR = "./imagesbooks/"
 imagepaths = list(paths.list_images(IMGDIR))
 # print (imagepathss)
@@ -88,7 +104,7 @@ rgbTable = pd.DataFrame ( data )
 
 
 
-imagepredictions , searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH(mydatasift, q_path, 100, 0.6, 519)
+imagepredictions , searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydatasift, q_path, 100, 0.7, 519)
 for myitem in imagepredictions:
     x, y = myitem
     sift_match_score.append(x)
@@ -142,16 +158,44 @@ myRGBtree = ImageSearch_Algo_RGB.RGB_Load_Tree (file_RGB_Tree)
 myHSVtree = ImageSearch_Algo_HSV.HSV_Load_Tree (file_HSV_Tree)
 
 
+
+q_path = r'./imagesbooks/ukbench06532.jpg'
+q_path = r'./imagesbooks/ukbench02718.jpg'
+q_path = r'./imagesbooks/ukbench05934.jpg'
+q_path = r'./imagesbooks/ukbench05945.jpg'
+
+
 q_path = random.sample(q_paths, 1)[0]
+q_path = './imagesbooks/ukbench05952.jpg'
+q_path = './imagesbooks/ukbench05932.jpg'
+q_path = './imagesbooks/ukbench05933.jpg'
+q_path = './imagesbooks/ukbench05931.jpg'
+q_path = './imagesbooks/ukbench05883.jpg'
 
 
-imagematches , searchtime = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 100)
-# imagematches , searchtime = ImageSearch_Algo_RGB.RGB_SEARCH(mydataRGB, q_path, 0.5)
-# imagematches , searchtime = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
-# imagematches , searchtime = ImageSearch_Algo_HSV.HSV_SEARCH(mydataHSV, q_path)
-imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, 100, 0.75, 500)
+# # imagematches , searchtime = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 100)
+# # imagematches , searchtime = ImageSearch_Algo_RGB.RGB_SEARCH(mydataRGB, q_path, 0.5)
+# # imagematches , searchtime = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
+# # imagematches , searchtime = ImageSearch_Algo_HSV.HSV_SEARCH(mydataHSV, q_path)
+imagematches1 , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, 100, 0.7, 100)
+a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches1, 20)
+print (q_path, 'search time', searchtime)
+print ('BF Accuracy =',  a, '%', '| Quality:', d )
+print ('Count', cnt, ' | position', ind)
 
-imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF_DIST(mydataSIFT, q_path, 100, 0.75, 100)
+imagematches2 , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH(mydataSIFT, q_path, 100, 0.7, 100)
+a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches2, 20)
+print (q_path, 'search time', searchtime)
+print ('FLANN Accuracy =',  a, '%', '| Quality:', d )
+print ('Count', cnt, ' | position', ind)
+
+
+
+# imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, sift_features_limit=SIFT_FEATURES_LIMIT, lowe_ratio=LOWE_RATIO, predictions_count=100)
+# imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH(mydataSIFT, q_path, sift_features_limit=SIFT_FEATURES_LIMIT, lowe_ratio=LOWE_RATIO, predictions_count=100)
+
+
+# imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF_DIST(mydataSIFT, q_path, 100, 0.7, 100)
 
 a, d, i_rgb, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
 print (q_path, 'search time', searchtime)
@@ -331,5 +375,3 @@ def plot_match_scores(imagematches):
     plt.xlabel('n_samples')
     plt.ylabel('Score')
     plt.show()
-
-

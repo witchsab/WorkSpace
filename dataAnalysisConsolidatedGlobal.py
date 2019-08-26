@@ -252,175 +252,202 @@ for algo in AlgoGenList :
 
 
 
+
 ################################################################################
-#                               ALGO CALLS 
+#                               ALGO CALLS                                     #
 ################################################################################
 
 # ---------- search HSV Tree
-def search_HSV(returnCount=100): 
+def search_HSV(returnCount=100, write=False): 
     imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE ( myHSVtree, mydataHSV, q_path, returnCount=returnCount)
-    a, d, i_hsv, cnt = accuracy.accuracy_matches(q_path, imagematcheshsv, 20)
-    row_dict['acc_hsv'] = a
-    row_dict['index_hsv'] = i_hsv
-    row_dict['Count_hsv'] = cnt
-    row_dict['quality_hsv'] = d
-    row_dict['time_hsv'] = searchtimehsv
-    # print ('HSV Accuracy =',  a, '%', '| Quality:', d )
-    # print ('Count', cnt, ' | position', i_hsv)
-    # x = autothreshold (imagematcheshsv)
-    # toplist = toplist + x
-    # # print (x)
+    if write: 
+        a, d, i_hsv, cnt = accuracy.accuracy_matches(q_path, imagematcheshsv, 20)
+        row_dict['acc_hsv'] = a
+        row_dict['index_hsv'] = i_hsv
+        row_dict['Count_hsv'] = cnt
+        row_dict['quality_hsv'] = d
+        row_dict['time_hsv'] = searchtimehsv
+        # print ('HSV Accuracy =',  a, '%', '| Quality:', d )
+        # print ('Count', cnt, ' | position', i_hsv)
+        # x = autothreshold (imagematcheshsv)
+        # toplist = toplist + x
+        # # print (x)
 
     return imagematcheshsv , searchtimehsv    
 
 # # ---------- search RGB Tree
-def search_RGB(returnCount=100, mydataRGB=mydataRGB) : 
+def search_RGB(returnCount=100, mydataRGB=mydataRGB, write=False) : 
     imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, returnCount=returnCount)
     # y= autothreshold (imagematchesrgb)
     # toplist = toplist + y
     # print (y)
-    a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematchesrgb, 20)
-    row_dict['acc_rgb'] = a
-    row_dict['index_rgb'] = ind
-    row_dict['Count_rgb'] = cnt
-    row_dict['quality_rgb'] = d
-    row_dict['time_rgb'] = searchtimergb
-    # print ('RGB Accuracy =',  a, '%', '| Quality:', d )
-    # print ('Count', cnt, ' | position', ind)
+    if write: 
+        a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematchesrgb, 20)
+        row_dict['acc_rgb'] = a
+        row_dict['index_rgb'] = ind
+        row_dict['Count_rgb'] = cnt
+        row_dict['quality_rgb'] = d
+        row_dict['time_rgb'] = searchtimergb
+        # print ('RGB Accuracy =',  a, '%', '| Quality:', d )
+        # print ('Count', cnt, ' | position', ind)
 
     return imagematchesrgb , searchtimergb 
 
 # # ---------- search RGB Correlation
-def search_RGB_Corr(returnCount=100, mydataRGB=mydataRGB): 
+def search_RGB_Corr(returnCount=100, mydataRGB=mydataRGB, write=False): 
     imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH(mydataRGB, q_path, correl_threshold=RGB_PARAMETERCORRELATIONTHRESHOLD)
     # y= autothreshold (imagematchesrgb)
     # toplist = toplist + y
     # print (y)
-    a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematchesrgb, 20)
-    row_dict['acc_rgb_corr'] = a
-    row_dict['index_rgb_corr'] = ind
-    row_dict['Count_rgb_corr'] = cnt
-    row_dict['quality_rgb_corr'] = d
-    row_dict['time_rgb_corr'] = searchtimergb
-    # print ('RGB Accuracy =',  a, '%', '| Quality:', d )
-    # print ('Count', cnt, ' | position', ind)
+    if write: 
+        a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematchesrgb, 20)
+        row_dict['acc_rgb_corr'] = a
+        row_dict['index_rgb_corr'] = ind
+        row_dict['Count_rgb_corr'] = cnt
+        row_dict['quality_rgb_corr'] = d
+        row_dict['time_rgb_corr'] = searchtimergb
+        # print ('RGB Accuracy =',  a, '%', '| Quality:', d )
+        # print ('Count', cnt, ' | position', ind)
 
     return imagematchesrgb , searchtimergb 
 
 
 # # ---------- search SIFT FLANN
-def search_SIFT_FLANN(returnCount=100, mydataSIFT=mydataSIFT): 
-    imagepredictions , searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH(mydataSIFT, q_path, sift_features_limit=SIFT_FEATURES_LIMIT , lowe_ratio=LOWE_RATIO, predictions_count=returnCount)
-    a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagepredictions, 20 )
-    # print ('Accuracy =',  a, '%', '| Quality:', d )
-    # print ('Count', cnt, ' | position', ind)
-    row_dict['acc_sift_Flann'] = a
-    row_dict['index_sift_Flann'] = ind
-    row_dict['Count_sift_Flann'] = cnt
-    row_dict['quality_sift_Flann'] = d
-    row_dict['time_sift_Flann'] = searchtimesift
+def search_SIFT_FLANN(returnCount=100, mydataSIFT=mydataSIFT, write=False): 
+    imagepredictionsFLANN , searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH(mydataSIFT, q_path, sift_features_limit=SIFT_FEATURES_LIMIT , lowe_ratio=LOWE_RATIO, predictions_count=returnCount)
+    if write: 
+        a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagepredictionsFLANN, 20 )
+        # print ('Accuracy =',  a, '%', '| Quality:', d )
+        # print ('Count', cnt, ' | position', ind)
+        row_dict['acc_sift_Flann'] = a
+        row_dict['index_sift_Flann'] = ind
+        row_dict['Count_sift_Flann'] = cnt
+        row_dict['quality_sift_Flann'] = d
+        row_dict['time_sift_Flann'] = searchtimesift
 
-    return imagepredictions, searchtimesift
+    return imagepredictionsFLANN, searchtimesift
 
 
 
 # # ---------- search SIFT BF
-def search_SIFT_BF(returnCount=100, mydataSIFT=mydataSIFT): 
-    imagepredictions , searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, sift_features_limit=SIFT_FEATURES_LIMIT, lowe_ratio=LOWE_RATIO, predictions_count=returnCount)
-    a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagepredictions, 20 )
-    # print ('Accuracy =',  a, '%', '| Quality:', d )
-    # print ('Count', cnt, ' | position', ind)
-    row_dict['acc_sift_BF'] = a
-    row_dict['index_sift_BF'] = ind
-    row_dict['Count_sift_BF'] = cnt
-    row_dict['quality_sift_BF'] = d
-    row_dict['time_sift_BF'] = searchtimesift
+def search_SIFT_BF(returnCount=100, mydataSIFT=mydataSIFT, write=False): 
+    imagepredictionsBF , searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, sift_features_limit=SIFT_FEATURES_LIMIT, lowe_ratio=LOWE_RATIO, predictions_count=returnCount)
+    if write: 
+        a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagepredictionsBF, 20 )
+        # print ('Accuracy =',  a, '%', '| Quality:', d )
+        # print ('Count', cnt, ' | position', ind)
+        row_dict['acc_sift_BF'] = a
+        row_dict['index_sift_BF'] = ind
+        row_dict['Count_sift_BF'] = cnt
+        row_dict['quality_sift_BF'] = d
+        row_dict['time_sift_BF'] = searchtimesift
 
-    return imagepredictions, searchtimesift
+    return imagepredictionsBF, searchtimesift
 
 
 
 # # ---------- search SIFT BOVW Tree
-def search_SIFT_BOVW(returnCount=100): 
+def search_SIFT_BOVW(returnCount=100, write=False): 
     imagematches, searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_TREE(q_path, mySIFTmodel, mySIFTtree, mydataSIFT, returnCount=returnCount, kp=100)
-    a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
-    # print ('Accuracy =',  a, '%', '| Quality:', d )
-    # print ('Count', cnt, ' | position', ind)
-    row_dict['acc_sift_tree'] = a
-    row_dict['index_sift_tree'] = ind
-    row_dict['Count_sift_tree'] = cnt
-    row_dict['quality_sift_tree'] = d
-    row_dict['time_sift_tree'] = searchtime
+    if write: 
+        a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
+        # print ('Accuracy =',  a, '%', '| Quality:', d )
+        # print ('Count', cnt, ' | position', ind)
+        row_dict['acc_sift_tree'] = a
+        row_dict['index_sift_tree'] = ind
+        row_dict['Count_sift_tree'] = cnt
+        row_dict['quality_sift_tree'] = d
+        row_dict['time_sift_tree'] = searchtime
 
     return imagematches, searchtime
 
 
 
 # # ---------- search ORB FLANN-LSH 
-def search_ORB_FLANN(returnCount=100, mydataORB=mydataORB) : 
+def search_ORB_FLANN(returnCount=100, mydataORB=mydataORB, write=False) : 
     imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_FLANN(mydataORB, q_path, ORB_features_limit=ORB_FEATURES_LIMIT , lowe_ratio=LOWE_RATIO, predictions_count=returnCount )
-    a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
-    # print ('Accuracy =',  a, '%', '| Quality:', d )
-    # print ('Count', cnt, ' | position', ind)
-    row_dict['acc_orb_Flann'] = a
-    row_dict['index_orb_Flann'] = ind
-    row_dict['Count_orb_Flann'] = cnt
-    row_dict['quality_orb_Flann'] = d
-    row_dict['time_orb_Flann'] = searchtime
+    if write: 
+        a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
+        # print ('Accuracy =',  a, '%', '| Quality:', d )
+        # print ('Count', cnt, ' | position', ind)
+        row_dict['acc_orb_Flann'] = a
+        row_dict['index_orb_Flann'] = ind
+        row_dict['Count_orb_Flann'] = cnt
+        row_dict['quality_orb_Flann'] = d
+        row_dict['time_orb_Flann'] = searchtime
 
     return imagematches, searchtime
 
 
 # # ---------- search ORB BF
-def search_ORB_BF(returnCount=100, mydataORB=mydataORB) : 
+def search_ORB_BF(returnCount=100, mydataORB=mydataORB, write=False) : 
     imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_BF(mydataORB, q_path, ORB_features_limit=ORB_FEATURES_LIMIT , lowe_ratio=LOWE_RATIO, predictions_count=returnCount )
-    a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
-    # print ('Accuracy =',  a, '%', '| Quality:', d )
-    # print ('Count', cnt, ' | position', ind)
-    row_dict['acc_orb_BF'] = a
-    row_dict['index_orb_BF'] = ind
-    row_dict['Count_orb_BF'] = cnt
-    row_dict['quality_orb_BF'] = d
-    row_dict['time_orb_BF'] = searchtime
+    if write: 
+        a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
+        # print ('Accuracy =',  a, '%', '| Quality:', d )
+        # print ('Count', cnt, ' | position', ind)
+        row_dict['acc_orb_BF'] = a
+        row_dict['index_orb_BF'] = ind
+        row_dict['Count_orb_BF'] = cnt
+        row_dict['quality_orb_BF'] = d
+        row_dict['time_orb_BF'] = searchtime
 
     return imagematches, searchtime
 
 
 # # ---------- search ORB BF NEW
-def search_ORB_BF2(returnCount=100, mydataORB=mydataORB) :
+def search_ORB_BF2(returnCount=100, mydataORB=mydataORB, write=False) :
     imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_MODBF(mydataORB, q_path, ORB_FEATURES_LIMIT , lowe_ratio=LOWE_RATIO, predictions_count=returnCount )
-    a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
-    # print ('Accuracy =',  a, '%', '| Quality:', d )
-    # print ('Count', cnt, ' | position', ind)
-    row_dict['acc_orb_BF2'] = a
-    row_dict['index_orb_BF2'] = ind
-    row_dict['Count_orb_BF2'] = cnt
-    row_dict['quality_orb_BF2'] = d
-    row_dict['time_orb_BF2'] = searchtime
+    if write: 
+        a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
+        # print ('Accuracy =',  a, '%', '| Quality:', d )
+        # print ('Count', cnt, ' | position', ind)
+        row_dict['acc_orb_BF2'] = a
+        row_dict['index_orb_BF2'] = ind
+        row_dict['Count_orb_BF2'] = cnt
+        row_dict['quality_orb_BF2'] = d
+        row_dict['time_orb_BF2'] = searchtime
 
     return imagematches, searchtime
 
 
 # # ---------- search ORB BOVW Tree
-def search_ORB_BOVW (returnCount=100) : 
+def search_ORB_BOVW (returnCount=100, write=False) : 
     imagematches, searchtime = ImageSearch_Algo_ORB.ORB_SEARCH_TREE(q_path, myORBmodel, myORBtree, mydataORB, returnCount=100, kp=ORB_FEATURES_LIMIT)
-    a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
-    # print ('Accuracy =',  a, '%', '| Quality:', d )
-    # print ('Count', cnt, ' | position', ind)
-    row_dict['acc_orb_tree'] = a
-    row_dict['index_orb_tree'] = ind
-    row_dict['Count_orb_tree'] = cnt
-    row_dict['quality_orb_tree'] = d
-    row_dict['time_orb_tree'] = searchtime
+    if write: 
+        a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
+        # print ('Accuracy =',  a, '%', '| Quality:', d )
+        # print ('Count', cnt, ' | position', ind)
+        row_dict['acc_orb_tree'] = a
+        row_dict['index_orb_tree'] = ind
+        row_dict['Count_orb_tree'] = cnt
+        row_dict['quality_orb_tree'] = d
+        row_dict['time_orb_tree'] = searchtime
     
     return imagematches, searchtime
 
 
 # # ---------- search HASH All
-def search_HASH_All(returnCount=100): 
+def search_HASH_All(returnCount=100, write=False): 
     # AlgoGenList = ['whash', 'phash', 'dhash', 'ahash']    
     for algo in AlgoGenList :
         imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH_TREE(myHASH_Trees[algo], mydataHASH, q_path, hashAlgo=algo, hashsize=16, returnCount=returnCount)
+        if write: 
+            a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
+            # print ('Accuracy =',  a, '%', '| Quality:', d )
+            # print ('Count', cnt, ' | position', ind)
+            row_dict['acc_HASH_'+str(algo)] = a
+            row_dict['index_HASH_'+str(algo)] = ind
+            row_dict['Count_HASH_'+str(algo)] = cnt
+            row_dict['quality_HASH_'+str(algo)] = d
+            row_dict['time_HASH_'+str(algo)] = searchtime
+
+
+# # ---------- search HASH specific Algo 
+def search_HASH( algo='whash', returnCount=100, write=False): 
+    # AlgoGenList = ['whash', 'phash', 'dhash', 'ahash'] 
+    imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH_TREE(myHASH_Trees[algo], mydataHASH, q_path,hashAlgo=algo, hashsize=16, returnCount=returnCount)
+    if write: 
         a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
         # print ('Accuracy =',  a, '%', '| Quality:', d )
         # print ('Count', cnt, ' | position', ind)
@@ -430,35 +457,22 @@ def search_HASH_All(returnCount=100):
         row_dict['quality_HASH_'+str(algo)] = d
         row_dict['time_HASH_'+str(algo)] = searchtime
 
-
-# # ---------- search HASH specific Algo 
-def search_HASH( algo='whash', returnCount=100): 
-    # AlgoGenList = ['whash', 'phash', 'dhash', 'ahash'] 
-    imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH_TREE(myHASH_Trees[algo], mydataHASH, q_path,hashAlgo=algo, hashsize=16, returnCount=returnCount)
-    a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
-    # print ('Accuracy =',  a, '%', '| Quality:', d )
-    # print ('Count', cnt, ' | position', ind)
-    row_dict['acc_HASH_'+str(algo)] = a
-    row_dict['index_HASH_'+str(algo)] = ind
-    row_dict['Count_HASH_'+str(algo)] = cnt
-    row_dict['quality_HASH_'+str(algo)] = d
-    row_dict['time_HASH_'+str(algo)] = searchtime
-
     return imagematches, searchtime
 
 
 # # ---------- search Hybrid HASH
-def search_HASH_HYBRID (returnCount=100): 
+def search_HASH_HYBRID (returnCount=100, write=False): 
     # HybridAlgoList = ['whash', 'ahash']
     imagematches, searchtime = ImageSearch_Algo_Hash.HASH_SEARCH_HYBRIDTREE( myHybridtree, mydataHASH, q_path,hashAlgoList=HybridAlgoList, hashsize=16, returnCount=returnCount)
-    a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
-    # print ('Accuracy =',  a, '%', '| Quality:', d )
-    # print ('Count', cnt, ' | position', ind)
-    row_dict['acc_HASH_Hybrid'] = a
-    row_dict['index_HASH_Hybrid'] = ind
-    row_dict['Count_HASH_Hybrid'] = cnt
-    row_dict['quality_HASH_Hybrid'] = d
-    row_dict['time_HASH_Hybrid'] = searchtime
+    if write: 
+        a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
+        # print ('Accuracy =',  a, '%', '| Quality:', d )
+        # print ('Count', cnt, ' | position', ind)
+        row_dict['acc_HASH_Hybrid'] = a
+        row_dict['index_HASH_Hybrid'] = ind
+        row_dict['Count_HASH_Hybrid'] = cnt
+        row_dict['quality_HASH_Hybrid'] = d
+        row_dict['time_HASH_Hybrid'] = searchtime
 
     return imagematches, searchtime
 
@@ -689,29 +703,29 @@ gt = accuracy.check_ground_truth()
 # initialize 
 Results = pd.DataFrame(columns=['file'])
 # iterate over all samples: 
-for q_path in imagepaths[:count]: 
+for q_path in imagepaths: 
 
     # initialize locals  
     row_dict = {'file':q_path } 
 
     search_HSV()
     search_RGB() 
-    search_RGB_Corr() 
+    # search_RGB_Corr() 
 
     search_SIFT_BF()
     search_SIFT_FLANN()
-    search_SIFT_BOVW()
+    # search_SIFT_BOVW()
 
-    search_ORB_FLANN()
-    search_ORB_BF()
-    search_ORB_BF2()
-    search_ORB_BOVW()   
+    # search_ORB_FLANN()
+    # search_ORB_BF()
+    # search_ORB_BF2()
+    # search_ORB_BOVW()   
     
-    search_HASH_All()
-    search_HASH_HYBRID()
+    # search_HASH_All()
+    # search_HASH_HYBRID()
 
-    # Funnel algo 
-    search_AlgoA(100, False)
+    # # Funnel algo 
+    # search_AlgoA(100, False)
 
     # --------- Append Results to Results
     Results = Results.append( row_dict , ignore_index=True)
@@ -719,11 +733,11 @@ for q_path in imagepaths[:count]:
 
 # ---------- SAVE ALL FILES TO DISK
 # Save Frame to csv 
-Results.to_csv( 'data/' + TESTNAME + '_RESULTS_50Bench_testGlobal.csv')
+Results.to_csv( 'data/' + TESTNAME + '_RESULTS_SIFT_BF_FLANN.csv')
 print ("Data Collection Completed ")
 
 # Save Frame to pickle
-savefile = 'data/' + TESTNAME + '_Results_50Bench_testGlobal'
+savefile = 'data/' + TESTNAME + '_Results_SIFT_BF_FLANN'
 outfile = open (savefile + '.pickle', 'wb')
 pickle.dump( Results, outfile )
 # ---------- SAVED
@@ -849,3 +863,4 @@ savefile = 'data/' + TESTNAME + '_Results_HASH_Bench_Global'
 outfile = open (savefile + '.pickle', 'wb')
 pickle.dump( Results, outfile )
 # ---------- SAVED --- HASH END
+

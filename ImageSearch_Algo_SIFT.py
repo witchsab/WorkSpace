@@ -143,6 +143,7 @@ def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.
 
 
 def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50):
+    '''SIFT Brute Force Matcher '''
     start = time.time()
     q_img = cv2.imread(queryimagepath)    
     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
@@ -175,6 +176,7 @@ def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio
     # print("[INFO] processed {} images in {:.2f} seconds".format(len(haystackPaths), t))
     return (predictions, t)
     # Search End
+
 
 
 def SIFT_SEARCH_BF_DIST (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50):
