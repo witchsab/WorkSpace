@@ -584,7 +584,7 @@ imagepaths = (list(paths.list_images(IMGDIR)))
 Results = pd.DataFrame(columns=['file'])
 # for q_path in imagepaths[30:35]: 
 # for q_path in imagepaths[100:201]: 
-for q_path in imagepaths[:10]: 
+for q_path in imagepaths: 
     row_dict = {'file':q_path } 
 
     # ------------Generic Algo Full Sample 
