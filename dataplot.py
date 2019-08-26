@@ -124,10 +124,7 @@ finalTable = finalTable[finalTable.file != q_path]
 
 # finalTable.to_csv('finalscoreTable.csv')
 
-
-##################################################################################
-##########  PLOT THRESHOLDING CURVE 
-##################################################################################
+################################# LOAD ALL FEATURES AND TREES  ################
 
 #### check Gaussian nature of scores and success positions
 import ImageSearch_Algo_HSV
@@ -159,13 +156,17 @@ myHSVtree = ImageSearch_Algo_HSV.HSV_Load_Tree (file_HSV_Tree)
 
 
 
-q_path = r'./imagesbooks/ukbench06532.jpg'
-q_path = r'./imagesbooks/ukbench02718.jpg'
-q_path = r'./imagesbooks/ukbench05934.jpg'
-q_path = r'./imagesbooks/ukbench05945.jpg'
-
+##################################################################################
+##########  PLOT THRESHOLDING CURVE 
+##################################################################################
 
 q_path = random.sample(q_paths, 1)[0]
+
+q_path = './imagesbooks/ukbench06532.jpg'
+q_path = './imagesbooks/ukbench02718.jpg'
+q_path = './imagesbooks/ukbench05934.jpg'
+q_path = './imagesbooks/ukbench05945.jpg'
+
 q_path = './imagesbooks/ukbench05952.jpg'
 q_path = './imagesbooks/ukbench05932.jpg'
 q_path = './imagesbooks/ukbench05933.jpg'
@@ -173,29 +174,37 @@ q_path = './imagesbooks/ukbench05931.jpg'
 q_path = './imagesbooks/ukbench05883.jpg'
 
 
-# # imagematches , searchtime = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 100)
 # # imagematches , searchtime = ImageSearch_Algo_RGB.RGB_SEARCH(mydataRGB, q_path, 0.5)
-# # imagematches , searchtime = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
 # # imagematches , searchtime = ImageSearch_Algo_HSV.HSV_SEARCH(mydataHSV, q_path)
-imagematches1 , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, 100, 0.7, 100)
-a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches1, 20)
-print (q_path, 'search time', searchtime)
-print ('BF Accuracy =',  a, '%', '| Quality:', d )
-print ('Count', cnt, ' | position', ind)
 
-imagematches2 , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH(mydataSIFT, q_path, 100, 0.7, 100)
-a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches2, 20)
-print (q_path, 'search time', searchtime)
-print ('FLANN Accuracy =',  a, '%', '| Quality:', d )
-print ('Count', cnt, ' | position', ind)
+# # imagematches , searchtime = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 100)
+# # imagematches , searchtime = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
 
+imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, 100, 0.7, 100)
 
+# a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches1, 20)
+# print (q_path, 'search time', searchtime)
+# print ('BF Accuracy =',  a, '%', '| Quality:', d )
+# print ('Count', cnt, ' | position', ind)
+
+# imagematches2 , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH(mydataSIFT, q_path, 100, 0.7, 100)
+# a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches2, 20)
+# print (q_path, 'search time', searchtime)
+# print ('FLANN Accuracy =',  a, '%', '| Quality:', d )
+# print ('Count', cnt, ' | position', ind)
 
 # imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, sift_features_limit=SIFT_FEATURES_LIMIT, lowe_ratio=LOWE_RATIO, predictions_count=100)
 # imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH(mydataSIFT, q_path, sift_features_limit=SIFT_FEATURES_LIMIT, lowe_ratio=LOWE_RATIO, predictions_count=100)
 
+# imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH(mydataSIFT, q_path, 100, 0.7, 100)
+imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, 100, 0.7, 100)
 
-# imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF_DIST(mydataSIFT, q_path, 100, 0.7, 100)
+# a, d, i_rgb, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
+# print (q_path, 'search time', searchtime)
+# print ('Accuracy =',  a, '%', '| Quality:', d )
+# print ('Count', cnt, ' | position', i_rgb)
+
+imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF_DIST(mydataSIFT, q_path, 100, 0.7, 100)
 
 a, d, i_rgb, cnt = accuracy.accuracy_matches(q_path, imagematches, 20)
 print (q_path, 'search time', searchtime)
@@ -232,6 +241,73 @@ qualifiedItems = min (knee, 6)
 plt.plot(score)
 plt.scatter(successPositions, successScore, c='r' )
 plt.vlines( qualifiedItems , 0, max(score), colors='g')
+
+
+# Sane Code 
+
+##################################################################################
+##########  PLOT THRESHOLDING CURVE 
+##################################################################################
+
+# Threshold chart Score vs Sorted Samples
+def plot_match_scores(imagematches): 
+    score = []
+    successScore = []
+    # score, file = item
+    for item in imagematches:
+        x, y = item
+        score.append(x)
+    # print(score)
+    successPositions =i_rgb
+    for i in i_rgb: 
+        successScore.append(score[i])
+
+    #  can throw exceptions in case of less points
+
+    knee = 6
+    try : 
+        elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
+        # print ('Detected Elbow cluster value :', elbow.knee)
+        knee = elbow.knee
+    except: 
+        pass    
+    qualifiedItems = min (knee, 6)
+
+    # plt.scatter ( [counter]*len(imagematches), score, c=matchesposition)
+    plt.plot(score)
+    plt.scatter(successPositions, successScore, c='r' )
+    plt.vlines( qualifiedItems , 0, max(score), colors='g')
+    plt.xlabel('n_samples')
+    plt.ylabel('Score')
+    plt.show()
+
+
+# q_path = random.sample(q_paths, 1)[0]
+# q_tests = ['./imagesbooks/ukbench05952.jpg', './imagesbooks/ukbench05932.jpg', './imagesbooks/ukbench05933.jpg', './imagesbooks/ukbench05931.jpg', './imagesbooks/ukbench05883.jpg']
+q_path = './imagesbooks/ukbench06532.jpg'
+q_path = './imagesbooks/ukbench02718.jpg'
+q_path = './imagesbooks/ukbench05934.jpg'
+q_path = './imagesbooks/ukbench05945.jpg'
+
+q_path = './imagesbooks/ukbench05952.jpg'
+q_path = './imagesbooks/ukbench05932.jpg'
+q_path = './imagesbooks/ukbench05933.jpg'
+q_path = './imagesbooks/ukbench05931.jpg'
+q_path = './imagesbooks/ukbench05883.jpg'
+
+
+# for q_path in q_tests[:1]: 
+imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, 100, 0.7, 100)
+# imagematches , searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF_DIST(mydataSIFT, q_path, 100, 0.7, 100)
+plot_match_scores (imagematches)
+
+imagematches , searchtime = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 100)
+plot_match_scores (imagematches)
+
+imagematches , searchtime = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
+plot_match_scores (imagematches)
+
+
 
 
 ##################################################################################
@@ -343,35 +419,3 @@ ax.set_title('SIFT vs RGB ')
 ax.set_xlabel('SIFT ')
 ax.set_ylabel('RGB ')
 plt.colorbar(scatter)
-
-# Threshold chart Score vs Sorted Samples
-def plot_match_scores(imagematches): 
-    score = []
-    successScore = []
-    # score, file = item
-    for item in imagematches:
-        x, y = item
-        score.append(x)
-    # print(score)
-    successPositions =i_rgb
-    for i in i_rgb: 
-        successScore.append(score[i])
-
-    #  can throw exceptions in case of less points
-
-    knee = 6
-    try : 
-        elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
-        print ('Detected Elbow cluster value :', elbow.knee)
-        knee = elbow.knee
-    except: 
-        pass    
-    qualifiedItems = min (knee, 6)
-
-    # plt.scatter ( [counter]*len(imagematches), score, c=matchesposition)
-    plt.plot(score)
-    plt.scatter(successPositions, successScore, c='r' )
-    plt.vlines( qualifiedItems , 0, max(score), colors='g')
-    plt.xlabel('n_samples')
-    plt.ylabel('Score')
-    plt.show()

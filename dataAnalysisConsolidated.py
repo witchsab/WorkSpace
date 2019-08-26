@@ -638,6 +638,15 @@ def algomixerAppend (algos, return_count, algoname='NewAlgo') :
 
 
 def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algoname='NewAlgo', write=False) : 
+    '''
+    algos [list]: list of candidare algos
+    return_count (int) : number of candidates to be generated 
+    finalalgo (str) : list of candidare algos
+    finalalgoDataframe (pd.Dataframe): dataframe of the finalAlgo to be filtered and used 
+    algoname (str)  : 'column name of datframe for the final reported accuracy, time etc.
+    write (bool): True / False -> whether to report funnel accurracy, time before merge with thresholded candidates 
+    '''
+
     # myAlgos = [ search_RGB, search_SIFT_BF ]
     # algomixerFunnel (myAlgos)
     start = time.time()
@@ -794,7 +803,7 @@ for q_path in imagepaths[:10]:
     # algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_FLANN', mydataSIFT, 'F_SIFT2')
     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB', write=True)
     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoBA', write=True)
-    algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC', , write=True)
+    algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC', write=True)
 
     Results = Results.append( row_dict , ignore_index=True)
     print ( 'Completed ', imagepaths.index(q_path), q_path)
