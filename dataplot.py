@@ -159,6 +159,41 @@ myHSVtree = ImageSearch_Algo_HSV.HSV_Load_Tree (file_HSV_Tree)
 
 
 
+# Threshold chart Score vs Sorted Samples
+def plot_match_scores(imagematches): 
+    score = []
+    successScore = []
+    # score, file = item
+    for item in imagematches:
+        x, y = item
+        score.append(x)
+    # print(score)
+    a, d, ind, cnt = accuracy.accuracy_matches(q_path, imagematcheshsv, 20)
+    successPositions =ind
+    for i in ind: 
+        successScore.append(score[i])
+
+    #  can throw exceptions in case of less points
+
+    knee = 6
+    try : 
+        elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
+        print ('Detected Elbow cluster value :', elbow.knee)
+        knee = elbow.knee
+    except: 
+        pass    
+    qualifiedItems = min (knee, 6)
+
+    # plt.scatter ( [counter]*len(imagematches), score, c=matchesposition)
+    plt.plot(score)
+    plt.scatter(successPositions, successScore, c='r' )
+    plt.vlines( qualifiedItems , 0, max(score), colors='g')
+    plt.xlabel('n_samples')
+    plt.ylabel('Score')
+    plt.show()
+
+
+
 q_path = r'./imagesbooks/ukbench06532.jpg'
 q_path = r'./imagesbooks/ukbench02718.jpg'
 q_path = r'./imagesbooks/ukbench05934.jpg'
@@ -251,6 +286,7 @@ space = len(mydataHSV.index)
 # space = 100
 
 imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, space)
+
 for myitem in imagematcheshsv:
     x, y = myitem
     hsv_match_score.append(x)
@@ -281,9 +317,9 @@ finalTable = pd.merge(finalTable,siftTable, on='file')
 truth = accuracy.accuracy_groundtruth(q_path) 
 finalTable ['Truth'] = 0 
 finalTable.loc [finalTable['file'].isin(truth) , 'Truth' ] = 1     
-finalTable = finalTable[finalTable.file != q_path]
 
-finalTable = finalTable.sort_values(by=['Truth'])
+# finalTable = finalTable[finalTable.file != q_path] # remove the current element
+finalTable = finalTable.sort_values(by=['Truth'])  
 
 plot_match_scores(imagematcheshsv)
 plot_match_scores(imagematchesrgb)
@@ -335,7 +371,7 @@ plt.colorbar(scatter)
 
 
 # X, Y Scatter SIFT vs RGB 
-customcmap = colors.ListedColormap(['gray', 'red'])
+customcmap = colors.ListedColormap(['green', 'red'])
 fig = plt.figure()
 ax = fig.add_subplot(111)
 scatter = ax.scatter( list(finalTable['SIFTScore']), list(finalTable['RGBScore']), c= list(finalTable["Truth"]),s=30, cmap=customcmap)
@@ -344,34 +380,13 @@ ax.set_xlabel('SIFT ')
 ax.set_ylabel('RGB ')
 plt.colorbar(scatter)
 
-# Threshold chart Score vs Sorted Samples
-def plot_match_scores(imagematches): 
-    score = []
-    successScore = []
-    # score, file = item
-    for item in imagematches:
-        x, y = item
-        score.append(x)
-    # print(score)
-    successPositions =i_rgb
-    for i in i_rgb: 
-        successScore.append(score[i])
 
-    #  can throw exceptions in case of less points
 
-    knee = 6
-    try : 
-        elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
-        print ('Detected Elbow cluster value :', elbow.knee)
-        knee = elbow.knee
-    except: 
-        pass    
-    qualifiedItems = min (knee, 6)
-
-    # plt.scatter ( [counter]*len(imagematches), score, c=matchesposition)
-    plt.plot(score)
-    plt.scatter(successPositions, successScore, c='r' )
-    plt.vlines( qualifiedItems , 0, max(score), colors='g')
-    plt.xlabel('n_samples')
-    plt.ylabel('Score')
-    plt.show()
+# # Sys & Package info
+# import platform; print(platform.platform())
+# import sys; print("Python", sys.version)
+# import numpy; print("NumPy", numpy.__version__)
+# import pandas; print("Pandas", pandas.__version__)
+# import scipy; print("SciPy", scipy.__version__)
+# import sklearn; print("Scikit-Learn", sklearn.__version__)
+# import tensorflow as tf; print("Tensorflow", tf.__version__)
