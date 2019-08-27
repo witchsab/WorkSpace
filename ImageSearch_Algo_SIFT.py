@@ -56,8 +56,11 @@ def gen_sift_features(imagelibrarypaths, sift_features_limit):
         # that we can use for our final features
         kp, desc = sift.detectAndCompute(m_img, None)
         # m_kp,m_des = gen_sift_features(m_img)
+        if len(kp) < 1:
+            desc = np.zeros((1, sift.descriptorSize()), np.float32)    
         siftdf = siftdf.append({'file':f, 'siftkey':kp, 'siftdes':desc}, ignore_index=True)
         
+
     t= time.time() - start
     # print("[INFO] processed {} images in {:.2f} seconds".format(len(imagelibrarypaths), t))
     # print (siftdf.head())

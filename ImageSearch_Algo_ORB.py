@@ -55,7 +55,9 @@ def GEN_ORB_FEATURES(imagelibrarypaths, ORB_features_limit):
 
         # compute the descriptors with ORB
         kp, desc = orb.compute(m_img, kp)
-
+        if len(kp) < 1:
+            desc = np.zeros((1, orb.descriptorSize()), np.float32)    
+        
         ORBdf = ORBdf.append(
             {'file': f, 'ORBkey': kp, 'ORBdes': desc}, ignore_index=True)
 
