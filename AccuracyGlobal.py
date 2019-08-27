@@ -26,7 +26,8 @@ class AccuracyGlobal:
         infile = open(dirpath+'groundTruth.pickle','rb')
         self.groundTruth = pickle.load(infile)
 
-    def check_ground_truth(self): 
+    def check_ground_truth(self):
+        '''Checks if pickle is loaded''' 
         print ('Ground Truth Value', len(self.groundTruth))
         return self.groundTruth
 
@@ -203,3 +204,4 @@ class AccuracyGlobal:
         # print(familyfilename)
     
         return queryfilename, familyfilename
+
