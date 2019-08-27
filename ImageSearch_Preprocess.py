@@ -8,9 +8,9 @@ from PIL import Image, ImageEnhance
 
 import foregroundextraction as extract
 
-# to reload module: uncomment use the following 
-%load_ext autoreload
-%autoreload 2
+# # to reload module: uncomment use the following 
+# %load_ext autoreload
+# %autoreload 2
 
 
 # --------------------  DEFINE DIRECTORIES ------------------- # 
