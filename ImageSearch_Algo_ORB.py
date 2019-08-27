@@ -123,15 +123,23 @@ def ORB_SEARCH_BF (feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0
     for index, j in feature.iterrows():
         m_des = j['ORBdes']
         m_path = j['file']
-        # Calculating number of feature matches using FLANN
-        matches = bf.knnMatch(q_des, m_des, k=2)
+        
+        try:  
+            # Calculating number of feature matches using FLANN
+            matches = bf.knnMatch(q_des, m_des, k=2)
 
-        # ratio query as per Lowe's paper
-        matches_count = 0
-        for x, (m, n) in enumerate(matches):
-            if m.distance < lowe_ratio*n.distance:
-                matches_count += 1
-        matches_BF.append((matches_count, m_path))
+            # ratio query as per Lowe's paper
+            matches_count = 0
+            for x, (m, n) in enumerate(matches):
+                if m.distance < lowe_ratio*n.distance:
+                    matches_count += 1
+            matches_BF.append((matches_count, m_path))
+        except: 
+            print ('ORB ERROR')
+            print ('Query', q_des)
+            print ('Search', m_des)
+            print ('Index' , index, m_path)
+            print ('BF Match count ', len(matches))
 
     matches_BF.sort(key=lambda x: x[0], reverse=True)
     predictions = matches_BF[:predictions_count]
@@ -168,16 +176,23 @@ def ORB_SEARCH_FLANN(feature, queryimagepath, ORB_features_limit=100, lowe_ratio
     for index, j in feature.iterrows(): 
         m_des = j['ORBdes'] 
         m_path = j['file']     
-        # Calculating number of feature matches using FLANN
-        matches = flann.knnMatch(q_des,m_des,k=2)
+        
+        try: 
+            # Calculating number of feature matches using FLANN
+            matches = flann.knnMatch(q_des,m_des,k=2)
 
-        #ratio query as per Lowe's paper
-        matches_count = 0
-        for m in matches:
-            if len(m) == 2 and m[0].distance < m[1].distance * lowe_ratio:
-                matches_count += 1
-        matches_flann.append((matches_count,m_path))
-
+            #ratio query as per Lowe's paper
+            matches_count = 0
+            for m in matches:
+                if len(m) == 2 and m[0].distance < m[1].distance * lowe_ratio:
+                    matches_count += 1
+            matches_flann.append((matches_count,m_path))
+        except: 
+            print ('ORB ERROR')            
+            print ('Query', q_des)
+            print ('Search', m_des)
+            print ('Index' , index, m_path)
+            print ('BF Match count ', len(matches))
 
     matches_flann.sort(key=lambda x: x[0], reverse=True)
     predictions = matches_flann[:predictions_count]
@@ -204,16 +219,24 @@ def ORB_SEARCH_MODBF(feature, queryimagepath, ORB_features_limit=100, lowe_ratio
     for index, j in feature.iterrows():
         m_des = j['ORBdes']
         m_path = j['file']
-        # Calculating number of feature matches using FLANN
-        matches = bf.match(q_des, m_des)
+        
+        try:
+            # Calculating number of feature matches using FLANN
+            matches = bf.match(q_des, m_des)
 
-        # ratio query as per Lowe's paper
-        matches_count = 0
-        for m in matches:
-            if m.distance < lowe_ratio:
-                matches_count += 1
-        # matches_BF.append((matches_count, m_path))
-        matches_BF.append((len(matches), m_path))
+            # ratio query as per Lowe's paper
+            matches_count = 0
+            for m in matches:
+                if m.distance < lowe_ratio:
+                    matches_count += 1
+            # matches_BF.append((matches_count, m_path))
+            matches_BF.append((len(matches), m_path))
+        except: 
+            print ('ORB ERROR')
+            print ('Query', q_des)
+            print ('Search', m_des)
+            print ('Index' , index, m_path)
+            print ('BF Match count ', len(matches))
 
     matches_BF.sort(key=lambda x: x[0], reverse=True)
     predictions = matches_BF[:predictions_count]

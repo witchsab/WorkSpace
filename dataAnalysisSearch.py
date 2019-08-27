@@ -8,7 +8,9 @@ import pandas as pd
 from imutils import paths
 from kneed import KneeLocator
 
-import Accuracy as accuracy
+import AccuracyGlobal
+# import Accuracy as accuracy
+
 import ImageSearch_Algo_Hash
 import ImageSearch_Algo_HSV
 import ImageSearch_Algo_ORB
@@ -24,11 +26,15 @@ import Thresholding
 
 # --------------- TEST PARAMETERS ----------------------#
 # TESTNAME = "Data519_RESIZE320"
-TESTNAME = "Data519"
+TESTNAME = "Data519VERIFY"
+# TESTNAME = "Data519"
+# TESTNAME = "DataUKBENCH10K"
 
 # --------------- VAR COMMONS------------------
 
 IMGDIR = r'./imagesbooks/'
+# IMGDIR = r'./ukbench/'
+
 # IMGDIR = r'./images/imagesbooks_DENOISE2/'
 # IMGDIR = r'./images/imagesbooks_S160/'
 # IMGDIR = r'./images/imagesbooks_S320/'
@@ -55,6 +61,11 @@ kneeRGB = 2
 kneeORB = 2
 kneeSIFT = 2
 HASHLENGTH = 16
+
+accuracy = AccuracyGlobal.AccuracyGlobal() # empty class genrated 
+accuracy.read(IMGDIR)
+
+
 
 # --------------- IMAGES  ----------------------#
 imagepaths =  (list(paths.list_images(IMGDIR)))
@@ -566,6 +577,7 @@ def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algonam
 #######################################################################
 # -----------  DATA COLLECTION START    ------------ #
 
+gt = accuracy.check_ground_truth()
 
 # image dirs path 
 imagepaths = (list(paths.list_images(IMGDIR)))

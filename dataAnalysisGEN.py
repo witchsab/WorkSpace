@@ -23,12 +23,14 @@ import Thresholding
 
 
 # --------------- TEST PARAMETERS ----------------------#
+TESTNAME = "Data519VERIFY"
 # TESTNAME = "Data519_RESIZE320"
-TESTNAME = "Data519"
+# TESTNAME = "DataUKBENCH10K"
 
 # --------------- VAR COMMONS------------------
 
 IMGDIR = r'./imagesbooks/'
+# IMGDIR = r'./ukbench/'
 # IMGDIR = r'./images/imagesbooks_DENOISE2/'
 # IMGDIR = r'./images/imagesbooks_S160/'
 # IMGDIR = r'./images/imagesbooks_S320/'
@@ -64,6 +66,8 @@ myDataFiles = pd.DataFrame( {'file' : imagepaths })
 
 
 # ----------- GENERATE ALL FEATURES & SAVE ------------ #
+print ("Generating Features for ", len(imagepaths), "images in", IMGDIR)
+
 
 # GEN SIFT
 sift_features_limit = SIFT_FEATURES_LIMIT
