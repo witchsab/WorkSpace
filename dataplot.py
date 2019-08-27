@@ -248,7 +248,7 @@ sift_match_score=[]
 sift_match_file=[]
 
 space = len(mydataHSV.index)
-space = 100
+# space = 100
 
 imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, space)
 for myitem in imagematcheshsv:

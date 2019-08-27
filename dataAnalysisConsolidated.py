@@ -24,7 +24,7 @@ import Thresholding
 
 # --------------- TEST PARAMETERS ----------------------#
 # TESTNAME = "Data519_RESIZE320"
-TESTNAME = "Data519"
+TESTNAME = "Data519_original20"
 
 # --------------- VAR COMMONS------------------
 
@@ -702,50 +702,6 @@ def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algonam
 imagepaths = (list(paths.list_images(IMGDIR)))
 
 
-# ********************** ALL INDIVIDUAL ALGO DATA ********************* #
-def runBenchmark50(count=50) : 
-    # initialize 
-    Results = pd.DataFrame(columns=['file'])
-    # iterate over all samples: 
-    for q_path in imagepaths[:count]: 
-
-        # initialize locals  
-        row_dict = {'file':q_path } 
-
-        search_HSV()
-        search_RGB() 
-        search_RGB_Corr() 
-
-        search_SIFT_BF()
-        search_SIFT_FLANN()
-        search_SIFT_BOVW()
-
-        search_ORB_FLANN()
-        search_ORB_BF()
-        search_ORB_BF2()
-        search_ORB_BOVW()   
-        
-        search_HASH_All()
-        search_HASH_HYBRID()
-
-        # Funnel algo 
-        search_AlgoA(100, False)
-
-        # --------- Append Results to Results
-        Results = Results.append( row_dict , ignore_index=True)
-        print ( 'Completed ', imagepaths.index(q_path), q_path)
-
-
-    # ---------- SAVE ALL FILES TO DISK
-    # Save Frame to csv 
-    Results.to_csv( 'data/' + TESTNAME + '_RESULTS_50Bench.csv')
-    print ("Data Collection Completed ")
-
-    # Save Frame to pickle
-    savefile = 'data/' + TESTNAME + '_Results_50Bench'
-    outfile = open (savefile + '.pickle', 'wb')
-    pickle.dump( Results, outfile )
-    # ---------- SAVED
 
 
 # *************************  CUSTOM ALGO DATA **************************** #
@@ -761,7 +717,7 @@ def runBenchmark50(count=50) :
 Results = pd.DataFrame(columns=['file'])
 # for q_path in imagepaths[30:35]: 
 # for q_path in imagepaths[100:201]: 
-for q_path in imagepaths[:10]: 
+for q_path in imagepaths: 
     row_dict = {'file':q_path } 
 
     # ------------Generic Algo Full Sample 
@@ -794,7 +750,7 @@ for q_path in imagepaths[:10]:
     # algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_FLANN', mydataSIFT, 'F_SIFT2')
     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB', write=True)
     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoBA', write=True)
-    algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC', , write=True)
+    algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC',  write=True)
 
     Results = Results.append( row_dict , ignore_index=True)
     print ( 'Completed ', imagepaths.index(q_path), q_path)
@@ -962,3 +918,51 @@ pickle.dump( Results, outfile )
 # Results.to_csv( 'data/' + TESTNAME + '_RESULTS.csv')
 # print ("Data Collection Completed ") 
 
+
+
+
+
+# ********************** ALL INDIVIDUAL ALGO DATA ********************* #
+def runBenchmark50(count=50) : 
+    # initialize 
+    Results = pd.DataFrame(columns=['file'])
+    # iterate over all samples: 
+    for q_path in imagepaths[:count]: 
+
+        # initialize locals  
+        row_dict = {'file':q_path } 
+
+        search_HSV()
+        search_RGB() 
+        search_RGB_Corr() 
+
+        search_SIFT_BF()
+        search_SIFT_FLANN()
+        search_SIFT_BOVW()
+
+        search_ORB_FLANN()
+        search_ORB_BF()
+        search_ORB_BF2()
+        search_ORB_BOVW()   
+        
+        search_HASH_All()
+        search_HASH_HYBRID()
+
+        # Funnel algo 
+        search_AlgoA(100, False)
+
+        # --------- Append Results to Results
+        Results = Results.append( row_dict , ignore_index=True)
+        print ( 'Completed ', imagepaths.index(q_path), q_path)
+
+
+    # ---------- SAVE ALL FILES TO DISK
+    # Save Frame to csv 
+    Results.to_csv( 'data/' + TESTNAME + '_RESULTS_50Bench.csv')
+    print ("Data Collection Completed ")
+
+    # Save Frame to pickle
+    savefile = 'data/' + TESTNAME + '_Results_50Bench'
+    outfile = open (savefile + '.pickle', 'wb')
+    pickle.dump( Results, outfile )
+    # ---------- SAVED
