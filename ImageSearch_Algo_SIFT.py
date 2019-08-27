@@ -56,7 +56,7 @@ def gen_sift_features(imagelibrarypaths, sift_features_limit):
         # that we can use for our final features
         kp, desc = sift.detectAndCompute(m_img, None)
         # m_kp,m_des = gen_sift_features(m_img)
-        if len(kp) < 1:
+        if len(kp) < 1: # Error handling 
             desc = np.zeros((1, sift.descriptorSize()), np.float32)    
         siftdf = siftdf.append({'file':f, 'siftkey':kp, 'siftdes':desc}, ignore_index=True)
         
@@ -126,7 +126,7 @@ def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.
         m_des = j['siftdes'] 
         m_path = j['file']     
 
-        try: 
+        try:  # Error handling 
             # Calculating number of feature matches using FLANN
             matches = flann.knnMatch(q_des,m_des,k=2)
             #ratio query as per Lowe's paper
@@ -136,6 +136,7 @@ def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.
                     matches_count += 1
             matches_flann.append((matches_count,m_path))
         except: 
+            print ('SIFT ERROR', m_path, 'qDes-Shape: ', q_des.shape, 'm_Des-Shape', m_Des.shape)
             print ('Query', q_des)
             print ('Search', m_des)
             print ('Index' , index, m_path)
@@ -179,6 +180,7 @@ def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio
                     matches_count += 1
             matches_BF.append((matches_count, m_path))
         except: 
+            print ('SIFT ERROR', m_path, 'qDes-Shape: ', q_des.shape, 'm_Des-Shape', m_Des.shape)            
             print ('Query', q_des)
             print ('Search', m_des)
             print ('Index' , index, m_path)

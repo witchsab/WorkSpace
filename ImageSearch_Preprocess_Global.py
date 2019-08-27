@@ -265,7 +265,9 @@ print("[INFO] DENOISE processed {} images in {:.2f} seconds".format(len(haystack
 # dict source 
 # dict 
 
-import AccuracyGlobal 
+import AccuracyGlobal
+import pickle
+
 accuracy = AccuracyGlobal.AccuracyGlobal() # empty class genrated 
 
 def update_Preprocessed_Dicts() :

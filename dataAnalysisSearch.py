@@ -26,9 +26,9 @@ import Thresholding
 
 # --------------- TEST PARAMETERS ----------------------#
 # TESTNAME = "Data519_RESIZE320"
-TESTNAME = "Data519VERIFY"
+# TESTNAME = "Data519VERIFY"
 # TESTNAME = "Data519"
-# TESTNAME = "DataUKBENCH10K"
+TESTNAME = "DataUKBENCH10K"
 
 # --------------- VAR COMMONS------------------
 
@@ -604,13 +604,13 @@ for q_path in imagepaths:
     search_RGB(write=True) 
     search_RGB_Corr(write=True) 
 
-    search_SIFT_BF(write=True)
-    search_SIFT_FLANN(write=True)
+    # search_SIFT_BF(write=True)
+    # search_SIFT_FLANN(write=True)
     search_SIFT_BOVW(write=True)
 
-    search_ORB_FLANN(write=True)
-    search_ORB_BF(write=True)
-    search_ORB_BF2(write=True)
+    # search_ORB_FLANN(write=True)
+    # search_ORB_BF(write=True)
+    # search_ORB_BF2(write=True)
     search_ORB_BOVW(write=True)   
     
     search_HASH_All(write=True)
