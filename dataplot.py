@@ -383,10 +383,10 @@ plt.colorbar(scatter)
 
 
 # # Sys & Package info
-# import platform; print(platform.platform())
-# import sys; print("Python", sys.version)
-# import numpy; print("NumPy", numpy.__version__)
-# import pandas; print("Pandas", pandas.__version__)
-# import scipy; print("SciPy", scipy.__version__)
-# import sklearn; print("Scikit-Learn", sklearn.__version__)
-# import tensorflow as tf; print("Tensorflow", tf.__version__)
+import platform; print(platform.platform())
+import sys; print("Python", sys.version)
+import numpy; print("NumPy", numpy.__version__)
+import pandas; print("Pandas", pandas.__version__)
+import scipy; print("SciPy", scipy.__version__)
+import sklearn; print("Scikit-Learn", sklearn.__version__)
+import tensorflow as tf; print("Tensorflow", tf.__version__)
