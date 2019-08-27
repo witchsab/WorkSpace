@@ -378,6 +378,8 @@ ax.set_ylabel('RGBScore')
 ax.set_zlabel('SIFTScore')
 plt.title('Score Comparison')
 # plt.legend(loc=2)
+plt.title(title)
+plt.savefig('./data/plots/' + title +'.png')
 plt.show()
 
 
@@ -404,35 +406,35 @@ ax.set_xlabel('SIFT ')
 ax.set_ylabel('RGB ')
 plt.colorbar(scatter)
 
-# Threshold chart Score vs Sorted Samples
-def plot_match_scores(imagematches): 
-    score = []
-    successScore = []
-    # score, file = item
-    for item in imagematches:
-        x, y = item
-        score.append(x)
-    # print(score)
-    successPositions =i_rgb
-    for i in i_rgb: 
-        successScore.append(score[i])
+# # Threshold chart Score vs Sorted Samples
+# def plot_match_scores(imagematches): 
+#     score = []
+#     successScore = []
+#     # score, file = item
+#     for item in imagematches:
+#         x, y = item
+#         score.append(x)
+#     # print(score)
+#     successPositions =i_rgb
+#     for i in i_rgb: 
+#         successScore.append(score[i])
 
-    #  can throw exceptions in case of less points
+#     #  can throw exceptions in case of less points
 
-    knee = 6
-    try : 
-        elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
-        print ('Detected Elbow cluster value :', elbow.knee)
-        knee = elbow.knee
-    except: 
-        pass    
-    qualifiedItems = min (knee, 6)
+#     knee = 6
+#     try : 
+#         elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
+#         print ('Detected Elbow cluster value :', elbow.knee)
+#         knee = elbow.knee
+#     except: 
+#         pass    
+#     qualifiedItems = min (knee, 6)
 
-    # plt.scatter ( [counter]*len(imagematches), score, c=matchesposition)
-    plt.plot(score)
-    plt.scatter(successPositions, successScore, c='r' )
-    plt.vlines( qualifiedItems , 0, max(score), colors='g')
-    plt.xlabel('n_samples')
-    plt.ylabel('Score')
-    plt.show()
+#     # plt.scatter ( [counter]*len(imagematches), score, c=matchesposition)
+#     plt.plot(score)
+#     plt.scatter(successPositions, successScore, c='r' )
+#     plt.vlines( qualifiedItems , 0, max(score), colors='g')
+#     plt.xlabel('n_samples')
+#     plt.ylabel('Score')
+#     plt.show()
 
