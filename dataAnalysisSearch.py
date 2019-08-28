@@ -28,17 +28,28 @@ import Thresholding
 # TESTNAME = "Data519_RESIZE320"
 # TESTNAME = "Data519VERIFY"
 # TESTNAME = "Data519"
-TESTNAME = "DataUKBENCH10K"
+# TESTNAME = "DataUKBENCH10K"
 
 # --------------- VAR COMMONS------------------
 
-IMGDIR = r'./imagesbooks/'
+# TESTNAME = "Data519"
+# IMGDIR = r'./imagesbooks/'
+
+# TESTNAME = "DataUKBENCH10K"
 # IMGDIR = r'./ukbench/'
 
+# TESTNAME = "Data519_DENOISE2"
 # IMGDIR = r'./images/imagesbooks_DENOISE2/'
-# IMGDIR = r'./images/imagesbooks_S160/'
+
+# TESTNAME = "Data519_S320"
 # IMGDIR = r'./images/imagesbooks_S320/'
+
+# TESTNAME = "Data519_S160"
+# IMGDIR = r'./images/imagesbooks_S160/'
+
+# TESTNAME = "Data519_DENOISE2"
 # IMGDIR = r'./images/imagesbooks_CT2.0/'
+
 # IMGDIR = r"V:\\Download\\imagesbooks\\"
 # IMGDIRPROCESSED = ['']*5
 # IMGDIRPROCESSED[0] = r"V:\\Download\\imagesbooks1\\"
@@ -46,6 +57,7 @@ IMGDIR = r'./imagesbooks/'
 # IMGDIRPROCESSED[2] = r"V:\\Download\\imagesbooks3\\"
 # IMGDIRPROCESSED[3] = r"V:\\Download\\imagesbooks4\\"
 # IMGDIRPROCESSED[4] = r"V:\\Download\\imagesbooks_warp\\"
+
 
 # --------------- CONFIG PARAMETERS ----------------------#
 
