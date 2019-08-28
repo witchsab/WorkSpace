@@ -136,11 +136,11 @@ def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.
                     matches_count += 1
             matches_flann.append((matches_count,m_path))
         except: 
-            print ('SIFT ERROR', m_path, 'qDes-Shape: ', q_des.shape, 'm_Des-Shape', m_Des.shape)
-            print ('Query', q_des)
-            print ('Search', m_des)
-            print ('Index' , index, m_path)
-            print ('BF Match count ', len(matches))
+            print ('SIFT ERROR', m_path, 'qDes-Shape: ', q_des.shape, 'm_des-Shape', m_des.shape)
+            # print ('Query', q_des)
+            # print ('Search', m_des)
+            # print ('Index' , index, m_path)
+            # print ('BF Match count ', len(matches))
 
     matches_flann.sort(key=lambda x : x[0] , reverse = True)
     predictions = matches_flann[:predictions_count]
@@ -180,11 +180,11 @@ def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio
                     matches_count += 1
             matches_BF.append((matches_count, m_path))
         except: 
-            print ('SIFT ERROR', m_path, 'qDes-Shape: ', q_des.shape, 'm_Des-Shape', m_Des.shape)            
-            print ('Query', q_des)
-            print ('Search', m_des)
-            print ('Index' , index, m_path)
-            print ('BF Match count ', len(matches))
+            print ('SIFT ERROR', m_path, 'qDes-Shape: ', q_des.shape, 'm_des-Shape', m_des.shape)            
+            # print ('Query', q_des)
+            # print ('Search', m_des)
+            # print ('Index' , index, m_path)
+            # print ('BF Match count ', len(matches))
 
     matches_BF.sort(key=lambda x: x[0], reverse=True)
     predictions = matches_BF[:predictions_count]
