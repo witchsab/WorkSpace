@@ -602,7 +602,7 @@ for q_path in imagepaths:
     # ------------Generic Algo Full Sample 
     search_HSV(write=True)
     search_RGB(write=True) 
-    search_RGB_Corr(write=True) 
+    # search_RGB_Corr(write=True) 
 
     # search_SIFT_BF(write=True)
     # search_SIFT_FLANN(write=True)
@@ -636,11 +636,11 @@ for q_path in imagepaths:
 
 # ---------- SAVE ALL FILES TO DISK
 # Save Frame to csv 
-Results.to_csv( 'data/' + TESTNAME + '_RESULTS.csv')
+Results.to_csv( 'data/' + TESTNAME + '_RESULTS_F.csv')
 print ("Data Collection Completed ")
 
 # Save Frame to pickle
-savefile = 'data/' + TESTNAME + '_RESULTS' # + str(int(time.time())) 
+savefile = 'data/' + TESTNAME + '_RESULTS_F' # + str(int(time.time())) 
 outfile = open (savefile + '.pickle', 'wb')
 pickle.dump( Results, outfile )
 # ---------- SAVED
