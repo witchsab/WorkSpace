@@ -78,7 +78,7 @@ def ORB_SAVE_FEATURES(mydataORB, savefile='testORB_Data'):
 
     # save the tree #example # treeName = 'testORB_Data.pickle'
     outfile = open(savefile + '.pickle', 'wb')
-    pickle.dump(mydataORB[['file', 'ORBkey', 'ORBdes']], outfile)
+    pickle.dump(mydataORB[['file', 'ORBdes']], outfile)
 
 
 '''

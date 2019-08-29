@@ -56,7 +56,7 @@ def gen_sift_features(imagelibrarypaths, sift_features_limit):
         # that we can use for our final features
         kp, desc = sift.detectAndCompute(m_img, None)
         # m_kp,m_des = gen_sift_features(m_img)
-        if len(kp) < 1: # Error handling 
+        if len(kp) < 1: # Error handling
             desc = np.zeros((1, sift.descriptorSize()), np.float32)    
         siftdf = siftdf.append({'file':f, 'siftdes':desc}, ignore_index=True)
         # siftdf = siftdf.append({'file':f, 'siftkey':kp, 'siftdes':desc}, ignore_index=True)
@@ -76,7 +76,8 @@ def SIFT_SAVE_FEATURES ( mydataSIFT, savefile='testSIFT_Data') :
 
     # save the tree #example # treeName = 'testSIFT_Data.pickle'
     outfile = open (savefile + '.pickle', 'wb')
-    pickle.dump( mydataSIFT[['file', 'siftkey', 'siftdes']] , outfile)
+    # pickle.dump( mydataSIFT[['file', 'siftkey', 'siftdes']] , outfile)
+    pickle.dump( mydataSIFT[['file', 'siftdes']], outfile)
 
 
 '''
