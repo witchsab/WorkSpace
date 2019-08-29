@@ -207,8 +207,14 @@ def RGB_SEARCH_TREE ( RGBtree , mydataRGB,  searchimagepath, returnCount=100):
     start = time.time()
     
     # get the feature from the input image 
-    fh = RGB_FEATURE (searchimagepath)
+    
+    # generate new feature 
+    # fh = RGB_FEATURE (searchimagepath)
 
+    # OR if feature exists in mydataRGB -> extract it 
+    fh =  np.vstack(mydataRGB[mydataRGB['file'] == searchimagepath]['imagehist'])
+
+    # ------- Re-structure to NumpyArray [DO NOT EDIT]
     fh = np.asarray(fh)
     # ft = raw feature 
     # process 
@@ -229,6 +235,7 @@ def RGB_SEARCH_TREE ( RGBtree , mydataRGB,  searchimagepath, returnCount=100):
 
 
 def RGB_SEARCH(feature, searchimagepath, correl_threshold):
+    '''Correlation based RGB histogram matching'''
     start = time.time()
     image = cv2.imread(searchimagepath)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)

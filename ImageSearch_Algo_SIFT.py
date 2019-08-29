@@ -75,7 +75,7 @@ def SIFT_SAVE_FEATURES ( mydataSIFT, savefile='testSIFT_Data') :
 
     # save the tree #example # treeName = 'testSIFT_Data.pickle'
     outfile = open (savefile + '.pickle', 'wb')
-    pickle.dump( mydataSIFT[['file', 'siftdes']] , outfile)
+    pickle.dump( mydataSIFT[['file', 'siftkey', 'siftdes']] , outfile)
 
 
 '''
@@ -100,18 +100,21 @@ def FEATURE (queryimagepath, sift_features_limit=100):
     q_kp, q_des = sift.detectAndCompute(q_img, None)
 
     return q_kp, q_des
-
-
-    
+ 
 #------------------QUERY IMAGE FEATURE GEN---------------#
 
-def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50):
+def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50, isNew = False):
     start = time.time()
-    q_img = cv2.imread(queryimagepath)    
-    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
-    sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
-    q_kp, q_des = sift.detectAndCompute(q_img, None)
-   
+
+    # if isNew: 
+    #     # Create Features for new Images
+    #     q_img = cv2.imread(queryimagepath)    
+    #     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    #     sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
+    #     q_kp, q_des = sift.detectAndCompute(q_img, None)
+    # else: 
+    # Search within the feature for known
+    q_des = np.vstack(feature[feature['file'] == queryimagepath]['siftdes'])
    
     # FLANN matcher
     FLANN_INDEX_KDTREE = 0
@@ -151,14 +154,19 @@ def SIFT_SEARCH (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.
     ## Search End
 
 
-def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50):
+def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50, isNew =False):
     '''SIFT Brute Force Matcher '''
     start = time.time()
-    q_img = cv2.imread(queryimagepath)    
-    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
-    sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
-    q_kp, q_des = sift.detectAndCompute(q_img, None)
-   
+
+    # if isNew: 
+    #     # Create Features for new Images
+    #     q_img = cv2.imread(queryimagepath)    
+    #     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    #     sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
+    #     q_kp, q_des = sift.detectAndCompute(q_img, None)
+    # else: 
+    # Search within the feature for known
+    q_des = np.vstack(feature[feature['file'] == queryimagepath]['siftdes'])
 
     # BF macher 
     bf = cv2.BFMatcher()
@@ -196,14 +204,20 @@ def SIFT_SEARCH_BF (feature, queryimagepath, sift_features_limit=100, lowe_ratio
 
 
 
-def SIFT_SEARCH_BF_DIST (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50):
+def SIFT_SEARCH_BF_DIST (feature, queryimagepath, sift_features_limit=100, lowe_ratio=0.75, predictions_count=50, isNew = False):
     '''Returns imagematches tuple: (distance, filename)'''
     start = time.time()
-    q_img = cv2.imread(queryimagepath)    
-    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
-    sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
-    q_kp, q_des = sift.detectAndCompute(q_img, None)
-   
+
+    # if isNew: 
+    #     # Create Features for new Images
+    #     q_img = cv2.imread(queryimagepath)    
+    #     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    #     sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
+    #     q_kp, q_des = sift.detectAndCompute(q_img, None)
+    # else: 
+    # Search within the feature for known
+    q_des = np.vstack(feature[feature['file'] == queryimagepath]['siftdes'])
+
     # BF macher 
     bf = cv2.BFMatcher()
 
@@ -282,15 +296,25 @@ def SIFT_Load_Tree_Model ( openfile='testSIFTtree' ) :
 
 
 
-def SIFT_SEARCH_TREE (q_path, cluster_model, SIFTtree, mydataSIFT, returnCount=100, kp=100) : 
+def SIFT_SEARCH_TREE (q_path, cluster_model, SIFTtree, mydataSIFT, returnCount=100, kp=100, isNew = False) : 
     # print ("searching Tree.")
     # # sample a image
     # q_path = random.sample(imagepaths, 1)[0]
     # print (q_path)
     # log time 
     start = time.time()
-    # get the feature for this image 
-    q_kp, q_des = FEATURE (q_path , kp)
+
+    # # get the feature for this image 
+    # if isNew: 
+    #     # Create Features for new Images
+    #     q_img = cv2.imread(queryimagepath)    
+    #     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    #     sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
+    #     q_kp, q_des = sift.detectAndCompute(q_img, None)
+    # else: 
+    # Search within the feature for known
+    q_des = np.vstack(mydataSIFT[mydataSIFT['file'] == q_path]['siftdes'])
+
     # get bow cluster
     q_clustered_words = cluster_model.predict(q_des) 
     # get FV histogram  
@@ -304,6 +328,35 @@ def SIFT_SEARCH_TREE (q_path, cluster_model, SIFTtree, mydataSIFT, returnCount=1
     matches = tuple(zip( slist, flist)) # create a list of tuples frm 2 lists
 
     return (matches, t)
+
+def SIFT_SEARCH_TREE_SELF(q_path, cluster_model, SIFTtree, mydataSIFT, returnCount=100, kp=100) : 
+    # print ("searching Tree.")
+    # # sample a image
+    # q_path = random.sample(imagepaths, 1)[0]
+    # print (q_path)
+    # log time 
+    start = time.time()
+    # get the feature for this image 
+    # q_kp, q_des = FEATURE (q_path , kp)
+    q_des = np.vstack(mydataSIFT[mydataSIFT['file'] == q_path]['siftdes'])
+    # print (q_des.shape)
+
+
+    # get bow cluster
+    q_clustered_words = cluster_model.predict(q_des) 
+    # get FV histogram  
+    q_bow_hist = np.array([np.bincount(q_clustered_words, minlength=cluster_model.n_clusters)])
+    # search the KDTree for nearest match
+    dist, result = SIFTtree.query(q_bow_hist, k=returnCount)
+    t= time.time() - start
+    # Zip results to list of tuples 
+    flist = list (mydataSIFT.iloc[ result[0].tolist()]['file'])
+    slist = list (dist[0])
+    matches = tuple(zip( slist, flist)) # create a list of tuples frm 2 lists
+
+    return (matches, t)
+
+
 
 
 # Clustering codes (Advanced Use Only)

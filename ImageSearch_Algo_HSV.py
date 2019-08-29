@@ -187,9 +187,13 @@ def HSV_SEARCH_TREE ( HSVtree , mydataHSV,  searchimagepath, returnCount=100):
 
     start = time.time()
     
-    # get the feature from the input image 
-    fh = HSV_FEATURE (searchimagepath)
+    # get the feature from the input (new) image 
+    # fh = HSV_FEATURE (searchimagepath)
+    
+    # OR if feature exists in mydataHSV -> extract it (need preknowledge)
+    fh = np.vstack(mydataHSV[mydataHSV['file'] == searchimagepath]['imagehist'])
 
+    # ------- Re-structure to NumpyArray [DO NOT EDIT]
     fh = np.asarray(fh)
     # ft = raw feature 
     # process 

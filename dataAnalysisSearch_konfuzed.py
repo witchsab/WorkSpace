@@ -616,7 +616,7 @@ imagepaths = ['./imagesbooks/ukbench09622.jpg','./imagesbooks/ukbench10066.jpg',
 Results = pd.DataFrame(columns=['file'])
 # for q_path in imagepaths[30:35]: 
 # for q_path in imagepaths[100:201]: 
-for q_path in imagepaths: 
+for q_path in imagepaths[:20]: 
     row_dict = {'file':q_path } 
 
     # ------------Generic Algo Full Sample 
@@ -625,12 +625,21 @@ for q_path in imagepaths:
     # search_RGB_Corr(write=True) 
 
     search_SIFT_BF(write=True)
+<<<<<<< HEAD
     # search_SIFT_FLANN(write=True)
     search_SIFT_BOVW(write=True)
 
     # search_ORB_FLANN(write=True)
     search_ORB_BF(write=True)
     # search_ORB_BF2(write=True)
+=======
+    search_SIFT_FLANN(write=True)
+    search_SIFT_BOVW(write=True)
+
+    search_ORB_FLANN(write=True)
+    search_ORB_BF(write=True)
+    search_ORB_BF2(write=True)
+>>>>>>> 55c839951bdea01087be1e6a734c6aefbdc7367f
     search_ORB_BOVW(write=True)   
     
     search_HASH_All(write=True)
@@ -656,11 +665,19 @@ for q_path in imagepaths:
 
 # ---------- SAVE ALL FILES TO DISK
 # Save Frame to csv 
+<<<<<<< HEAD
 Results.to_csv( 'data/' + TESTNAME + '_RESULTS.csv')
 print ("Data Collection Completed ")
 
 # Save Frame to pickle
 savefile = 'data/' + TESTNAME + '_RESULTS' # + str(int(time.time())) 
+=======
+Results.to_csv( 'data/' + TESTNAME + '_RESULTS_ORBchk2.csv')
+print ("Data Collection Completed ")
+
+# Save Frame to pickle
+savefile = 'data/' + TESTNAME + '_RESULTS_ORBchk2' # + str(int(time.time())) 
+>>>>>>> 55c839951bdea01087be1e6a734c6aefbdc7367f
 outfile = open (savefile + '.pickle', 'wb')
 pickle.dump( Results, outfile )
 # ---------- SAVED
