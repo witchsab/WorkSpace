@@ -58,7 +58,8 @@ def gen_sift_features(imagelibrarypaths, sift_features_limit):
         # m_kp,m_des = gen_sift_features(m_img)
         if len(kp) < 1: # Error handling 
             desc = np.zeros((1, sift.descriptorSize()), np.float32)    
-        siftdf = siftdf.append({'file':f, 'siftkey':kp, 'siftdes':desc}, ignore_index=True)
+        siftdf = siftdf.append({'file':f, 'siftdes':desc}, ignore_index=True)
+        # siftdf = siftdf.append({'file':f, 'siftkey':kp, 'siftdes':desc}, ignore_index=True)
         
 
     t= time.time() - start

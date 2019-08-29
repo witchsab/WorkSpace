@@ -59,7 +59,8 @@ def GEN_ORB_FEATURES(imagelibrarypaths, ORB_features_limit):
             desc = np.zeros((1, orb.descriptorSize()), np.float32)    
         
         ORBdf = ORBdf.append(
-            {'file': f, 'ORBkey': kp, 'ORBdes': desc}, ignore_index=True)
+            {'file': f, 'ORBdes': desc}, ignore_index=True)
+            # {'file': f, 'ORBkey': kp, 'ORBdes': desc}, ignore_index=True)
 
     t = time.time() - start
     # print("[INFO] processed {} images in {:.2f} seconds".format(len(imagelibrarypaths), t))
