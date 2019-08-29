@@ -599,8 +599,7 @@ gt = accuracy.check_ground_truth()
 # image dirs path 
 imagepaths = (list(paths.list_images(IMGDIR)))
 
-
-imagepaths = ['./imagesbooks/ukbench09622.jpg','./imagesbooks/ukbench10066.jpg','./imagesbooks/ukbench03864.jpg','./imagesbooks/ukbench06696.jpg','./imagesbooks/ukbench08546.jpg','./imagesbooks/ukbench05988.jpg','./imagesbooks/ukbench02718.jpg','./imagesbooks/ukbench05945.jpg','./imagesbooks/ukbench05779.jpg','./imagesbooks/ukbench08054.jpg','./imagesbooks/ukbench10166.jpg','./imagesbooks/ukbench05776.jpg','./imagesbooks/ukbench03865.jpg','./imagesbooks/ukbench06004.jpg','./imagesbooks/ukbench08048.jpg','./imagesbooks/ukbench05874.jpg','./imagesbooks/ukbench03098.jpg','./imagesbooks/ukbench05600.jpg','./imagesbooks/ukbench06047.jpg','./imagesbooks/ukbench10065.jpg']
+# imagepaths = ['./imagesbooks/ukbench09622.jpg','./imagesbooks/ukbench10066.jpg','./imagesbooks/ukbench03864.jpg','./imagesbooks/ukbench06696.jpg','./imagesbooks/ukbench08546.jpg','./imagesbooks/ukbench05988.jpg','./imagesbooks/ukbench02718.jpg','./imagesbooks/ukbench05945.jpg','./imagesbooks/ukbench05779.jpg','./imagesbooks/ukbench08054.jpg','./imagesbooks/ukbench10166.jpg','./imagesbooks/ukbench05776.jpg','./imagesbooks/ukbench03865.jpg','./imagesbooks/ukbench06004.jpg','./imagesbooks/ukbench08048.jpg','./imagesbooks/ukbench05874.jpg','./imagesbooks/ukbench03098.jpg','./imagesbooks/ukbench05600.jpg','./imagesbooks/ukbench06047.jpg','./imagesbooks/ukbench10065.jpg']
 
 
 # *************************  CUSTOM ALGO DATA **************************** #
@@ -616,30 +615,26 @@ imagepaths = ['./imagesbooks/ukbench09622.jpg','./imagesbooks/ukbench10066.jpg',
 Results = pd.DataFrame(columns=['file'])
 # for q_path in imagepaths[30:35]: 
 # for q_path in imagepaths[100:201]: 
-for q_path in imagepaths[:20]: 
+for q_path in imagepaths: 
     row_dict = {'file':q_path } 
 
     # ------------Generic Algo Full Sample 
     search_HSV(write=True)
     search_RGB(write=True) 
     # search_RGB_Corr(write=True) 
+    
+    # ------------Generic Algo Full Sample 
+    search_HSV(write=True)
+    search_RGB(write=True) 
+    # search_RGB_Corr(write=True) 
 
     search_SIFT_BF(write=True)
-<<<<<<< HEAD
-    # search_SIFT_FLANN(write=True)
-    search_SIFT_BOVW(write=True)
-
-    # search_ORB_FLANN(write=True)
-    search_ORB_BF(write=True)
-    # search_ORB_BF2(write=True)
-=======
     search_SIFT_FLANN(write=True)
     search_SIFT_BOVW(write=True)
 
     search_ORB_FLANN(write=True)
     search_ORB_BF(write=True)
     search_ORB_BF2(write=True)
->>>>>>> 55c839951bdea01087be1e6a734c6aefbdc7367f
     search_ORB_BOVW(write=True)   
     
     search_HASH_All(write=True)
@@ -665,20 +660,13 @@ for q_path in imagepaths[:20]:
 
 # ---------- SAVE ALL FILES TO DISK
 # Save Frame to csv 
-<<<<<<< HEAD
-Results.to_csv( 'data/' + TESTNAME + '_RESULTS.csv')
+Results.to_csv( 'data/' + TESTNAME + '_RESULTS_Tree_Check_519.csv')
 print ("Data Collection Completed ")
 
 # Save Frame to pickle
-savefile = 'data/' + TESTNAME + '_RESULTS' # + str(int(time.time())) 
-=======
-Results.to_csv( 'data/' + TESTNAME + '_RESULTS_ORBchk2.csv')
-print ("Data Collection Completed ")
-
-# Save Frame to pickle
-savefile = 'data/' + TESTNAME + '_RESULTS_ORBchk2' # + str(int(time.time())) 
->>>>>>> 55c839951bdea01087be1e6a734c6aefbdc7367f
+savefile = 'data/' + TESTNAME + '_RESULTS_Tree_Check_519' # + str(int(time.time())) 
 outfile = open (savefile + '.pickle', 'wb')
 pickle.dump( Results, outfile )
 # ---------- SAVED
+
 
