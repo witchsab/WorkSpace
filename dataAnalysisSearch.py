@@ -32,8 +32,8 @@ import Thresholding
 
 # --------------- VAR COMMONS------------------
 
-# TESTNAME = "Data519"
-# IMGDIR = r'./imagesbooks/'
+TESTNAME = "Data519"
+IMGDIR = r'./imagesbooks/'
 
 # TESTNAME = "DataUKBENCH10K"
 # IMGDIR = r'./ukbench/'
@@ -47,7 +47,7 @@ import Thresholding
 # TESTNAME = "Data519_S160"
 # IMGDIR = r'./images/imagesbooks_S160/'
 
-# TESTNAME = "Data519_DENOISE2"
+# TESTNAME = "Data519_CT2.0"
 # IMGDIR = r'./images/imagesbooks_CT2.0/'
 
 # IMGDIR = r"V:\\Download\\imagesbooks\\"
@@ -57,6 +57,7 @@ import Thresholding
 # IMGDIRPROCESSED[2] = r"V:\\Download\\imagesbooks3\\"
 # IMGDIRPROCESSED[3] = r"V:\\Download\\imagesbooks4\\"
 # IMGDIRPROCESSED[4] = r"V:\\Download\\imagesbooks_warp\\"
+
 
 
 # --------------- CONFIG PARAMETERS ----------------------#
@@ -82,6 +83,10 @@ accuracy.read(IMGDIR)
 # --------------- IMAGES  ----------------------#
 imagepaths =  (list(paths.list_images(IMGDIR)))
 myDataFiles = pd.DataFrame( {'file' : imagepaths })
+
+print ('Testname: ', TESTNAME)
+print ("Searching Features for ", len(imagepaths), "images in", IMGDIR)
+
 
 
 # -----------  LOAD FEATUTES AND TREES from file  ------------ #
@@ -595,6 +600,9 @@ gt = accuracy.check_ground_truth()
 imagepaths = (list(paths.list_images(IMGDIR)))
 
 
+imagepaths = ['./imagesbooks/ukbench09622.jpg','./imagesbooks/ukbench10066.jpg','./imagesbooks/ukbench03864.jpg','./imagesbooks/ukbench06696.jpg','./imagesbooks/ukbench08546.jpg','./imagesbooks/ukbench05988.jpg','./imagesbooks/ukbench02718.jpg','./imagesbooks/ukbench05945.jpg','./imagesbooks/ukbench05779.jpg','./imagesbooks/ukbench08054.jpg','./imagesbooks/ukbench10166.jpg','./imagesbooks/ukbench05776.jpg','./imagesbooks/ukbench03865.jpg','./imagesbooks/ukbench06004.jpg','./imagesbooks/ukbench08048.jpg','./imagesbooks/ukbench05874.jpg','./imagesbooks/ukbench03098.jpg','./imagesbooks/ukbench05600.jpg','./imagesbooks/ukbench06047.jpg','./imagesbooks/ukbench10065.jpg']
+
+
 # *************************  CUSTOM ALGO DATA **************************** #
 # AlgoMixerAppend : 
 #   runs specified algos by text calls and merges result
@@ -616,12 +624,12 @@ for q_path in imagepaths:
     search_RGB(write=True) 
     # search_RGB_Corr(write=True) 
 
-    # search_SIFT_BF(write=True)
+    search_SIFT_BF(write=True)
     # search_SIFT_FLANN(write=True)
     search_SIFT_BOVW(write=True)
 
     # search_ORB_FLANN(write=True)
-    # search_ORB_BF(write=True)
+    search_ORB_BF(write=True)
     # search_ORB_BF2(write=True)
     search_ORB_BOVW(write=True)   
     
@@ -633,8 +641,8 @@ for q_path in imagepaths:
     # search_RGB()
 
     # ----------- generate custom combination algos w/ adaptive thresholding
-    algomixerAppend(['search_HSV', 'search_RGB'], 100, 'AlgoS')
-    algomixerAppend(['search_ORB_BOVW', 'search_SIFT_BOVW'], 100, 'AlgoF')
+    # algomixerAppend(['search_HSV', 'search_RGB'], 100, 'AlgoS')
+    # algomixerAppend(['search_ORB_BOVW', 'search_SIFT_BOVW'], 100, 'AlgoF')
 
     # ----------- generate custom Funnel algos
     algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoA', write=True)
@@ -648,11 +656,11 @@ for q_path in imagepaths:
 
 # ---------- SAVE ALL FILES TO DISK
 # Save Frame to csv 
-Results.to_csv( 'data/' + TESTNAME + '_RESULTS_F.csv')
+Results.to_csv( 'data/' + TESTNAME + '_RESULTS.csv')
 print ("Data Collection Completed ")
 
 # Save Frame to pickle
-savefile = 'data/' + TESTNAME + '_RESULTS_F' # + str(int(time.time())) 
+savefile = 'data/' + TESTNAME + '_RESULTS' # + str(int(time.time())) 
 outfile = open (savefile + '.pickle', 'wb')
 pickle.dump( Results, outfile )
 # ---------- SAVED

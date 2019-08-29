@@ -29,8 +29,8 @@ import Thresholding
 
 # --------------- VAR COMMONS------------------
 
-# TESTNAME = "Data519"
-# IMGDIR = r'./imagesbooks/'
+TESTNAME = "Data519"
+IMGDIR = r'./imagesbooks/'
 
 # TESTNAME = "DataUKBENCH10K"
 # IMGDIR = r'./ukbench/'
@@ -44,7 +44,7 @@ import Thresholding
 # TESTNAME = "Data519_S160"
 # IMGDIR = r'./images/imagesbooks_S160/'
 
-# TESTNAME = "Data519_DENOISE2"
+# TESTNAME = "Data519_CT2.0"
 # IMGDIR = r'./images/imagesbooks_CT2.0/'
 
 # IMGDIR = r"V:\\Download\\imagesbooks\\"
@@ -78,6 +78,7 @@ myDataFiles = pd.DataFrame( {'file' : imagepaths })
 
 
 # ----------- GENERATE ALL FEATURES & SAVE ------------ #
+print ('Testname: ', TESTNAME)
 print ("Generating Features for ", len(imagepaths), "images in", IMGDIR)
 
 
