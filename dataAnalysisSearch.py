@@ -32,8 +32,8 @@ import Thresholding
 
 # --------------- VAR COMMONS------------------
 
-# TESTNAME = "Data519"
-# IMGDIR = r'./imagesbooks/'
+TESTNAME = "Data519"
+IMGDIR = r'./imagesbooks/'
 
 # TESTNAME = "DataUKBENCH10K"
 # IMGDIR = r'./ukbench/'
@@ -608,7 +608,7 @@ imagepaths = (list(paths.list_images(IMGDIR)))
 Results = pd.DataFrame(columns=['file'])
 # for q_path in imagepaths[30:35]: 
 # for q_path in imagepaths[100:201]: 
-for q_path in imagepaths: 
+for q_path in imagepaths[:20]: 
     row_dict = {'file':q_path } 
 
     # ------------Generic Algo Full Sample 
@@ -616,13 +616,13 @@ for q_path in imagepaths:
     search_RGB(write=True) 
     # search_RGB_Corr(write=True) 
 
-    # search_SIFT_BF(write=True)
-    # search_SIFT_FLANN(write=True)
+    search_SIFT_BF(write=True)
+    search_SIFT_FLANN(write=True)
     search_SIFT_BOVW(write=True)
 
-    # search_ORB_FLANN(write=True)
-    # search_ORB_BF(write=True)
-    # search_ORB_BF2(write=True)
+    search_ORB_FLANN(write=True)
+    search_ORB_BF(write=True)
+    search_ORB_BF2(write=True)
     search_ORB_BOVW(write=True)   
     
     search_HASH_All(write=True)
@@ -648,11 +648,11 @@ for q_path in imagepaths:
 
 # ---------- SAVE ALL FILES TO DISK
 # Save Frame to csv 
-Results.to_csv( 'data/' + TESTNAME + '_RESULTS_F.csv')
+Results.to_csv( 'data/' + TESTNAME + '_RESULTS_ORBchk2.csv')
 print ("Data Collection Completed ")
 
 # Save Frame to pickle
-savefile = 'data/' + TESTNAME + '_RESULTS_F' # + str(int(time.time())) 
+savefile = 'data/' + TESTNAME + '_RESULTS_ORBchk2' # + str(int(time.time())) 
 outfile = open (savefile + '.pickle', 'wb')
 pickle.dump( Results, outfile )
 # ---------- SAVED

@@ -77,7 +77,7 @@ def ORB_SAVE_FEATURES(mydataORB, savefile='testORB_Data'):
 
     # save the tree #example # treeName = 'testORB_Data.pickle'
     outfile = open(savefile + '.pickle', 'wb')
-    pickle.dump(mydataORB[['file', 'ORBdes']], outfile)
+    pickle.dump(mydataORB[['file', 'ORBkey', 'ORBdes']], outfile)
 
 
 '''
@@ -110,10 +110,18 @@ def FEATURE (queryimagepath, ORB_features_limit=100):
 
 def ORB_SEARCH_BF (feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7, predictions_count=50):
     start = time.time()
-    q_img = cv2.imread(queryimagepath)
-    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
-    ORB = cv2.ORB_create(ORB_features_limit)
-    q_kp, q_des = ORB.detectAndCompute(q_img, None)
+
+
+    # if isNew: 
+    #     # Create Features for new Images
+    #     q_img = cv2.imread(queryimagepath)    
+    #     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    #     sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
+    #     q_kp, q_des = sift.detectAndCompute(q_img, None)
+    # else: 
+    # Search within the feature for known
+    q_des = np.vstack(feature[feature['file'] == queryimagepath]['ORBdes'])
+    
 
     # BF macher 
     bf = cv2.BFMatcher()
@@ -154,10 +162,17 @@ def ORB_SEARCH_BF (feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0
 # https://towardsdatascience.com/image-panorama-stitching-with-opencv-2402bde6b46c
 def ORB_SEARCH_FLANN(feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7, predictions_count=50):
     start = time.time()
-    q_img = cv2.imread(queryimagepath)
-    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
-    ORB = cv2.ORB_create(ORB_features_limit)
-    q_kp, q_des = ORB.detectAndCompute(q_img, None)
+
+# if isNew: 
+    #     # Create Features for new Images
+    #     q_img = cv2.imread(queryimagepath)    
+    #     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    #     sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
+    #     q_kp, q_des = sift.detectAndCompute(q_img, None)
+    # else: 
+    # Search within the feature for known
+    q_des = np.vstack(feature[feature['file'] == queryimagepath]['ORBdes'])
+    
 
 
     # FLANN matcher
@@ -208,10 +223,17 @@ def ORB_SEARCH_FLANN(feature, queryimagepath, ORB_features_limit=100, lowe_ratio
 # Do not use yet 
 def ORB_SEARCH_MODBF(feature, queryimagepath, ORB_features_limit=100, lowe_ratio=0.7, predictions_count=50):
     start = time.time()
-    q_img = cv2.imread(queryimagepath)
-    q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
-    ORB = cv2.ORB_create(ORB_features_limit)
-    q_kp, q_des = ORB.detectAndCompute(q_img, None)
+
+    # if isNew: 
+    #     # Create Features for new Images
+    #     q_img = cv2.imread(queryimagepath)    
+    #     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    #     sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
+    #     q_kp, q_des = sift.detectAndCompute(q_img, None)
+    # else: 
+    # Search within the feature for known
+    q_des = np.vstack(feature[feature['file'] == queryimagepath]['ORBdes'])
+    
 
     # bf = cv2.BFMatcher ()
     bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
@@ -303,8 +325,18 @@ def ORB_SEARCH_TREE (q_path, cluster_model, ORBtree, mydataORB, returnCount=100,
     # print (q_path)
     # log time 
     start = time.time()
-    # get the feature for this image 
-    q_kp, q_des = FEATURE (q_path , kp)
+
+    # # get the feature for this image 
+    # if isNew: 
+    #     # Create Features for new Images
+    #     q_img = cv2.imread(queryimagepath)    
+    #     q_img = cv2.cvtColor(q_img, cv2.COLOR_BGR2RGB)
+    #     sift = cv2.xfeatures2d.SIFT_create(sift_features_limit)
+    #     q_kp, q_des = sift.detectAndCompute(q_img, None)
+    # else: 
+    # Search within the feature for known
+    q_des = np.vstack(mydataORB[mydataORB['file'] == q_path]['ORBdes'])
+
     # get bow cluster
     q_clustered_words = cluster_model.predict(q_des) 
     # get FV histogram  
