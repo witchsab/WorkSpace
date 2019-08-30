@@ -17,9 +17,9 @@ import ImageSearch_Algo_SIFT
 import ImageSearch_Plots as myplots
 import Thresholding
 
-# --------------- Reload modules on :
-%load_ext autoreload
-%autoreload 2
+# # --------------- Reload modules on :
+# %load_ext autoreload
+# %autoreload 2
 
 
 # --------------- TEST PARAMETERS ----------------------#
@@ -126,8 +126,6 @@ for kp in [100, 200, 300, 400, 500]:
         ################################################################################
         #                               ALGO CALLS                                     #
         ################################################################################
-
-        # # ---------- search SIFT BOVW Tree
 
         # # ---------- search ORB BOVW Tree
         def search_ORB_BOVW(returnCount=100, write=False):
