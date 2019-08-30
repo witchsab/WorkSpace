@@ -1,4 +1,5 @@
 import os
+import pickle
 import time
 
 import cv2
@@ -6,6 +7,7 @@ import numpy as np
 from imutils import paths
 from PIL import Image, ImageEnhance
 
+import AccuracyGlobal
 import foregroundextraction as extract
 
 # # to reload module: uncomment use the following 
@@ -265,8 +267,6 @@ print("[INFO] DENOISE processed {} images in {:.2f} seconds".format(len(haystack
 # dict source 
 # dict 
 
-import AccuracyGlobal 
-import pickle
 
 accuracy = AccuracyGlobal.AccuracyGlobal() # empty class genrated 
 
@@ -298,12 +298,103 @@ def update_Preprocessed_Dicts() :
 # Run an updates on the preprocessed dicts 
 update_Preprocessed_Dicts()
 
-# ------- GLOBAL MIX 
-def create_global() : 
-    # Todo
-    
-    return None
 
+
+# ######### Data519 MIX - Org, Rot 3x => Total 520x4 = 2080. update dict  ##########
+
+def create_augment(): 
+    AUGMENT_DIR = './images/imagesbooks_AUG/'
+    if not os.path.exists(os.path.dirname(AUGMENT_DIR)):
+            try:
+                os.makedirs(os.path.dirname(AUGMENT_DIR))
+            except OSError as exc: # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+
+    AUGMENT_LIST = [
+        ('./imagesbooks/', ''),
+        ('./images/imagesbooks_R90/', '_R90'),
+        ('./images/imagesbooks_R180/', '_R180'),
+        ('./images/imagesbooks_R270/', '_R270')]
+
+    # Consolidate Copy to AUG directory 
+    from shutil import copyfile
+    accuracy = AccuracyGlobal.AccuracyGlobal() # empty class genrated 
+
+    for DIR, NAME in AUGMENT_LIST:
+        haystackPaths = sorted(list(paths.list_images(DIR))) #[:2]
+        for srcPath in haystackPaths: 
+            src = srcPath
+            fn = (os.path.basename(src)).split('.')[0]+ NAME
+            fe = (os.path.basename(src)).split('.')[1]
+            fname = fn +'.' + fe
+            des = os.path.join(AUGMENT_DIR, fname )
+            # adding exception handling
+            try:
+                copyfile(src, des)
+                print (src, des)
+            except IOError as e:
+                print("Unable to copy file. %s" % e)
+            except:
+                print("Unexpected error:", sys.exc_info())
+
+    # generate GroundTruth dict file 
+
+    KEYDIR, _ = AUGMENT_LIST[0]
+    haystackPaths = sorted(list(paths.list_images(KEYDIR))) #[:2]
+    imagefiles = haystackPaths # [:50]
+
+    globalDict = {}
+    for f in imagefiles: 
+        gkey, gList = accuracy.accuracy_groundtruth_gen(f)
+
+        gkeys = []
+        gLists = []
+
+        for item, name in AUGMENT_LIST : 
+            fn = (gkey).split('.')[0]+ name
+            fe = (gkey).split('.')[1]
+            fname = fn +'.' + fe
+            gkeys.append (fname)
+        
+        for gitem in gList : 
+            for item, name in AUGMENT_LIST : 
+                fn = (gitem).split('.')[0]+ name
+                fe = (gitem).split('.')[1]
+                fname = fn +'.' + fe
+                gLists.append (fname)
+        
+        print ('gkeys', gkeys)
+        print ('glists', gLists)
+
+        # Update the global dict globalDict
+        for item in gkeys: 
+            globalDict[item] = gLists
+
+    # print (gList)
+    # store the file matches (ground truth) dictionary 
+    matchesFile = AUGMENT_DIR + 'groundTruth'
+    outfile = open (matchesFile + '.pickle', 'wb')
+    pickle.dump( globalDict, outfile )
+    print ("[INFO] Saving file ", matchesFile)
+
+    # store the file list 
+    seedFile = AUGMENT_DIR + 'seed'
+    outfiles = open (seedFile + '.pickle', 'wb')
+    pickle.dump( globalDict.keys, outfiles )
+    print ("[INFO] Saving file ", seedFile)
+
+
+    # # check gt file 
+    # accuracy = AccuracyGlobal.AccuracyGlobal() # empty class genrated 
+    # accuracy.read(AUGMENT_DIR)
+    # gt = accuracy.check_ground_truth()
+
+
+create_augment()
+
+
+###########################   DONE   ##############################
 
 
 
@@ -335,6 +426,3 @@ def run_foregroundExtractor ():
 
     print("[INFO] processed {} images in {:.2f} seconds".format( len(haystackPaths), time.time() - start))
     # ------- END 
-
-
-
