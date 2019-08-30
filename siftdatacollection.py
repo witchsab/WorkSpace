@@ -125,9 +125,10 @@ print ("Data Collection Completed ")
    
     # ---------- SAVED
 
-#####################################################################################
-#############################       VENN DIAGRAM      ###############################
-#####################################################################################
+############################################################################
+#############################  VENN DIAGRAM  ###############################
+############################################################################
+
  # reading the pickle tree
 infile = open('data/Data519_original20_Results_mix100_ALL.pickle','rb')
 myanalysistestsift = pickle.load(infile)
@@ -173,7 +174,7 @@ plt.title('candidates_captured_Count_100 = 4')
 
 
 ##################################################################################
-##########  PLOT THRESHOLDING CURVE 
+##########  PLOT THRESHOLDING CURVE ################################
 ##################################################################################
 
 #### check Gaussian nature of scores and success positions
@@ -253,11 +254,11 @@ def plot_match_scores(imagematches,label, title):
 # q_path = './imagesbooks/ukbench00487.jpg'
 # q_path = './imagesbooks/ukbench02730.jpg'
 # q_path = './imagesbooks/ukbench05941.jpg'
-q_path = './imagesbooks/ukbench10165.jpg'
+# q_path = './imagesbooks/ukbench10165.jpg'
 # q_path = './imagesbooks/ukbench10166.jpg'
 # q_path = './imagesbooks/ukbench08595.jpg'
 # q_path = './imagesbooks/ukbench08594.jpg'
-# q_path = './imagesbooks/ukbench05952.jpg'
+q_path = './imagesbooks/ukbench05952.jpg'
 
 
 imagematcheshsv , searchtime = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
@@ -291,6 +292,12 @@ plot_match_scores(imagematchesSIFT, 'SIFT','13_SIFT_threshold')
 # plot_match_scores(imagematcheshsv)
 # plot_match_scores(imagematchesSIFT)
 
+
+# q_path = './imagesbooks/ukbench10165.jpg'
+# q_path = './imagesbooks/ukbench10166.jpg'
+# q_path = './imagesbooks/ukbench08595.jpg'
+# q_path = './imagesbooks/ukbench08594.jpg'
+q_path = './imagesbooks/ukbench05952.jpg'
 
 
 
@@ -378,8 +385,7 @@ ax.set_ylabel('RGBScore')
 ax.set_zlabel('SIFTScore')
 plt.title('Score Comparison')
 # plt.legend(loc=2)
-plt.title(title)
-plt.savefig('./data/plots/' + title +'.png')
+plt.savefig('./data/plots/' + '13_ScoreComparison' +'.png')
 plt.show()
 
 
@@ -393,6 +399,7 @@ scatter = ax.scatter( list(finalTable['HSVScore']), list(finalTable['RGBScore'])
 ax.set_title('HSV vs RGB ')
 ax.set_xlabel('HSV ')
 ax.set_ylabel('RGB ')
+plt.savefig('./data/plots/' + '13_HSVvsRGB ' +'.png')
 plt.colorbar(scatter)
 
 
@@ -404,6 +411,7 @@ scatter = ax.scatter( list(finalTable['SIFTScore']), list(finalTable['RGBScore']
 ax.set_title('SIFT vs RGB ')
 ax.set_xlabel('SIFT ')
 ax.set_ylabel('RGB ')
+plt.savefig('./data/plots/' + '13_SIFTvsRGB ' +'.png')
 plt.colorbar(scatter)
 
 # # Threshold chart Score vs Sorted Samples
@@ -438,3 +446,369 @@ plt.colorbar(scatter)
 #     plt.ylabel('Score')
 #     plt.show()
 
+
+
+
+
+
+
+
+
+
+
+#################################################################
+########## Unique problem samples ###################3
+
+myFavList = ['./imagesbooks/ukbench10165.jpg','./imagesbooks/ukbench10166.jpg','./imagesbooks/ukbench08595.jpg','./imagesbooks/ukbench08594.jpg','./imagesbooks/ukbench05952.jpg']
+
+
+
+##################################################################################
+##########  PLOT DISTRIBUTION 2D SCATTER and 3D  
+##################################################################################
+import pandas as pd 
+import os 
+# Consolidate all to 1 final table of scores for all images in datset 
+
+for q_path in myFavList: 
+    hsv_match_score=[]
+    hsv_match_file=[]
+    rgb_match_score=[]
+    rgb_match_file=[]
+    sift_match_score=[]
+    sift_match_file=[]
+
+    space = len(mydataHSV.index)
+    # space = 100
+
+    imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, space)
+    for myitem in imagematcheshsv:
+        x, y = myitem
+        hsv_match_score.append(x)
+        hsv_match_file.append(y)
+    data = { 'file' : hsv_match_file , 'HSVScore' : hsv_match_score }
+    hsvTable = pd.DataFrame ( data )
+
+    imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, space)
+    for myitem in imagematchesrgb:
+        x, y = myitem
+        rgb_match_score.append(x)
+        rgb_match_file.append(y)
+    data = { 'file' : rgb_match_file , 'RGBScore' : rgb_match_score }
+    rgbTable = pd.DataFrame ( data )
+
+    imagematchesSIFT, searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF_DIST(mydataSIFT, q_path, 100, 0.75, space)
+    for myitem in imagematchesSIFT:
+        x, y = myitem
+        sift_match_score.append(x)
+        sift_match_file.append(y)
+    data = { 'file' : sift_match_file , 'SIFTScore' : sift_match_score }
+    siftTable = pd.DataFrame ( data )
+
+
+    finalTable = pd.merge(hsvTable,rgbTable, on='file')
+    finalTable = pd.merge(finalTable,siftTable, on='file')
+
+    truth = accuracy.accuracy_groundtruth(q_path) 
+    finalTable ['Truth'] = 0 
+    finalTable.loc [finalTable['file'].isin(truth) , 'Truth' ] = 1     
+    finalTable = finalTable[finalTable.file != q_path]
+
+    finalTable = finalTable.sort_values(by=['Truth'])
+
+    # plot_match_scores(imagematcheshsv,'HSV', '13_HSV_threshold')
+    # plot_match_scores(imagematchesrgb,'RGB', '13_RGB_threshold')
+    # plot_match_scores(imagematchesSIFT,'SIFT', '13_SIFT_threshold')
+
+
+
+
+
+    #################################################################################
+    ##########              PLOT SCATTERS for SCORES            #####################
+    #################################################################################
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from matplotlib import colors
+    from mpl_toolkits.mplot3d import Axes3D
+
+
+    myID = os.path.basename(q_path)
+    # colormaps 
+    customcmap = colors.ListedColormap(['green', 'red'])
+
+    # Plotting
+    fig = plt.figure(1, figsize=(7,7))
+    ax = Axes3D(fig, rect=[0, 0, 0.95, 1], elev=40, azim=134)
+
+    # fig = plt.figure()
+    # ax = fig.add_subplot(1, 1, 1, projection='3d')
+    ax.scatter(list(finalTable['HSVScore']), list(finalTable['RGBScore']), list(finalTable['SIFTScore']), c=list(finalTable['Truth']), s=50 ,cmap=customcmap) 
+    # marker='o', cmap=plt.cm.RdYlGn)
+    ax.set_xlabel('HSVScore')
+    ax.set_ylabel('RGBScore')
+    ax.set_zlabel('SIFTScore')
+    plt.title(myID + ' Score Comparison')
+    # plt.legend(loc=2)
+    plt.savefig('./data/plots/' + myID + '_ScoreComparison' +'.png')
+    plt.show()
+
+
+    # X, Y Scatter HSV vs RGB 
+    customcmap = colors.ListedColormap(['green', 'red'])
+    # customcmap = colors.ListedColormap(['gray', 'red'])
+    # customcmap = colors.ListedColormap(['cyan', 'magenta'])
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    scatter = ax.scatter( list(finalTable['HSVScore']), list(finalTable['RGBScore']), c= list(finalTable["Truth"]),s=30, cmap=customcmap)
+    ax.set_title(myID + ' HSV vs RGB ')
+    ax.set_xlabel('HSV ')
+    ax.set_ylabel('RGB ')
+    plt.savefig('./data/plots/' + myID + '_HSVvsRGB ' +'.png')
+    plt.colorbar(scatter)
+
+
+    # X, Y Scatter SIFT vs RGB 
+    customcmap = colors.ListedColormap(['gray', 'red'])
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    scatter = ax.scatter( list(finalTable['SIFTScore']), list(finalTable['RGBScore']), c= list(finalTable["Truth"]),s=30, cmap=customcmap)
+    ax.set_title(myID + ' SIFT vs RGB ')
+    ax.set_xlabel('SIFT ')
+    ax.set_ylabel('RGB ')
+    plt.savefig('./data/plots/' + myID + '_SIFTvsRGB ' +'.png')
+    plt.colorbar(scatter)
+
+
+
+
+#############################################################################
+#######################------  RGB THRESHOLDING  Plot--- ########################
+##############################################################################
+
+
+import ImageSearch_Algo_RGB
+from imutils import paths
+from matplotlib import colors
+import matplotlib.pyplot as plt
+import Accuracy as accuracy
+import random
+from kneed import KneeLocator
+
+# # to reload module: uncomment use the following 
+# %load_ext autoreload
+# %autoreload 2
+
+# Hyper-Parameter for comparing histograms
+parametercorrelationthreshold = 0.70
+
+IMGDIR = "./imagesbooks/"
+imagepaths = qpaths = list(paths.list_images(IMGDIR))
+# print (imagepathss)
+
+mydata, mytime = ImageSearch_Algo_RGB.RGB_GEN(imagepaths)
+print ('RGB Generation Time' , mytime)
+
+
+
+#------SEARCH TEST------------------------------#
+
+import Accuracy as accuracy
+
+# q_path = random.sample(imagepaths, 1)[0]
+q_paths = random.sample(imagepaths, 30)  # random sample 100 items in list
+customcmap = colors.ListedColormap(['green', 'red'])
+
+counter = 1 
+clist = [] 
+qlist = []
+for q_path in q_paths: 
+    imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 100)
+
+    a, d, i_rgb, cnt = accuracy.accuracy_matches(q_path, imagematchesrgb, 20)
+    score = []
+    matchesposition = [0]*len(imagematchesrgb)
+    for i in i_rgb: 
+        matchesposition[i] = 1
+
+    # score, file = item
+    for item in imagematchesrgb:
+        x, y = item
+        score.append(x)
+    # print(score)
+
+    knee = 6
+    try : 
+        elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
+        # print ('Detected Elbow cluster value :', elbow.knee)
+        knee = elbow.knee
+    except: 
+        pass    
+    qualifiedItems = min (knee, 6)
+
+    plt.scatter ( [counter]*len(imagematchesrgb), score, c=matchesposition, cmap=customcmap, s=10)
+
+    clist.append(counter)
+    qlist.append(score[qualifiedItems]-0.25) # fixed offset 
+    counter +=1 # DONT FORGET 
+
+    # import matplotlib.pyplot as plt 
+    # plt.scatter ( [counter]*len(imagematchesrgb), score, c=matchesposition)
+
+# plot line chart 
+plt.step ( clist, qlist, where='mid', c='purple')   
+# plt.plot ( clist, qlist, '-')   
+
+
+plt.colorbar()
+plt.xlabel('n_samples')
+plt.ylabel('RGB Score')
+plt.title('RGB_Score_based_Thresholding')
+plt.savefig('./data/plots/' + 'RGB_Thresholding' +'.png')
+plt.show()
+
+
+    
+
+##############################################################################
+#######################----HSV THRESHOLDING Plot------ ########################
+##############################################################################
+
+
+import matplotlib.pyplot as plt
+from matplotlib import colors
+import Accuracy as accuracy
+import random
+import ImageSearch_Algo_HSV
+from kneed import knee_locator
+
+# # to reload module: uncomment use the following 
+# %load_ext autoreload
+# %autoreload 2
+
+# Hyper-Parameter for comparing histograms
+parametercorrelationthreshold = 0.70
+
+IMGDIR = "./imagesbooks/"
+imagepaths = list(paths.list_images(IMGDIR))
+# print (imagepathss)
+
+mydataHSV, mytime = ImageSearch_Algo_HSV.HSV_GEN(imagepaths)
+print ('HSV Feature Generation time', mytime)
+
+# to create a new tree from dataframe features 'mydataHSV'
+mytree = ImageSearch_Algo_HSV.HSV_Create_Tree (mydataHSV, savefile='HSV_Tree')
+
+
+#------SEARCH TEST------------------------------#
+
+q_paths = random.sample(imagepaths, 30)  # random sample 100 items in list
+customcmap = colors.ListedColormap(['green', 'red'])
+counter = 1 
+clist = [] 
+qlist = []
+
+for q_path in q_paths: 
+    imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 100)
+       
+    a, d, i_hsv, cnt = accuracy.accuracy_matches(q_path, imagematcheshsv, 20)
+    score = []
+    matchesposition = [0]*len(imagematcheshsv)
+    for i in i_hsv: 
+        matchesposition[i] = 1
+
+    # score, file = item
+    for item in imagematcheshsv:
+        x, y = item
+        score.append(x)
+    # print (score)
+
+    knee = 6
+    try : 
+        elbow = KneeLocator( list(range(0,len(score))), score, S=2.0, curve='convex', direction='increasing')
+        # print ('Detected Elbow cluster value :', elbow.knee)
+        knee = elbow.knee
+    except: 
+        pass    
+    qualifiedItems = min (knee, 6)
+
+    plt.scatter ( [counter]*len(imagematcheshsv), score, c=matchesposition, cmap=customcmap, s=10)
+
+    clist.append(counter)
+    qlist.append(score[qualifiedItems]-0.25) # fixed offset 
+    counter +=1 # DONT FORGET 
+
+    # import matplotlib.pyplot as plt 
+    # plt.scatter ( [counter]*len(imagematchesrgb), score, c=matchesposition)
+
+# plot line chart 
+plt.step ( clist, qlist, where='mid', c='purple')   
+# plt.plot ( clist, qlist, '-')      
+
+plt.colorbar()
+plt.xlabel('n_samples')
+plt.ylabel('HSV Score')
+plt.title('HSV_Score_based_Thresholding')
+plt.savefig('./data/plots/' + 'HSV_Thresholding' +'.png')
+plt.show()
+
+
+
+#####################################################################
+########  STATISTICAL HSV vs. RGB  score/thresholding comparison
+#####################################################################
+
+import pandas as pd
+
+# X, Y Scatter HSV vs RGB 
+customcmap = colors.ListedColormap(['green', 'red'])
+# customcmap = colors.ListedColormap(['gray', 'red'])
+# customcmap = colors.ListedColormap(['cyan', 'magenta'])
+fig = plt.figure()
+ax = fig.add_subplot(111)
+
+counter = 0 
+for q_path in q_paths[:30]: 
+    
+    counter +=1 # DONT FORGET 
+
+    hsv_match_score=[]
+    hsv_match_file=[]
+    rgb_match_score=[]
+    rgb_match_file=[]
+
+    imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, 50)
+    imagematchesrgb , searchtimergb = ImageSearch_Algo_RGB.RGB_SEARCH_TREE (myRGBtree, mydataRGB, q_path, 50)
+    space = 100
+    # create a dataframe for HSV ans RGB 
+    imagematcheshsv , searchtimehsv = ImageSearch_Algo_HSV.HSV_SEARCH_TREE (myHSVtree, mydataHSV, q_path, space)
+    for myitem in imagematcheshsv:
+        x, y = myitem
+        hsv_match_score.append(x)
+        hsv_match_file.append(y)
+    data = { 'file' : hsv_match_file , 'HSVScore' : hsv_match_score }
+    hsvTable = pd.DataFrame ( data )
+
+    for myitem in imagematchesrgb:
+        x, y = myitem
+        rgb_match_score.append(x)
+        rgb_match_file.append(y)
+    data = { 'file' : rgb_match_file , 'RGBScore' : rgb_match_score }
+    rgbTable = pd.DataFrame ( data )
+
+    finalTable = pd.merge(hsvTable,rgbTable, on='file')
+    truth = accuracy.accuracy_groundtruth(q_path) 
+    finalTable ['Truth'] = 0 
+    finalTable.loc [finalTable['file'].isin(truth) , 'Truth' ] = 1     
+    finalTable = finalTable[finalTable.file != q_path]
+    finalTable = finalTable.sort_values(by=['Truth']) # sort by Truth for plotting overlay
+
+    scatter = ax.scatter( list(finalTable['HSVScore']), list(finalTable['RGBScore']), c= list(finalTable["Truth"]),s=30, cmap=customcmap)
+
+ax.set_title('HSV vs RGB Thresholding comparison ')
+ax.set_xlabel('HSV ')
+ax.set_ylabel('RGB ')
+plt.colorbar(scatter)
+# plt.savefig('./data/plots/' + 'HSV vs RGB_Thresholding' +'.png')
+plt.show()
