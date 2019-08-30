@@ -650,17 +650,17 @@ for q_path in imagepaths:
     # search_RGB_Corr(write=True) 
 
     search_SIFT_BF(txt='100', write=True)
-    # search_SIFT_BF(mydataSIFT=mydataSIFT2, txt='300', write=True)
+    search_SIFT_BF(mydataSIFT=mydataSIFT2, txt='300', write=True)
     # search_SIFT_FLANN(write=True)
     search_SIFT_BOVW(write=True)
     search_SIFT_BOVW(mySIFTmodel=mySIFTmodel2, mySIFTtree=mySIFTtree2, mydataSIFT=mydataSIFT2, txt='kp300n50', write=True)
     
-    # search_ORB_FLANN(txt='100', write=True)
-    # search_ORB_FLANN(mydataORB=mydataORB2, txt='500', write=True)
+    search_ORB_FLANN(txt='100', write=True)
+    search_ORB_FLANN(mydataORB=mydataORB2, txt='500', write=True)
     # search_ORB_BF(write=True)
     # search_ORB_BF2(write=True)
-    # search_ORB_BOVW(write=True)
-    # search_ORB_BOVW(myORBmodel=myORBmodel2, myORBtree=myORBtree2, mydataORB=mydataORB2, txt='kp500n50',write=True)
+    search_ORB_BOVW(write=True)
+    search_ORB_BOVW(myORBmodel=myORBmodel2, myORBtree=myORBtree2, mydataORB=mydataORB2, txt='kp500n50',write=True)
     
     search_HASH_All(write=True)
     search_HASH_HYBRID(write=True)
@@ -672,20 +672,20 @@ for q_path in imagepaths:
     # ----------- generate custom combination algos w/ adaptive thresholding
     # algomixerAppend(['search_HSV', 'search_RGB'], 100, 'AlgoS')
     # algomixerAppend(['search_ORB_BOVW', 'search_SIFT_BOVW'], 100, 'AlgoF')
-    # algomixerAppend(['search_ORB_BOVW2', 'search_SIFT_BOVW2'], 100, 'AlgoFX')
+    algomixerAppend(['search_ORB_BOVW2', 'search_SIFT_BOVW2'], 100, 'AlgoFX')
     algomixerAppend(['search_HSV', 'search_RGB', 'search_SIFT_BOVW2'], 100, 'AlgoX')
 
     # ----------- generate custom Funnel algos
     
     algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoA', write=True)
-    # algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT2, 'AlgoA2', write=True)
+    algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT2, 'AlgoA2', write=True)
     # algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_FLANN', mydataSIFT, 'F_SIFT2')
 
     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB_100', write=True)
     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoB_50', write=True)
 
-    # algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC', write=True)
-    # algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW2'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC2', write=True)
+    algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC', write=True)
+    algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW2'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC2', write=True)
 
     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW2'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_100', write=True)
     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW2'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_50', write=True)
@@ -696,17 +696,17 @@ for q_path in imagepaths:
 
 # ---------- SAVE ALL FILES TO DISK
 # Save Frame to csv 
-Results.to_csv( 'data/' + TESTNAME + '_RESULTS_FINAL.csv')
+Results.to_csv( 'data/' + TESTNAME + '_RESULTS_Tree_Check1_n50.csv')
 print ("Data Collection Completed ")
 
 # Save Frame to pickle
-savefile = 'data/' + TESTNAME + '_RESULTS_FINAL' # + str(int(time.time())) 
+savefile = 'data/' + TESTNAME + '_RESULTS_Tree_Check1_n50' # + str(int(time.time())) 
 outfile = open (savefile + '.pickle', 'wb')
 pickle.dump( Results, outfile )
 # ---------- SAVED
 
 # Calculate statistics and save to a file 
 stats = Results.describe()
-stats.to_csv( 'data/' + TESTNAME + '_RESULTS_FINAL_stats.csv')
+stats.to_csv( 'data/' + TESTNAME + '_RESULTS_Tree_Check1_n50_stats.csv')
 
 print ("Data Analysis Completed.")
