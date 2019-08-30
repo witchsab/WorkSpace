@@ -50,6 +50,9 @@ IMGDIR = r'./imagesbooks/'
 # TESTNAME = "Data519_CT2.0"
 # IMGDIR = r'./images/imagesbooks_CT2.0/'
 
+# TESTNAME = "Data519_AUG"
+# IMGDIR = r'./images/imagesbooks_AUG'
+
 # IMGDIR = r"V:\\Download\\imagesbooks\\"
 # IMGDIRPROCESSED = ['']*5
 # IMGDIRPROCESSED[0] = r"V:\\Download\\imagesbooks1\\"
@@ -57,7 +60,6 @@ IMGDIR = r'./imagesbooks/'
 # IMGDIRPROCESSED[2] = r"V:\\Download\\imagesbooks3\\"
 # IMGDIRPROCESSED[3] = r"V:\\Download\\imagesbooks4\\"
 # IMGDIRPROCESSED[4] = r"V:\\Download\\imagesbooks_warp\\"
-
 
 
 # --------------- CONFIG PARAMETERS ----------------------#

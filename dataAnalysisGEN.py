@@ -47,6 +47,9 @@ IMGDIR = r'./imagesbooks/'
 # TESTNAME = "Data519_CT2.0"
 # IMGDIR = r'./images/imagesbooks_CT2.0/'
 
+# TESTNAME = "Data519_AUG"
+# IMGDIR = r'./images/imagesbooks_AUG'
+
 # IMGDIR = r"V:\\Download\\imagesbooks\\"
 # IMGDIRPROCESSED = ['']*5
 # IMGDIRPROCESSED[0] = r"V:\\Download\\imagesbooks1\\"
@@ -58,14 +61,14 @@ IMGDIR = r'./imagesbooks/'
 # --------------- CONFIG PARAMETERS ----------------------#
 
 ORB_FEATURES_LIMIT = 100
-ORB_FEATURES_LIMIT2 = 500   
+ORB_FEATURES_LIMIT2 = 500
 ORB_N_CLUSTERS = 500
-ORB_N_CLUSTERS2 = 50    # 500 # (option2)
+ORB_N_CLUSTERS2 = 50    # 500 # (option2) #optimal = 50 for 500 features
 
 SIFT_FEATURES_LIMIT = 100
 SIFT_FEATURES_LIMIT2 = 300
 SIFT_N_CLUSTERS = 500
-SIFT_N_CLUSTERS2 = 50   # 100 # (option2)
+SIFT_N_CLUSTERS2 = 50   # 100 # (option2) #optimal = 50 for 300 features
 
 LOWE_RATIO = 0.7
 SIFT_PREDICTIONS_COUNT = 100
