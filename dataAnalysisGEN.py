@@ -47,8 +47,8 @@ IMGDIR = r'./imagesbooks/'
 # TESTNAME = "Data519_CT2.0"
 # IMGDIR = r'./images/imagesbooks_CT2.0/'
 
-# TESTNAME = "Data519_AUG"
-# IMGDIR = r'./images/imagesbooks_AUG'
+# TESTNAME = "Data519AUG"
+# IMGDIR = r'./images/imagesbooks_AUG/'
 
 # IMGDIR = r"V:\\Download\\imagesbooks\\"
 # IMGDIRPROCESSED = ['']*5
