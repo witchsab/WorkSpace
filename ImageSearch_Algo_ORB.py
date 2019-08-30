@@ -65,7 +65,7 @@ def GEN_ORB_FEATURES(imagelibrarypaths, ORB_features_limit):
     t = time.time() - start
     # print("[INFO] processed {} images in {:.2f} seconds".format(len(imagelibrarypaths), t))
     # print (ORBdf.head())
-    return (ORBdf,  t)
+    return (ORBdf, t)
 
 
 '''

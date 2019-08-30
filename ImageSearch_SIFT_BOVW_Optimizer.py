@@ -173,79 +173,78 @@ for kp in [100, 200, 300, 400, 500]:
 ResultStats.to_csv( 'opt/' + TESTNAME + '_RESULTS_kp_vs_nCluster_SELF.csv')
 
 
+# ################################################################################
+# #################  TRUE TEST 
+# ################################################################################
 
-################################################################################
-#################  TRUE TEST 
-################################################################################
+# # Initialize Stats 
+# ResultStats2 = pd.DataFrame()
 
-# Initialize Stats 
-ResultStats2 = pd.DataFrame()
+# for kp in [100, 200, 300, 400, 500]:
+#     for n in [50, 100, 500, 1000, 2000, 3000, 4000, 5000] :
 
-for kp in [100, 200, 300, 400, 500]:
-    for n in [50, 100, 500, 1000, 2000, 3000, 4000, 5000] :
-
-        n_clusters = n 
+#         n_clusters = n 
         
-        # # Files
-        # file_SIFT_Cluster = 'opt/' + 'test' + '_SIFT_Cluster' + str(kneeSIFT)
-        file_SIFT_Feature = 'opt/' + TESTNAME + '_PandasDF_SIFT_Features_kp'+ str(kp)
-        file_SIFT_TreeCluster = 'opt/' + TESTNAME + '_SIFT_Tree_kp'+str(kp)+'Cluster' + str(n_clusters)
+#         # # Files
+#         # file_SIFT_Cluster = 'opt/' + 'test' + '_SIFT_Cluster' + str(kneeSIFT)
+#         file_SIFT_Feature = 'opt/' + TESTNAME + '_PandasDF_SIFT_Features_kp'+ str(kp)
+#         file_SIFT_TreeCluster = 'opt/' + TESTNAME + '_SIFT_Tree_kp'+str(kp)+'Cluster' + str(n_clusters)
 
-        # # Features
-        mydataSIFT = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES (file_SIFT_Feature)
-        # mydataORB = ImageSearch_Algo_ORB.ORB_LOAD_FEATURES(file_ORB_Feature)
+#         # # Features
+#         mydataSIFT = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES (file_SIFT_Feature)
+#         # mydataORB = ImageSearch_Algo_ORB.ORB_LOAD_FEATURES(file_ORB_Feature)
 
-        # # Tree & Clusters
-        mySIFTtree, mySIFTmodel, mySIFTFVHist = ImageSearch_Algo_SIFT.SIFT_Load_Tree_Model (file_SIFT_TreeCluster)
-
-
-        ################################################################################
-        #                               ALGO CALLS                                     #
-        ################################################################################
-
-        # # ---------- search SIFT BOVW Tree
-        def search_SIFT_BOVW(returnCount=100, write=False):
-            imagematches, searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_TREE(q_path, mySIFTmodel, mySIFTtree, mydataSIFT, returnCount=returnCount, kp=kp)
-            if write:
-                a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
-                # print('Accuracy =',  a, '%', '| Quality:', d )
-                # print('Count', cnt, ' | position', ind)
-                row_dict['acc_sift_tree'] = a
-                row_dict['index_sift_tree'] = ind
-                row_dict['Count_sift_tree'] = cnt
-                row_dict['quality_sift_tree'] = d
-                row_dict['time_sift_tree'] = searchtime
-
-            return imagematches, searchtime
+#         # # Tree & Clusters
+#         mySIFTtree, mySIFTmodel, mySIFTFVHist = ImageSearch_Algo_SIFT.SIFT_Load_Tree_Model (file_SIFT_TreeCluster)
 
 
-        #######################################################################
-        # -----------  DATA COLLECTION START    ------------ #
+#         ################################################################################
+#         #                               ALGO CALLS                                     #
+#         ################################################################################
 
-        # initialize
-        Results = pd.DataFrame(columns=['file'])
+#         # # ---------- search SIFT BOVW Tree
+#         def search_SIFT_BOVW(returnCount=100, write=False):
+#             imagematches, searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_TREE(q_path, mySIFTmodel, mySIFTtree, mydataSIFT, returnCount=returnCount, kp=kp)
+#             if write:
+#                 a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
+#                 # print('Accuracy =',  a, '%', '| Quality:', d )
+#                 # print('Count', cnt, ' | position', ind)
+#                 row_dict['acc_sift_tree'] = a
+#                 row_dict['index_sift_tree'] = ind
+#                 row_dict['Count_sift_tree'] = cnt
+#                 row_dict['quality_sift_tree'] = d
+#                 row_dict['time_sift_tree'] = searchtime
 
-        start = time.time()
-        sample = 100
-        for q_path in imagepaths[:sample]:
-            row_dict = {'file':q_path}
+#             return imagematches, searchtime
+
+
+#         #######################################################################
+#         # -----------  DATA COLLECTION START    ------------ #
+
+#         # initialize
+#         Results = pd.DataFrame(columns=['file'])
+
+#         start = time.time()
+#         sample = 100
+#         for q_path in imagepaths[:sample]:
+#             row_dict = {'file':q_path}
 
             
-            search_SIFT_BOVW(write=True)
+#             search_SIFT_BOVW(write=True)
 
-            # search_ORB_BOVW(write=True)  
+#             # search_ORB_BOVW(write=True)  
         
-            Results = Results.append( row_dict, ignore_index=True)
+#             Results = Results.append( row_dict, ignore_index=True)
 
-        # ---------- SAVE ALL FILES TO DISK
-        # Save Frame to csv
-        # Results.to_csv( 'opt/' + TESTNAME + '_RESULTS_kp'+str(kp)+'Cluster'+ str(n_clusters)+'.csv')
-        # print('Data Collection Completed  kp'+str(kp)+' Cluster' + str(n_clusters))
+#         # ---------- SAVE ALL FILES TO DISK
+#         # Save Frame to csv
+#         # Results.to_csv( 'opt/' + TESTNAME + '_RESULTS_kp'+str(kp)+'Cluster'+ str(n_clusters)+'.csv')
+#         # print('Data Collection Completed  kp'+str(kp)+' Cluster' + str(n_clusters))
 
-        print ('kp:%5d' %(kp), 'n:%5d t: %2.4f' %(n, (time.time() - start)/sample), "\tACC: %2.2f" %(Results['acc_sift_tree'].mean()), "COUNT: %2.2f" %(Results['Count_sift_tree'].mean()) )
+#         print ('kp:%5d' %(kp), 'n:%5d t: %2.4f' %(n, (time.time() - start)/sample), "\tACC: %2.2f" %(Results['acc_sift_tree'].mean()), "COUNT: %2.2f" %(Results['Count_sift_tree'].mean()) )
 
-        ResultStats2 = ResultStats2.append ({'kp': kp, 'n_cluster': n, 'Acc': Results['acc_sift_tree'].mean(), 'Count': Results['Count_sift_tree'].mean(), 'Acc_std': Results['acc_sift_tree'].std(), 'Count_std': Results['Count_sift_tree'].std(), 'Time': Results['time_sift_tree'].mean()}, ignore_index=True)
+#         ResultStats2 = ResultStats2.append ({'kp': kp, 'n_cluster': n, 'Acc': Results['acc_sift_tree'].mean(), 'Count': Results['Count_sift_tree'].mean(), 'Acc_std': Results['acc_sift_tree'].std(), 'Count_std': Results['Count_sift_tree'].std(), 'Time': Results['time_sift_tree'].mean()}, ignore_index=True)
 
 
-ResultStats2.to_csv( 'opt/' + TESTNAME + '_RESULTS_kp_vs_nCluster_TRUE.csv')
+# ResultStats2.to_csv( 'opt/' + TESTNAME + '_RESULTS_kp_vs_nCluster_TRUE.csv')
 

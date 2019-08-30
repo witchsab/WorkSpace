@@ -65,7 +65,9 @@ IMGDIR = r'./imagesbooks/'
 ORB_FEATURES_LIMIT = 100
 ORB_N_CLUSTERS = 500
 SIFT_N_CLUSTERS = 500
+SIFT_N_CLUSTERS2 = 50
 SIFT_FEATURES_LIMIT = 100
+SIFT_FEATURES_LIMIT2 = 300
 LOWE_RATIO = 0.7
 SIFT_PREDICTIONS_COUNT = 100
 RGB_PARAMETERCORRELATIONTHRESHOLD = 0.70 # not needed for generation
@@ -111,10 +113,16 @@ file_SIFT_Cluster = 'data/' + 'test' + '_SIFT_Cluster' + str(kneeSIFT)
 file_SIFT_Feature = 'data/' + TESTNAME + '_PandasDF_SIFT_Features_kp'+ str(SIFT_FEATURES_LIMIT)
 file_SIFT_TreeCluster = 'data/' + TESTNAME + '_SIFT_Tree_Cluster' + str(SIFT_N_CLUSTERS)
 
+file_SIFT_Feature2 = 'data/' + TESTNAME + '_PandasDF_SIFT_Features_kp'+ str(SIFT_FEATURES_LIMIT2)
+file_SIFT_TreeCluster2 = 'data/' + TESTNAME + '_SIFT_Tree_Cluster' + str(SIFT_N_CLUSTERS2) + 'kp'+str(SIFT_FEATURES_LIMIT2)
+
+
+
 # Features 
 mydataRGB = ImageSearch_Algo_RGB.RGB_LOAD_FEATURES (file_RGB_Feature)
 mydataHSV = ImageSearch_Algo_HSV.HSV_LOAD_FEATURES (file_HSV_Feature)
 mydataSIFT = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES (file_SIFT_Feature)
+mydataSIFT2 = ImageSearch_Algo_SIFT.SIFT_LOAD_FEATURES (file_SIFT_Feature2)
 mydataORB = ImageSearch_Algo_ORB.ORB_LOAD_FEATURES(file_ORB_Feature)
 mydataHASH = ImageSearch_Algo_Hash.HASH_LOAD_FEATURES(file_HASH_Feature)
 
@@ -122,6 +130,7 @@ mydataHASH = ImageSearch_Algo_Hash.HASH_LOAD_FEATURES(file_HASH_Feature)
 myRGBtree = ImageSearch_Algo_RGB.RGB_Load_Tree (file_RGB_Tree)
 myHSVtree = ImageSearch_Algo_HSV.HSV_Load_Tree (file_HSV_Tree)
 mySIFTtree, mySIFTmodel, mySIFTFVHist = ImageSearch_Algo_SIFT.SIFT_Load_Tree_Model (file_SIFT_TreeCluster)
+mySIFTtree2, mySIFTmodel2, mySIFTFVHist2 = ImageSearch_Algo_SIFT.SIFT_Load_Tree_Model (file_SIFT_TreeCluster2)
 myORBtree, myORBmodel, myORBFVHist = ImageSearch_Algo_ORB.ORB_Load_Tree_Model(file_ORB_TreeCluster)
 myHybridtree =ImageSearch_Algo_Hash.HASH_Load_Tree (file_HASH_HybridTree)
 
@@ -214,34 +223,34 @@ def search_SIFT_FLANN(returnCount=100, mydataSIFT=mydataSIFT, write=False):
 
 
 # # ---------- search SIFT BF
-def search_SIFT_BF(returnCount=100, mydataSIFT=mydataSIFT, write=False): 
+def search_SIFT_BF(returnCount=100, mydataSIFT=mydataSIFT, txt='', write=False): 
     imagepredictionsBF , searchtimesift = ImageSearch_Algo_SIFT.SIFT_SEARCH_BF(mydataSIFT, q_path, sift_features_limit=SIFT_FEATURES_LIMIT, lowe_ratio=LOWE_RATIO, predictions_count=returnCount)
     if write: 
         a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagepredictionsBF, 20 )
         # print ('Accuracy =',  a, '%', '| Quality:', d )
         # print ('Count', cnt, ' | position', ind)
-        row_dict['acc_sift_BF'] = a
-        row_dict['index_sift_BF'] = ind
-        row_dict['Count_sift_BF'] = cnt
-        row_dict['quality_sift_BF'] = d
-        row_dict['time_sift_BF'] = searchtimesift
+        row_dict['acc_sift_BF'+txt] = a
+        row_dict['index_sift_BF'+txt] = ind
+        row_dict['Count_sift_BF'+txt] = cnt
+        row_dict['quality_sift_BF'+txt] = d
+        row_dict['time_sift_BF'+txt] = searchtimesift
 
     return imagepredictionsBF, searchtimesift
 
 
 
 # # ---------- search SIFT BOVW Tree
-def search_SIFT_BOVW(returnCount=100, write=False): 
+def search_SIFT_BOVW(returnCount=100, mySIFTmodel=mySIFTmodel, mySIFTtree=mySIFTtree, mydataSIFT=mydataSIFT, txt='', write=False): 
     imagematches, searchtime = ImageSearch_Algo_SIFT.SIFT_SEARCH_TREE(q_path, mySIFTmodel, mySIFTtree, mydataSIFT, returnCount=returnCount, kp=100)
     if write: 
         a ,d, ind, cnt = accuracy.accuracy_matches(q_path, imagematches, 20 )
         # print ('Accuracy =',  a, '%', '| Quality:', d )
         # print ('Count', cnt, ' | position', ind)
-        row_dict['acc_sift_tree'] = a
-        row_dict['index_sift_tree'] = ind
-        row_dict['Count_sift_tree'] = cnt
-        row_dict['quality_sift_tree'] = d
-        row_dict['time_sift_tree'] = searchtime
+        row_dict['acc_sift_tree'+txt] = a
+        row_dict['index_sift_tree'+txt] = ind
+        row_dict['Count_sift_tree'+txt] = cnt
+        row_dict['quality_sift_tree'+txt] = d
+        row_dict['time_sift_tree'+txt] = searchtime
 
     return imagematches, searchtime
 
@@ -451,8 +460,12 @@ def algo_selector( algo, return_count = 100):
         imagepredictions, searchtime = search_RGB_Corr(returnCount=return_count)
     elif algo == "search_SIFT_BF": # Full
         imagepredictions, searchtime = search_SIFT_BF(returnCount=return_count) 
+    elif algo == "search_SIFT_BF2": # Full
+        imagepredictions, searchtime = search_SIFT_BF(returnCount=return_count, mydataSIFT=mydataSIFT2, txt='2') 
     elif algo == "search_SIFT_BOVW": # Tree
         imagepredictions, searchtime = search_SIFT_BOVW(returnCount=return_count)
+    elif algo == "search_SIFT_BOVW2": # Tree
+        imagepredictions, searchtime = search_SIFT_BOVW(returnCount=return_count, mySIFTmodel=mySIFTmodel2, mySIFTtree=mySIFTtree2, mydataSIFT=mydataSIFT2, txt='2')
     elif algo == "search_SIFT_FLANN": # Full
         imagepredictions, searchtime = search_SIFT_FLANN(returnCount=return_count)
     elif algo == "search_HSV": # Tree
@@ -629,13 +642,15 @@ for q_path in imagepaths:
     # search_RGB_Corr(write=True) 
 
     search_SIFT_BF(write=True)
-    search_SIFT_FLANN(write=True)
+    search_SIFT_BF(mydataSIFT=mydataSIFT2, txt='2', write=True)
+    # search_SIFT_FLANN(write=True)
     search_SIFT_BOVW(write=True)
-
+    search_SIFT_BOVW(mySIFTmodel=mySIFTmodel2, mySIFTtree=mySIFTtree2, mydataSIFT=mydataSIFT2, txt='2', write=True)
+    
     search_ORB_FLANN(write=True)
-    search_ORB_BF(write=True)
-    search_ORB_BF2(write=True)
-    search_ORB_BOVW(write=True)   
+    # search_ORB_BF(write=True)
+    # search_ORB_BF2(write=True)
+    # search_ORB_BOVW(write=True)   
     
     search_HASH_All(write=True)
     search_HASH_HYBRID(write=True)
@@ -650,23 +665,32 @@ for q_path in imagepaths:
 
     # ----------- generate custom Funnel algos
     algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoA', write=True)
+    algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT2, 'AlgoA2', write=True)
     # algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_FLANN', mydataSIFT, 'F_SIFT2')
-    algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB', write=True)
-    algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoBA', write=True)
+    algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB_100', write=True)
+    algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoB_50', write=True)
     algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC', write=True)
+
+    algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW2'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_100', write=True)
+    algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW2'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_50', write=True)
+
 
     Results = Results.append( row_dict , ignore_index=True)
     print ( 'Completed ', imagepaths.index(q_path), q_path)
 
 # ---------- SAVE ALL FILES TO DISK
 # Save Frame to csv 
-Results.to_csv( 'data/' + TESTNAME + '_RESULTS_Tree_Check_519.csv')
+Results.to_csv( 'data/' + TESTNAME + '_RESULTS_Tree_Check1.csv')
 print ("Data Collection Completed ")
 
 # Save Frame to pickle
-savefile = 'data/' + TESTNAME + '_RESULTS_Tree_Check_519' # + str(int(time.time())) 
+savefile = 'data/' + TESTNAME + '_RESULTS_Tree_Check1' # + str(int(time.time())) 
 outfile = open (savefile + '.pickle', 'wb')
 pickle.dump( Results, outfile )
 # ---------- SAVED
 
+# Calculate statistics and save to a file 
+stats = Results.describe()
+stats.to_csv( 'data/' + TESTNAME + '_RESULTS_Tree_Check1_stats.csv')
 
+print ("Data Analysis Completed.")

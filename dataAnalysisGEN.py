@@ -60,7 +60,9 @@ IMGDIR = r'./imagesbooks/'
 ORB_FEATURES_LIMIT = 100
 ORB_N_CLUSTERS = 500
 SIFT_N_CLUSTERS = 500
+SIFT_N_CLUSTERS2 = 50
 SIFT_FEATURES_LIMIT = 100
+SIFT_FEATURES_LIMIT2 = 300
 LOWE_RATIO = 0.7
 SIFT_PREDICTIONS_COUNT = 100
 RGB_PARAMETERCORRELATIONTHRESHOLD = 0.70 # not needed for generation
@@ -94,6 +96,22 @@ savefile = 'data/' + TESTNAME + '_PandasDF_SIFT_Features_kp'+ str(sift_features_
 ImageSearch_Algo_SIFT.SIFT_SAVE_FEATURES (mydataSIFT, savefile)
 print("SIFT Feature saved to : ", savefile)
 # -- END
+
+
+# GEN SIFT 2 # for TREE kp=300, n_cluster=50 
+sift_features_limit = SIFT_FEATURES_LIMIT2
+lowe_ratio = LOWE_RATIO
+predictions_count = SIFT_PREDICTIONS_COUNT
+
+mydataSIFT2, mytime1 = ImageSearch_Algo_SIFT.gen_sift_features(
+    imagepaths, sift_features_limit)
+print("SIFT Feature Generation time :", mytime1)
+savefile = 'data/' + TESTNAME + '_PandasDF_SIFT_Features_kp'+ str(sift_features_limit)
+ImageSearch_Algo_SIFT.SIFT_SAVE_FEATURES (mydataSIFT2, savefile)
+print("SIFT Feature saved to : ", savefile)
+# -- END
+
+
 
 # GEN ORB
 orb_features_limit = ORB_FEATURES_LIMIT
@@ -160,6 +178,12 @@ myHybridtree = ImageSearch_Algo_Hash.HASH_CREATE_HYBRIDTREE(mydataHASH, savefile
 n_clusters = SIFT_N_CLUSTERS
 savefile = 'data/' + TESTNAME + '_SIFT_Tree_Cluster' + str(n_clusters)
 mySIFTtree, mySIFTmodel, mySIFTFVHist = ImageSearch_Algo_SIFT.SIFT_CREATE_TREE_MODEL(mydataSIFT, savefile, n_clusters)
+
+
+# SIFT FV Tree and Cluster with kp=300, n_cluster=50
+n_clusters = SIFT_N_CLUSTERS2
+savefile = 'data/' + TESTNAME + '_SIFT_Tree_Cluster' + str(n_clusters) + 'kp'+str(SIFT_FEATURES_LIMIT2)
+mySIFTtree2, mySIFTmodel2, mySIFTFVHist2 = ImageSearch_Algo_SIFT.SIFT_CREATE_TREE_MODEL(mydataSIFT2, savefile, n_clusters)
 
 
 # ORB FV Tree and Cluster
