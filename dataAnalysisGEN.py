@@ -58,11 +58,15 @@ IMGDIR = r'./imagesbooks/'
 # --------------- CONFIG PARAMETERS ----------------------#
 
 ORB_FEATURES_LIMIT = 100
+ORB_FEATURES_LIMIT2 = 500   
 ORB_N_CLUSTERS = 500
-SIFT_N_CLUSTERS = 500
-SIFT_N_CLUSTERS2 = 50
+ORB_N_CLUSTERS2 = 50    # 500 # (option2)
+
 SIFT_FEATURES_LIMIT = 100
 SIFT_FEATURES_LIMIT2 = 300
+SIFT_N_CLUSTERS = 500
+SIFT_N_CLUSTERS2 = 50   # 100 # (option2)
+
 LOWE_RATIO = 0.7
 SIFT_PREDICTIONS_COUNT = 100
 RGB_PARAMETERCORRELATIONTHRESHOLD = 0.70 # not needed for generation
@@ -71,6 +75,7 @@ kneeRGB = 2
 kneeORB = 2
 kneeSIFT = 2
 HASHLENGTH = 16
+
 
 # --------------- IMAGES  ----------------------#
 imagepaths =  (list(paths.list_images(IMGDIR)))
@@ -120,6 +125,16 @@ mydataORB, mytime1 = ImageSearch_Algo_ORB.GEN_ORB_FEATURES(imagepaths, orb_featu
 print("ORB Feature Generation time :", mytime1)
 savefile = 'data/' + TESTNAME + '_PandasDF_ORB_Features_kp'+ str(orb_features_limit)
 ImageSearch_Algo_ORB.ORB_SAVE_FEATURES (mydataORB, savefile)
+print("ORB Feature saved to : ", savefile)
+# -- END
+
+# GEN ORB 2 # for TREE kp=500, n_cluster=50 
+orb_features_limit = ORB_FEATURES_LIMIT2
+
+mydataORB2, mytime1 = ImageSearch_Algo_ORB.GEN_ORB_FEATURES(imagepaths, orb_features_limit)
+print("ORB Feature Generation time :", mytime1)
+savefile = 'data/' + TESTNAME + '_PandasDF_ORB_Features_kp'+ str(orb_features_limit)
+ImageSearch_Algo_ORB.ORB_SAVE_FEATURES (mydataORB2, savefile)
 print("ORB Feature saved to : ", savefile)
 # -- END
 
@@ -190,5 +205,10 @@ mySIFTtree2, mySIFTmodel2, mySIFTFVHist2 = ImageSearch_Algo_SIFT.SIFT_CREATE_TRE
 n_clusters = ORB_N_CLUSTERS
 savefile = 'data/' + TESTNAME + '_ORB_Tree_Cluster' + str(n_clusters)
 myORBtree, myORBmodel, myORBFVHist = ImageSearch_Algo_ORB.ORB_CREATE_TREE_MODEL(mydataORB, savefile, n_clusters)
+
+# ORB FV Tree and Cluster with kp=500, n_cluster=50
+n_clusters = ORB_N_CLUSTERS2
+savefile = 'data/' + TESTNAME + '_ORB_Tree_Cluster' + str(n_clusters) + 'kp'+str(ORB_FEATURES_LIMIT2)
+myORBtree2, myORBmodel2, myORBFVHist2 = ImageSearch_Algo_ORB.ORB_CREATE_TREE_MODEL(mydataORB2, savefile, n_clusters)
 
 print ("## Tree Generation Complete.")
