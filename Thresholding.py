@@ -6,7 +6,7 @@ import time
 
 import pandas as pd
 from kneed import KneeLocator
-
+import matplotlib.pyplot as plt
 import Accuracy as accuracy
 
 
@@ -38,11 +38,15 @@ def autothreshold_knee(imagematches, cutoff=6, verbose=False):
         myknee = elbow.knee
         if verbose:
             print('Detected Elbow cluster value :', myknee)
-    except:
-        print('Error in AutoThresholding.')
+    except Exception:
+        print('Error in AutoThresholding > ' + filelist[0])
+        # plt.plot(score)
+        # plt.show()
         pass
 
+    # qualified_items = cutoff if myknee == 0 else myknee
     qualified_items = min(myknee, cutoff)
+    # qualified_items = max(myknee, cutoff)
 
     return filelist[:qualified_items]
 

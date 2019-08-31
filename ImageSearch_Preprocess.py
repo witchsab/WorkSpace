@@ -364,8 +364,8 @@ def create_augment():
                 fname = fn +'.' + fe
                 gLists.append (fname)
         
-        print ('gkeys', gkeys)
-        print ('glists', gLists)
+        # print ('gkeys', gkeys)
+        # print ('glists', gLists)
 
         # Update the global dict globalDict
         for item in gkeys: 

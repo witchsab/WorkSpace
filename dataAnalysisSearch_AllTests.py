@@ -19,9 +19,9 @@ import ImageSearch_Algo_SIFT
 import ImageSearch_Plots as myplots
 import Thresholding
 
-# # --------------- Reload modules on :
-# %load_ext autoreload
-# %autoreload 2
+# --------------- Reload modules on :
+%load_ext autoreload
+%autoreload 2
 
 
 # --------------- TEST PARAMETERS ----------------------#
@@ -546,7 +546,7 @@ def SEARCH_TESTS(TESTNAME, IMGDIR):
 
         # find accuracy and append to dict 
         a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, ACCURRACY_RANGE)
-        print ('index F_'+algoname+': ', ind)
+        # print ('index F_'+algoname+': ', ind)
 
         row_dict['acc_'+ algoname] = a
         row_dict['index_'+ algoname] = ind
@@ -613,7 +613,7 @@ def SEARCH_TESTS(TESTNAME, IMGDIR):
 
         # find accuracy and append to dict 
         a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, ACCURRACY_RANGE)
-        print ('index F_'+algoname+': ', ind)
+        # print ('index F_'+algoname+': ', ind)
         row_dict['acc_'+ algoname] = a
         row_dict['index_'+ algoname] = ind
         row_dict['Count_'+ algoname] = cnt
@@ -645,7 +645,7 @@ def SEARCH_TESTS(TESTNAME, IMGDIR):
     Results = pd.DataFrame(columns=['file'])
     # for q_path in imagepaths[30:35]: 
     # for q_path in imagepaths[100:201]: 
-    for q_path in imagepaths: 
+    for q_path in imagepaths[:5]: 
         row_dict = {'file':q_path } 
 
         # ------------Generic Algo Full Sample 
@@ -720,12 +720,12 @@ def SEARCH_TESTS(TESTNAME, IMGDIR):
 
 TESTS = [
     ("Data520",             r'./imagesbooks/'),
-    ("Data520_DENOISE2",    r'./images/imagesbooks_DENOISE2/'   ),
-    ("Data520_S320",        r'./images/imagesbooks_S320/'       ),
-    ("Data520_S160",        r'./images/imagesbooks_S160/'       ),
-    ("Data520_R90",         r'./images/imagesbooks_R90/'        ),
-    ("Data520_CT2.0",       r'./images/imagesbooks_CT2.0/'      ),
-    ("Data520_EQ2",         r'./images/imagesbooks_EQ2/'        ),
+    # ("Data520_DENOISE2",    r'./images/imagesbooks_DENOISE2/'   ),
+    # ("Data520_S320",        r'./images/imagesbooks_S320/'       ),
+    # ("Data520_S160",        r'./images/imagesbooks_S160/'       ),
+    # ("Data520_R90",         r'./images/imagesbooks_R90/'        ),
+    # ("Data520_CT2.0",       r'./images/imagesbooks_CT2.0/'      ),
+    # ("Data520_EQ2",         r'./images/imagesbooks_EQ2/'        ),
     # ("DataUKBENCH10K",      r'./ukbench/'),
     # ("Data520AUG",          r'./images/imagesbooks_AUG/'),
 ]
