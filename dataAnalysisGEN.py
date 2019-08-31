@@ -29,8 +29,8 @@ import Thresholding
 
 # --------------- VAR COMMONS------------------
 
-TESTNAME = "Data520"
-IMGDIR = r'./imagesbooks/'
+# TESTNAME = "Data520"
+# IMGDIR = r'./imagesbooks/'
 
 # TESTNAME = "DataUKBENCH10K"
 # IMGDIR = r'./ukbench/'
@@ -41,8 +41,8 @@ IMGDIR = r'./imagesbooks/'
 # TESTNAME = "Data520_S320"
 # IMGDIR = r'./images/imagesbooks_S320/'
 
-# TESTNAME = "Data520_S160"
-# IMGDIR = r'./images/imagesbooks_S160/'
+TESTNAME = "Data520_S160"
+IMGDIR = r'./images/imagesbooks_S160/'
 
 # TESTNAME = "Data520_CT2.0"
 # IMGDIR = r'./images/imagesbooks_CT2.0/'
