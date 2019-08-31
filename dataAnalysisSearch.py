@@ -545,7 +545,7 @@ def algomixerAppend (algos, return_count, algoname='NewAlgo') :
 
     # find accuracy and append to dict 
     a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, ACCURRACY_RANGE)
-    print ('index F_'+algoname+': ', ind)
+    # print ('index F_'+algoname+': ', ind)
 
     row_dict['acc_'+ algoname] = a
     row_dict['index_'+ algoname] = ind
@@ -612,7 +612,7 @@ def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algonam
 
     # find accuracy and append to dict 
     a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, ACCURRACY_RANGE)
-    print ('index F_'+algoname+': ', ind)
+    # print ('index F_'+algoname+': ', ind)
     row_dict['acc_'+ algoname] = a
     row_dict['index_'+ algoname] = ind
     row_dict['Count_'+ algoname] = cnt
