@@ -23,31 +23,31 @@ import Thresholding
 
 
 # --------------- TEST PARAMETERS ----------------------#
-# TESTNAME = "Data519VERIFY"
-# TESTNAME = "Data519_RESIZE320"
+# TESTNAME = "Data520VERIFY"
+# TESTNAME = "Data520_RESIZE320"
 # TESTNAME = "DataUKBENCH10K"
 
 # --------------- VAR COMMONS------------------
 
-TESTNAME = "Data519"
+TESTNAME = "Data520"
 IMGDIR = r'./imagesbooks/'
 
 # TESTNAME = "DataUKBENCH10K"
 # IMGDIR = r'./ukbench/'
 
-# TESTNAME = "Data519_DENOISE2"
+# TESTNAME = "Data520_DENOISE2"
 # IMGDIR = r'./images/imagesbooks_DENOISE2/'
 
-# TESTNAME = "Data519_S320"
+# TESTNAME = "Data520_S320"
 # IMGDIR = r'./images/imagesbooks_S320/'
 
-# TESTNAME = "Data519_S160"
+# TESTNAME = "Data520_S160"
 # IMGDIR = r'./images/imagesbooks_S160/'
 
-# TESTNAME = "Data519_CT2.0"
+# TESTNAME = "Data520_CT2.0"
 # IMGDIR = r'./images/imagesbooks_CT2.0/'
 
-# TESTNAME = "Data519AUG"
+# TESTNAME = "Data520AUG"
 # IMGDIR = r'./images/imagesbooks_AUG/'
 
 # IMGDIR = r"V:\\Download\\imagesbooks\\"
