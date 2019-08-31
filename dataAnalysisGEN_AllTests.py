@@ -235,8 +235,9 @@ TESTS = [
     ("Data520_DENOISE2",    r'./images/imagesbooks_DENOISE2/'   ),
     ("Data520_S320",        r'./images/imagesbooks_S320/'       ),
     ("Data520_S160",        r'./images/imagesbooks_S160/'       ),
-    ("Data520_CT2.0",       r'./images/imagesbooks_CT2.0/'      ),
     ("Data520_R90",         r'./images/imagesbooks_R90/'        ),
+    ("Data520_CT2.0",       r'./images/imagesbooks_CT2.0/'      ),
+    ("Data520_EQ2",         r'./images/imagesbooks_EQ2/'        ),
     # ("DataUKBENCH10K",      r'./ukbench/'),
     # ("Data520AUG",          r'./images/imagesbooks_AUG/'),
 ]
