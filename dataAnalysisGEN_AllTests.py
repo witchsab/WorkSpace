@@ -232,14 +232,16 @@ def GENERATE (TESTNAME, IMGDIR):
 
 TESTS = [
     ("Data520",             r'./imagesbooks/'),
-    ("DataUKBENCH10K",      r'./ukbench/'),
-    ("Data520_DENOISE2",    r'./images/imagesbooks_DENOISE2/'),
-    ("Data520_S320",        r'./images/imagesbooks_S320/'),
-    ("Data520_S160",        r'./images/imagesbooks_S160/')
-    ("Data520_CT2.0",       r'./images/imagesbooks_CT2.0/'),
-    ("Data520AUG",          r'./images/imagesbooks_AUG/'),
+    ("Data520_DENOISE2",    r'./images/imagesbooks_DENOISE2/'   ),
+    ("Data520_S320",        r'./images/imagesbooks_S320/'       ),
+    ("Data520_S160",        r'./images/imagesbooks_S160/'       ),
+    ("Data520_CT2.0",       r'./images/imagesbooks_CT2.0/'      ),
+    ("Data520_R90",         r'./images/imagesbooks_R90/'        ),
+    # ("DataUKBENCH10K",      r'./ukbench/'),
+    # ("Data520AUG",          r'./images/imagesbooks_AUG/'),
 ]
 
-# Run all the tests 
+# Run all the tests
+
 for testname, imgdir in TESTS: 
     GENERATE(testname, imgdir)
