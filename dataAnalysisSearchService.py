@@ -32,8 +32,8 @@ import Thresholding
 
 # --------------- VAR COMMONS------------------
 
-# TESTNAME = "Data520"
-# IMGDIR = r'./imagesbooks/'
+TESTNAME = "Data520"
+IMGDIR = r'./imagesbooks/'
 
 # TESTNAME = "Data520_DENOISE2"
 # IMGDIR = r'./images/imagesbooks_DENOISE2/'
@@ -53,8 +53,8 @@ import Thresholding
 # TESTNAME = "DataUKBENCH10K"
 # IMGDIR = r'./ukbench/'
 
-TESTNAME = "DataUKBENCH10K_EQ2"
-IMGDIR = r'./ukbench_all/imagesbooks_EQ2/'
+# TESTNAME = "DataUKBENCH10K_EQ2"
+# IMGDIR = r'./ukbench_all/imagesbooks_EQ2/'
 
 # TESTNAME = "Data520AUG"
 # IMGDIR = r'./images/imagesbooks_AUG/'
@@ -93,7 +93,7 @@ ACCURRACY_RANGE = 20
 accuracy = AccuracyGlobal.AccuracyGlobal() # empty class genrated 
 accuracy.read(IMGDIR)
 
-
+q_path = './imagesbooks/ukbench09622.jpg'
 
 # --------------- IMAGES  ----------------------#
 imagepaths =  (list(paths.list_images(IMGDIR)))
@@ -553,11 +553,11 @@ def algomixerAppend (algos, return_count, algoname='NewAlgo') :
     a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, ACCURRACY_RANGE)
     # print ('index F_'+algoname+': ', ind)
 
-    row_dict['acc_'+ algoname] = a
-    row_dict['index_'+ algoname] = ind
-    row_dict['Count_'+ algoname] = cnt
-    row_dict['quality_'+ algoname] = d
-    row_dict['time_'+ algoname] = t
+    # row_dict['acc_'+ algoname] = a
+    # row_dict['index_'+ algoname] = ind
+    # row_dict['Count_'+ algoname] = cnt
+    # row_dict['quality_'+ algoname] = d
+    # row_dict['time_'+ algoname] = t
 
 
 def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algoname='NewAlgo', write=False) : 
@@ -619,103 +619,123 @@ def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algonam
     # find accuracy and append to dict 
     a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, ACCURRACY_RANGE)
     # print ('index F_'+algoname+': ', ind)
-    row_dict['acc_'+ algoname] = a
-    row_dict['index_'+ algoname] = ind
-    row_dict['Count_'+ algoname] = cnt
-    row_dict['quality_'+ algoname] = d
-    row_dict['time_'+ algoname] = t
+    # row_dict['acc_'+ algoname] = a
+    # row_dict['index_'+ algoname] = ind
+    # row_dict['Count_'+ algoname] = cnt
+    # row_dict['quality_'+ algoname] = d
+    # row_dict['time_'+ algoname] = t
+
+    return toplist
+
+# #######################################################################
+# # -----------  DATA COLLECTION START    ------------ #
+
+# gt = accuracy.check_ground_truth()
+
+# # image dirs path 
+# imagepaths = (list(paths.list_images(IMGDIR)))
+
+# # imagepaths = ['./imagesbooks/ukbench09622.jpg','./imagesbooks/ukbench10066.jpg','./imagesbooks/ukbench03864.jpg','./imagesbooks/ukbench06696.jpg','./imagesbooks/ukbench08546.jpg','./imagesbooks/ukbench05988.jpg','./imagesbooks/ukbench02718.jpg','./imagesbooks/ukbench05945.jpg','./imagesbooks/ukbench05779.jpg','./imagesbooks/ukbench08054.jpg','./imagesbooks/ukbench10166.jpg','./imagesbooks/ukbench05776.jpg','./imagesbooks/ukbench03865.jpg','./imagesbooks/ukbench06004.jpg','./imagesbooks/ukbench08048.jpg','./imagesbooks/ukbench05874.jpg','./imagesbooks/ukbench03098.jpg','./imagesbooks/ukbench05600.jpg','./imagesbooks/ukbench06047.jpg','./imagesbooks/ukbench10065.jpg']
 
 
-#######################################################################
-# -----------  DATA COLLECTION START    ------------ #
-
-gt = accuracy.check_ground_truth()
-
-# image dirs path 
-imagepaths = (list(paths.list_images(IMGDIR)))
-
-# imagepaths = ['./imagesbooks/ukbench09622.jpg','./imagesbooks/ukbench10066.jpg','./imagesbooks/ukbench03864.jpg','./imagesbooks/ukbench06696.jpg','./imagesbooks/ukbench08546.jpg','./imagesbooks/ukbench05988.jpg','./imagesbooks/ukbench02718.jpg','./imagesbooks/ukbench05945.jpg','./imagesbooks/ukbench05779.jpg','./imagesbooks/ukbench08054.jpg','./imagesbooks/ukbench10166.jpg','./imagesbooks/ukbench05776.jpg','./imagesbooks/ukbench03865.jpg','./imagesbooks/ukbench06004.jpg','./imagesbooks/ukbench08048.jpg','./imagesbooks/ukbench05874.jpg','./imagesbooks/ukbench03098.jpg','./imagesbooks/ukbench05600.jpg','./imagesbooks/ukbench06047.jpg','./imagesbooks/ukbench10065.jpg']
+# # *************************  CUSTOM ALGO DATA **************************** #
+# # AlgoMixerAppend : 
+# #   runs specified algos by text calls and merges result
+# # AlgoMixerFunnel : 
+# #   runs specified algosm generates candidates and then runs final algo
+# #   thresholds candidates for top list 
+# #   merges all the finals to results
 
 
-# *************************  CUSTOM ALGO DATA **************************** #
-# AlgoMixerAppend : 
-#   runs specified algos by text calls and merges result
-# AlgoMixerFunnel : 
-#   runs specified algosm generates candidates and then runs final algo
-#   thresholds candidates for top list 
-#   merges all the finals to results
+# # initialize 
+# Results = pd.DataFrame(columns=['file'])
+# # for q_path in imagepaths[30:35]: 
+# # for q_path in imagepaths[100:201]: 
+# for q_path in imagepaths: 
+#     row_dict = {'file':q_path } 
 
+#     # ------------Generic Algo Full Sample 
+#     search_HSV(write=True)
+#     search_RGB(write=True) 
+#     # search_RGB_Corr(write=True) 
 
-# initialize 
-Results = pd.DataFrame(columns=['file'])
-# for q_path in imagepaths[30:35]: 
-# for q_path in imagepaths[100:201]: 
-for q_path in imagepaths: 
-    row_dict = {'file':q_path } 
-
-    # ------------Generic Algo Full Sample 
-    search_HSV(write=True)
-    search_RGB(write=True) 
-    # search_RGB_Corr(write=True) 
-
-    search_SIFT_BF(txt='100', write=True)
-    # search_SIFT_BF(mydataSIFT=mydataSIFT2, txt='300', write=True)
-    # search_SIFT_FLANN(write=True)
-    search_SIFT_BOVW(write=True)
-    search_SIFT_BOVW(mySIFTmodel=mySIFTmodel2, mySIFTtree=mySIFTtree2, mydataSIFT=mydataSIFT2, txt='kp300n50', write=True)
+#     search_SIFT_BF(txt='100', write=True)
+#     # search_SIFT_BF(mydataSIFT=mydataSIFT2, txt='300', write=True)
+#     # search_SIFT_FLANN(write=True)
+#     search_SIFT_BOVW(write=True)
+#     search_SIFT_BOVW(mySIFTmodel=mySIFTmodel2, mySIFTtree=mySIFTtree2, mydataSIFT=mydataSIFT2, txt='kp300n50', write=True)
     
-    # search_ORB_FLANN(txt='100', write=True)
-    # search_ORB_FLANN(mydataORB=mydataORB2, txt='500', write=True)
-    # search_ORB_BF(write=True)
-    # search_ORB_BF2(write=True)
-    # search_ORB_BOVW(write=True)
-    # search_ORB_BOVW(myORBmodel=myORBmodel2, myORBtree=myORBtree2, mydataORB=mydataORB2, txt='kp500n50',write=True)
+#     # search_ORB_FLANN(txt='100', write=True)
+#     # search_ORB_FLANN(mydataORB=mydataORB2, txt='500', write=True)
+#     # search_ORB_BF(write=True)
+#     # search_ORB_BF2(write=True)
+#     # search_ORB_BOVW(write=True)
+#     # search_ORB_BOVW(myORBmodel=myORBmodel2, myORBtree=myORBtree2, mydataORB=mydataORB2, txt='kp500n50',write=True)
     
-    search_HASH_All(write=True)
-    search_HASH_HYBRID(write=True)
+#     search_HASH_All(write=True)
+#     search_HASH_HYBRID(write=True)
 
-    # ---------- ALGO SELECTOR 
-    # algo_selector('search_HSV', 100)
-    # search_RGB()
+#     # ---------- ALGO SELECTOR 
+#     # algo_selector('search_HSV', 100)
+#     # search_RGB()
 
-    # ----------- generate custom combination algos w/ adaptive thresholding
-    # algomixerAppend(['search_HSV', 'search_RGB'], 100, 'AlgoS')
-    # algomixerAppend(['search_ORB_BOVW', 'search_SIFT_BOVW'], 100, 'AlgoF')
-    # algomixerAppend(['search_ORB_BOVW2', 'search_SIFT_BOVW2'], 100, 'AlgoFX')
-    algomixerAppend(['search_HSV', 'search_RGB', 'search_SIFT_BOVW2'], 100, 'AlgoX')
+#     # ----------- generate custom combination algos w/ adaptive thresholding
+#     # algomixerAppend(['search_HSV', 'search_RGB'], 100, 'AlgoS')
+#     # algomixerAppend(['search_ORB_BOVW', 'search_SIFT_BOVW'], 100, 'AlgoF')
+#     # algomixerAppend(['search_ORB_BOVW2', 'search_SIFT_BOVW2'], 100, 'AlgoFX')
+#     algomixerAppend(['search_HSV', 'search_RGB', 'search_SIFT_BOVW2'], 100, 'AlgoX')
 
-    # ----------- generate custom Funnel algos
+#     # ----------- generate custom Funnel algos
     
-    algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoA', write=True)
-    # algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT2, 'AlgoA2', write=True)
-    # algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_FLANN', mydataSIFT, 'F_SIFT2')
+#     algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoA', write=True)
+#     # algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_BF', mydataSIFT2, 'AlgoA2', write=True)
+#     # algomixerFunnel(['search_HSV', 'search_RGB'], 100, 'search_SIFT_FLANN', mydataSIFT, 'F_SIFT2')
 
-    algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB_100', write=True)
-    algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoB_50', write=True)
+#     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB_100', write=True)
+#     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoB_50', write=True)
 
-    # algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC', write=True)
-    # algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW2'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC2', write=True)
+#     # algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC', write=True)
+#     # algomixerFunnel(['search_HSV', 'search_RGB', 'search_ORB_BOVW2'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoC2', write=True)
 
-    algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW2'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_100', write=True)
-    algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW2'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_50', write=True)
+#     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW2'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_100', write=True)
+#     algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW2'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_50', write=True)
 
 
-    Results = Results.append( row_dict , ignore_index=True)
-    print ( 'Completed ', imagepaths.index(q_path), q_path)
+#     Results = Results.append( row_dict , ignore_index=True)
+#     print ( 'Completed ', imagepaths.index(q_path), q_path)
 
-# ---------- SAVE ALL FILES TO DISK
-# Save Frame to csv 
-Results.to_csv( 'data/' + TESTNAME + '_RESULTS_FINAL.csv')
-print ("Data Collection Completed ")
+# # ---------- SAVE ALL FILES TO DISK
+# # Save Frame to csv 
+# Results.to_csv( 'data/' + TESTNAME + '_RESULTS_FINAL.csv')
+# print ("Data Collection Completed ")
 
-# Save Frame to pickle
-savefile = 'data/' + TESTNAME + '_RESULTS_FINAL' # + str(int(time.time())) 
-outfile = open (savefile + '.pickle', 'wb')
-pickle.dump( Results, outfile )
-# ---------- SAVED
+# # Save Frame to pickle
+# savefile = 'data/' + TESTNAME + '_RESULTS_FINAL' # + str(int(time.time())) 
+# outfile = open (savefile + '.pickle', 'wb')
+# pickle.dump( Results, outfile )
+# # ---------- SAVED
 
-# Calculate statistics and save to a file 
-stats = Results.describe()
-stats.to_csv( 'data/' + TESTNAME + '_RESULTS_FINAL_stats.csv')
+# # Calculate statistics and save to a file 
+# stats = Results.describe()
+# stats.to_csv( 'data/' + TESTNAME + '_RESULTS_FINAL_stats.csv')
 
-print ("Data Analysis Completed.")
+# print ("Data Analysis Completed.")
+
+def searchNeedle ( imgID ):
+    global q_path 
+
+    q_path = IMGDIR + imgID + '.jpg' 
+
+    print ('##############    Query Image path   #######',  q_path)
+
+    # print (mydataHSV.head())
+    toplist = algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB_100', write=False)
+
+    idlist = []
+    # print (toplist)
+    for item in toplist: 
+        thisID = item.replace(IMGDIR , '')
+        thisID = thisID.replace('.jpg', '')
+        idlist.append(( thisID, thisID ))
+
+    return idlist[:20]

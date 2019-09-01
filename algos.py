@@ -7,6 +7,7 @@ from imutils import paths
 import os
 import time
 import matplotlib.pyplot as plt
+import dataAnalysisSearchService as search
 
 
 # ALGO Module 
@@ -22,6 +23,8 @@ import matplotlib.pyplot as plt
 def algo1(image_id): 
 
     # Example output: Sample list of tuples 
-    image_id_list = [('125401',29), ('107001',30), (109802,77), (2,100)]
+    # image_id_list = [('125401',29), ('107001',30), (109802,77), (2,100)]
+
+    image_id_list = search.searchNeedle(image_id)
 
     return image_id_list

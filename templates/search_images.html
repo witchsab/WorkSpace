@@ -28,8 +28,9 @@
 
         {% for image in images %}
         <figure style="width:100px; float:left">
-            <img src="{{ image.link }}" alt="image" style="width:120px">
-            <figcaption>{{ image.text }}</figcaption>
+            <a href="{{ image.search }}">
+                <img src="{{ image.link }}" alt="image" style="width:120px">
+            </a>            <figcaption>{{ image.text }}</figcaption>
         </figure>
         {% endfor %}
     </div>

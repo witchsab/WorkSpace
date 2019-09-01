@@ -58,7 +58,7 @@ def get_sampleimages():
 @app.route('/searchimages/<string:image_id>', methods=['GET'])
 def search_image(image_id):
       
-    qimg = {"link": "/api/image/"+image_id , 'text' : 'Input Image!'}
+    qimg = {"link": "/api/image/"+image_id, 'text' : 'Input Image!'}
 
     # actual implementation of the algo 
     imglist = searchService.imageIDList(image_id)
