@@ -1,0 +1,39 @@
+<html>
+
+<head>
+    <title>Py Image Search Service</title>
+</head>
+
+<body>
+    <h1>Py Image Search Micro-Service</h1>
+    <div>
+        <a href="/home">Home</a> <br>
+        <a href="/images">Display Image lists</a></br>
+        <a href="/searchimages">Search image lists</a></br>
+    </div>
+
+    <!-- Input images display code -->
+    <div style="clear: both; border-top: 1px solid;">
+        <p> Query Image</p>
+
+        <figure style="width:100px; float:left">
+            <img src="{{ qimage.link }}" alt="image" style="width:120px">
+            <figcaption>{{ qimage.text }}</figcaption>
+        </figure>
+    </div>
+
+    <!-- Search Images display code -->
+    <div style="clear: both; border-top: 1px solid;">
+        <p> Result: Search Images</p>
+
+        {% for image in images %}
+        <figure style="width:100px; float:left">
+            <img src="{{ image.link }}" alt="image" style="width:120px">
+            <figcaption>{{ image.text }}</figcaption>
+        </figure>
+        {% endfor %}
+    </div>
+
+</body>
+
+</html>

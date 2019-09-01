@@ -1,0 +1,30 @@
+<html>
+
+<head>
+    <title>Py Image Search Micro-Service</title>
+</head>
+
+<body>
+    <h1>Py Image Search Service</h1>
+    <div>
+        <a href="/home">Home</a> <br>
+        <a href="/images">Display Image lists</a></br>
+        <a href="/searchimages">Search image lists</a></br>
+    </div>
+
+    <p> Result Search Images</p>
+    <div>
+        {% for image in images %}
+        <figure style="width:100px; float:left">
+            <a href="{{ image.search }}">
+                <img src="{{ image.link }}" alt="image" style="width:120px">
+            </a>
+            <figcaption>{{ image.text }}</figcaption>
+
+        </figure>
+        {% endfor %}
+    </div>
+
+</body>
+
+</html>
