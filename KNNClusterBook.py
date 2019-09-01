@@ -150,38 +150,35 @@ from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-# %matplotlib inline
 from sklearn import datasets
+import time 
+
+%matplotlib inline
+
 #Iris Dataset
 iris = datasets.load_iris()
-IX = iris.data
+X = iris.data
 
-# IX = X
 
+start = time.time()
 #Gaussian Mixture Model
-gmm = GaussianMixture(n_components=5)
-gmm.fit(IX)
-proba_lists = gmm.predict_proba(IX)
+gmm = GaussianMixture(n_components=3)
+gmm.fit(X)
+proba_lists = gmm.predict_proba(X)
 
-# # convert prob matrices to labels based on index
-# gmlabels = proba_lists.argmax(axis=-1)
-# # update labels to original dataframe
-# mydataRGB['cluster'] = pd.DataFrame(gmlabels)
-# mydataRGB[['file', 'cluster']].head
-
+print ('time:', time.time() - start )
 
 #Plotting
 colored_arrays = np.matrix(proba_lists)
 colored_tuples = [tuple(i.tolist()[0]) for i in colored_arrays]
 fig = plt.figure(1, figsize=(7,7))
 ax = Axes3D(fig, rect=[0, 0, 0.95, 1], elev=48, azim=134)
-ax.scatter(IX[:, 3], IX[:, 0], IX[:, 2],
+ax.scatter(X[:, 3], X[:, 0], X[:, 2],
           c=colored_tuples, edgecolor="k", s=50)
 ax.set_xlabel("Petal width")
 ax.set_ylabel("Sepal length")
 ax.set_zlabel("Petal length")
 plt.title("Gaussian Mixture Model", fontsize=14)
-
 
 
 ##############################################################################################

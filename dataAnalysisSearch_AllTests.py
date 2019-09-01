@@ -645,7 +645,7 @@ def SEARCH_TESTS(TESTNAME, IMGDIR):
     Results = pd.DataFrame(columns=['file'])
     # for q_path in imagepaths[30:35]: 
     # for q_path in imagepaths[100:201]: 
-    for q_path in imagepaths[:5]: 
+    for q_path in imagepaths: 
         row_dict = {'file':q_path } 
 
         # ------------Generic Algo Full Sample 
@@ -720,12 +720,12 @@ def SEARCH_TESTS(TESTNAME, IMGDIR):
 
 TESTS = [
     ("Data520",             r'./imagesbooks/'),
-    # ("Data520_DENOISE2",    r'./images/imagesbooks_DENOISE2/'   ),
-    # ("Data520_S320",        r'./images/imagesbooks_S320/'       ),
-    # ("Data520_S160",        r'./images/imagesbooks_S160/'       ),
-    # ("Data520_R90",         r'./images/imagesbooks_R90/'        ),
-    # ("Data520_CT2.0",       r'./images/imagesbooks_CT2.0/'      ),
-    # ("Data520_EQ2",         r'./images/imagesbooks_EQ2/'        ),
+    ("Data520_DENOISE2",    r'./images/imagesbooks_DENOISE2/'   ),
+    ("Data520_S320",        r'./images/imagesbooks_S320/'       ),
+    ("Data520_S160",        r'./images/imagesbooks_S160/'       ),
+    ("Data520_R90",         r'./images/imagesbooks_R90/'        ),
+    ("Data520_CT2.0",       r'./images/imagesbooks_CT2.0/'      ),
+    ("Data520_EQ2",         r'./images/imagesbooks_EQ2/'        ),
     # ("DataUKBENCH10K",      r'./ukbench/'),
     # ("Data520AUG",          r'./images/imagesbooks_AUG/'),
 ]
