@@ -32,8 +32,8 @@ import Thresholding
 
 # --------------- VAR COMMONS------------------
 
-TESTNAME = "Data520"
-IMGDIR = r'./imagesbooks/'
+# TESTNAME = "Data520"
+# IMGDIR = r'./imagesbooks/'
 
 # TESTNAME = "Data520_DENOISE2"
 # IMGDIR = r'./images/imagesbooks_DENOISE2/'
@@ -47,8 +47,8 @@ IMGDIR = r'./imagesbooks/'
 # TESTNAME = "Data520_CT2.0"
 # IMGDIR = r'./images/imagesbooks_CT2.0/'
 
-# TESTNAME = 'Data520_EQ2 '       
-# IMGDIR  = r'./images/imagesbooks_EQ2/'      
+TESTNAME = 'Data520_EQ2 '       
+IMGDIR  = r'./images/imagesbooks_EQ2/'      
 
 # TESTNAME = "DataUKBENCH10K"
 # IMGDIR = r'./ukbench/'
@@ -518,7 +518,7 @@ def algo_selector_final( algo, algoFrame,  return_count = 100):
     return (imagepredictions, searchtime)
 
 
-def algomixerAppend (algos, return_count, algoname='NewAlgo') : 
+def algomixerAppend (algos, return_count, algoname='NewAlgo', write=False) : 
     # myAlgos = [ search_RGB, search_SIFT_BF ]
     # algomixerFunnel (myAlgos)
     start = time.time()
@@ -533,6 +533,9 @@ def algomixerAppend (algos, return_count, algoname='NewAlgo') :
     # generate algo uniques: apply threshold for each Result (imagematches)     
     unique_final_list = []
     for result in algoResults : 
+        if write: 
+            a ,d, ind, cnt = accuracy.accuracy_matches(q_path, result, ACCURRACY_RANGE)
+            print (ind)
         unique_final_list.append(Thresholding.autothreshold_knee(result))
 
     # MERGE OPEARATION FROM ALL RESULTS 
@@ -550,7 +553,7 @@ def algomixerAppend (algos, return_count, algoname='NewAlgo') :
     t = time.time() - start
 
     # find accuracy and append to dict 
-    a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, ACCURRACY_RANGE)
+    # a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, ACCURRACY_RANGE)
     # print ('index F_'+algoname+': ', ind)
 
     # row_dict['acc_'+ algoname] = a
@@ -558,9 +561,10 @@ def algomixerAppend (algos, return_count, algoname='NewAlgo') :
     # row_dict['Count_'+ algoname] = cnt
     # row_dict['quality_'+ algoname] = d
     # row_dict['time_'+ algoname] = t
+    return toplist
 
 
-def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algoname='NewAlgo', write=False) : 
+def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algoname='NewAlgo', write=False, BM=False ) : 
     '''
     algos [list]: list of candidare algos
     return_count (int) : number of candidates to be generated 
@@ -617,7 +621,7 @@ def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algonam
     t = time.time() - start
 
     # find accuracy and append to dict 
-    a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, ACCURRACY_RANGE)
+    # a ,d, ind, cnt = accuracy.accuracy_from_list(q_path, toplist, ACCURRACY_RANGE)
     # print ('index F_'+algoname+': ', ind)
     # row_dict['acc_'+ algoname] = a
     # row_dict['index_'+ algoname] = ind
@@ -625,7 +629,10 @@ def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algonam
     # row_dict['quality_'+ algoname] = d
     # row_dict['time_'+ algoname] = t
 
-    return toplist
+    if BM : 
+        return final_algo_List 
+    else :
+        return toplist
 
 # #######################################################################
 # # -----------  DATA COLLECTION START    ------------ #
@@ -721,15 +728,34 @@ def algomixerFunnel (algos, return_count, finalalgo, finalalgoDataframe, algonam
 
 # print ("Data Analysis Completed.")
 
+row_dict = {}
+
 def searchNeedle ( imgID ):
     global q_path 
-
+    global row_dict
     q_path = IMGDIR + imgID + '.jpg' 
 
     print ('##############    Query Image path   #######',  q_path)
 
+
+    # Algo Funnel Only 
     # print (mydataHSV.head())
-    toplist = algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB_100', write=False)
+
+    # toplist = algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB_100', write=False)
+
+    # toplist = algomixerFunnel(['search_HSV', 'search_RGB', 'search_SIFT_BOVW2'], 100, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_100', write=False)
+
+    # toplist =  algomixerFunnel(['search_SIFT_BOVW2','search_HSV', 'search_RGB'], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_50', write=False)
+
+    # toplist =  algomixerFunnel(['search_SIFT_BOVW2', 'search_HSV', 'search_RGB', ], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_50', write=False, BM=True)
+    
+    # toplist =  algomixerFunnel(['search_SIFT_BOVW2', 'search_HSV', 'search_RGB', ], 50, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_50', write=False, BM=False)
+
+
+    # toplist = algomixerAppend(['search_SIFT_BOVW2', 'search_HSV', 'search_RGB'], 30, 'AlgoX', write=True)
+
+    toplist =  algomixerFunnel(['search_SIFT_BOVW2', 'search_HSV', 'search_RGB', ], 30, 'search_SIFT_BF', mydataSIFT, 'AlgoB2_50', write=False, BM=True)
+
 
     idlist = []
     # print (toplist)
@@ -737,5 +763,16 @@ def searchNeedle ( imgID ):
         thisID = item.replace(IMGDIR , '')
         thisID = thisID.replace('.jpg', '')
         idlist.append(( thisID, thisID ))
+
+
+    # # Raw Algos : 
+    # matches, stime = search_SIFT_BF()
+    # print (matches)
+    # idlist = []
+    # # print (toplist)
+    # for score, path  in matches: 
+    #     thisID = path.replace(IMGDIR , '')
+    #     thisID = thisID.replace('.jpg', '')
+    #     idlist.append(( thisID, score ))
 
     return idlist[:20]

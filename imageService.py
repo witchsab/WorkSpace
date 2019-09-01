@@ -15,6 +15,8 @@ import random
 # IMGDIR = r'/home/towshif/code/python/pyImageSearch/imagesbooks'
 
 IMGDIR = os.path.join(os.getcwd(), 'imagesbooks')
+# IMGDIR = os.path.join(os.getcwd(), 'ukbench_all/imagesbooks_EQ2')
+# IMGDIR = os.path.join(os.getcwd(), 'ukbench')
 IMGTYPE = r'.jpg'
 
 

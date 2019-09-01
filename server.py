@@ -76,7 +76,7 @@ def mapID(idList):
     API_ROOT = "/api/image/"
     for img in idList : 
       link = API_ROOT + str(img['ID'])
-      print (link)
+      # print (link)
       imgs.append({'link': link, 'text': img['text'], 'search': '/searchimages/'+ str(img['ID'])})
     return imgs
 
