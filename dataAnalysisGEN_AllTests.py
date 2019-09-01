@@ -231,18 +231,20 @@ def GENERATE (TESTNAME, IMGDIR):
 # Define all TESTNAMES AND DIRS 
 
 TESTS = [
-    ("Data520",             r'./imagesbooks/'),
-    ("Data520_DENOISE2",    r'./images/imagesbooks_DENOISE2/'   ),
-    ("Data520_S320",        r'./images/imagesbooks_S320/'       ),
-    ("Data520_S160",        r'./images/imagesbooks_S160/'       ),
-    ("Data520_R90",         r'./images/imagesbooks_R90/'        ),
-    ("Data520_CT2.0",       r'./images/imagesbooks_CT2.0/'      ),
-    ("Data520_EQ2",         r'./images/imagesbooks_EQ2/'        ),
-    # ("DataUKBENCH10K",      r'./ukbench/'),
+    # ("Data520",             r'./imagesbooks/'),
+    # ("Data520_DENOISE2",    r'./images/imagesbooks_DENOISE2/'   ),
+    # ("Data520_S320",        r'./images/imagesbooks_S320/'       ),
+    # ("Data520_S160",        r'./images/imagesbooks_S160/'       ),
+    # ("Data520_R90",         r'./images/imagesbooks_R90/'        ),
+    # ("Data520_CT2.0",       r'./images/imagesbooks_CT2.0/'      ),
+    # ("Data520_EQ2",         r'./images/imagesbooks_EQ2/'        ),
+    ("DataUKBENCH10K_EQ2",  r'./ukbench_all/imagesbooks_EQ2/'),
+    ("DataUKBENCH10K",      r'./ukbench/'),
     # ("Data520AUG",          r'./images/imagesbooks_AUG/'),
 ]
 
 # Run all the tests
 
 for testname, imgdir in TESTS: 
+    print ('Loaded Test', testname, ', data directory', imgdir)
     GENERATE(testname, imgdir)

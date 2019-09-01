@@ -20,8 +20,8 @@ import ImageSearch_Plots as myplots
 import Thresholding
 
 # --------------- Reload modules on :
-%load_ext autoreload
-%autoreload 2
+# %load_ext autoreload
+# %autoreload 2
 
 
 # --------------- TEST PARAMETERS ----------------------#
